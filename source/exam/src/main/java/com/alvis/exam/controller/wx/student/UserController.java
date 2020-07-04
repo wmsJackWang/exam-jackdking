@@ -1,6 +1,20 @@
 package com.alvis.exam.controller.wx.student;
 
-import com.alvis.exam.base.BaseApiController;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.alvis.exam.base.RestResponse;
 import com.alvis.exam.controller.wx.BaseWXApiController;
 import com.alvis.exam.domain.Message;
@@ -16,19 +30,15 @@ import com.alvis.exam.service.UserEventLogService;
 import com.alvis.exam.service.UserService;
 import com.alvis.exam.utility.DateTimeUtil;
 import com.alvis.exam.utility.PageInfoHelper;
-import com.alvis.exam.viewmodel.student.user.*;
+import com.alvis.exam.viewmodel.student.user.MessageRequestVM;
+import com.alvis.exam.viewmodel.student.user.MessageResponseVM;
+import com.alvis.exam.viewmodel.student.user.UserEventLogVM;
+import com.alvis.exam.viewmodel.student.user.UserRegisterVM;
+import com.alvis.exam.viewmodel.student.user.UserResponseVM;
+import com.alvis.exam.viewmodel.student.user.UserUpdateVM;
 import com.github.pagehelper.PageInfo;
-import lombok.AllArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
 
 
 /**
