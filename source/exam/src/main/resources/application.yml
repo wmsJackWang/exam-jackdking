@@ -1,5 +1,16 @@
 server:
-  port: 8000
+  port: 80
+  #只要添加下面ssl配置  gateway就变成 只能支持https了
+#  ssl:
+#    key-alias: spring
+#    enabled: true
+#    key-password: spring
+#    key-store: classpath:selfsigned.jks
+#    key-store-type: JKS
+#    key-store-provider: SUN
+#    key-store-password: spring 
+#  http: # 新加一个http的端口号配置
+#    port: 8004
   undertow:
     io-threads: 16
     worker-threads: 4000
@@ -73,6 +84,15 @@ spring:
     type: redis
     redis:
       time-to-live: 12h   #12 hour
+#  thymeleaf:
+#    prefix: /
+#    check-template-location: true
+#    suffix: .html
+#    encoding: UTF-8
+#    servlet:
+#      content-type: text/html
+#    mode: HTML5
+#    cache: false
 
 
   #runningtime environment
