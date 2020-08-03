@@ -62,6 +62,8 @@ public class UserController extends BaseWXApiController {
         UserResponseVM userVm = UserResponseVM.from(user);
         userVm.setBirthDay(DateTimeUtil.dateShortFormat(user.getBirthDay()));
         return RestResponse.ok(userVm);
+    
+    
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
