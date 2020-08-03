@@ -1,7 +1,11 @@
 const {
   $Message
 } = require('/component/iView/base/index');
+<<<<<<< HEAD
 // const mtjwxsdk = require('./utils/mtj-wx-sdk.js');
+=======
+const mtjwxsdk = require('./utils/bmap-wx.js');
+>>>>>>> ce77300098847c7b2c10b406d3d141cc38e4d7f4
 
 App({
   globalData: {

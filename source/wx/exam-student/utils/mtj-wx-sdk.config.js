@@ -1,5 +1,5 @@
 module.exports = {
-  appKey: '9abd2dfe51',
+  appKey: '0b9OtPVCKyZQWTl24l9BESdxlypKZv9C',
   hasPlugin: false,
   getLocation: false
 };
