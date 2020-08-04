@@ -8,6 +8,9 @@ import com.alvis.exam.repository.UserTokenMapper;
 import com.alvis.exam.service.UserService;
 import com.alvis.exam.service.UserTokenService;
 import com.alvis.exam.utility.DateTimeUtil;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -19,6 +22,10 @@ import java.util.UUID;
 
 @Service
 public class UserTokenServiceImpl extends BaseServiceImpl<UserToken> implements UserTokenService {
+	
+	
+	private static final Logger log = LoggerFactory.getLogger(UserTokenServiceImpl.class);
+
 
     private final static String CACHE_NAME = "Token";
     private final UserTokenMapper userTokenMapper;
@@ -103,6 +110,8 @@ public class UserTokenServiceImpl extends BaseServiceImpl<UserToken> implements 
 			user.setWxOpenId(openId);
 			userService.insertByFilter(user);
 		}
+		
+		log.info("用戶信息：{}",user.toString());
 		
 	    return insertUserToken(user);
 	}

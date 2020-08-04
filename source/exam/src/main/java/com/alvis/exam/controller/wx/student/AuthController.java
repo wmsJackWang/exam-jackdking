@@ -1,5 +1,15 @@
 package com.alvis.exam.controller.wx.student;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.alvis.exam.base.RestResponse;
 import com.alvis.exam.configuration.property.SystemConfig;
 import com.alvis.exam.controller.wx.BaseWXApiController;
@@ -10,12 +20,8 @@ import com.alvis.exam.service.UserService;
 import com.alvis.exam.service.UserTokenService;
 import com.alvis.exam.utility.WxUtil;
 import com.alvis.exam.viewmodel.wx.student.user.BindInfo;
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 
 
 @Controller("WXStudentAuthController")
@@ -23,6 +29,10 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @ResponseBody
 public class AuthController extends BaseWXApiController {
+	
+	
+	private static final Logger log = LoggerFactory.getLogger(AuthController.class);
+
 
     private final SystemConfig systemConfig;
     private final AuthenticationService authenticationService;
@@ -86,8 +96,13 @@ public class AuthController extends BaseWXApiController {
         }
         UserToken userToken = userTokenService.existOrCreate(openid);
         if (null != userToken) {
+        	
+        	log.info("用戶token信息：{}",userToken.toString());
             return RestResponse.ok(userToken.getToken());
         }
+
+    	log.info("用戶token信息不存在");
+    	
         return RestResponse.fail(2, "用户未绑定");
     }
 
