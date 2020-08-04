@@ -1,11 +1,8 @@
 const {
   $Message
 } = require('/component/iView/base/index');
-<<<<<<< HEAD
 // const mtjwxsdk = require('./utils/mtj-wx-sdk.js');
-=======
 const mtjwxsdk = require('./utils/bmap-wx.js');
->>>>>>> ce77300098847c7b2c10b406d3d141cc38e4d7f4
 
 App({
   globalData: {
@@ -14,12 +11,15 @@ App({
   },
   onLaunch: function() {
     let _this = this
+    //从用户微信本地获取token数据
     let token = wx.getStorageSync('token')
+    //如果token数据为空，表示用户未登入
     if (null == token || token == '') {
+      //微信登入
       wx.login({
         success(wxres) {
           if (wxres.code) {
-            _this.formPost('/api/wx/student/auth/checkBind', {
+            _this.formPost('/api/wx/student/auth/checkBindV2', {
               "code": wxres.code
             }).then(res => {
               if (res.code == 1) {
@@ -50,6 +50,7 @@ App({
       type: type
     });
   },
+  //这个方法是给所有需要登入才能使用的url调用的方法。token放入到url的header中
   formPost: function(url, data) {
     let _this = this
     return new Promise(function(resolve, reject) {

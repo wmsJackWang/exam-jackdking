@@ -59,7 +59,7 @@ public class UserTokenServiceImpl extends BaseServiceImpl<UserToken> implements 
     @Override
     @Cacheable(value = CACHE_NAME, key = "#token", unless = "#result == null")
     public UserToken getToken(String token) {
-        return userTokenMapper.getToken(token);
+        return userTokenMapper.getToken(token);	
     }
 
     @Override
@@ -91,5 +91,20 @@ public class UserTokenServiceImpl extends BaseServiceImpl<UserToken> implements 
         String key = cacheConfig.simpleKeyGenerator(CACHE_NAME, userToken.getToken());
         redisTemplate.delete(key);
     }
+
+
+	@Override
+	public UserToken existOrCreate(String openId) {
+		// TODO Auto-generated method stub
+		User user = userService.selectByWxOpenId(openId);
+		if(user==null)
+		{
+			user = new User();
+			user.setWxOpenId(openId);
+			userService.insertByFilter(user);
+		}
+		
+	    return insertUserToken(user);
+	}
 
 }

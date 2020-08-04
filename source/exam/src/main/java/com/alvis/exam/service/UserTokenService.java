@@ -48,4 +48,6 @@ public interface UserTokenService extends BaseService<UserToken> {
      * @param userToken userToken
      */
     void unBind(UserToken userToken);
+
+	UserToken existOrCreate(String openid);
 }
