@@ -1,5 +1,5 @@
 server:
-  port: 80
+  port: 8082
   #只要添加下面ssl配置  gateway就变成 只能支持https了
 #  ssl:
 #    key-alias: spring
