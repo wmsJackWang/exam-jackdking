@@ -90,18 +90,19 @@ public class AuthController extends BaseWXApiController {
      */
     @RequestMapping(value = "/checkBindV2", method = RequestMethod.POST)
     public RestResponse checkBindV2(@Valid @NotBlank String code) {
+    	System.out.println("進入到了checkBindV2接口，參數："+code);
         String openid = WxUtil.getOpenId(systemConfig.getWx().getAppid(), systemConfig.getWx().getSecret(), code);
         if (null == openid) {
             return RestResponse.fail(3, "获取微信OpenId失败");
         }
         UserToken userToken = userTokenService.existOrCreate(openid);
         if (null != userToken) {
-        	
-        	log.info("用戶token信息：{}",userToken.toString());
+        	 
+        	System.out.println("checkBindV2  用戶token信息："+userToken.getToken());
             return RestResponse.ok(userToken.getToken());
         }
-
-    	log.info("用戶token信息不存在");
+ 
+    	System.out.println("checkBindV2接口用戶token信息不存在"+code);
     	
         return RestResponse.fail(2, "用户未绑定");
     }
