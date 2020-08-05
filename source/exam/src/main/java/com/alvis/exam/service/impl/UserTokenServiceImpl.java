@@ -3,7 +3,11 @@ package com.alvis.exam.service.impl;
 import com.alvis.exam.configuration.property.SystemConfig;
 import com.alvis.exam.configuration.spring.cache.CacheConfig;
 import com.alvis.exam.domain.User;
+import com.alvis.exam.domain.UserEventLog;
 import com.alvis.exam.domain.UserToken;
+import com.alvis.exam.domain.enums.RoleEnum;
+import com.alvis.exam.domain.enums.UserStatusEnum;
+import com.alvis.exam.event.UserEvent;
 import com.alvis.exam.repository.UserTokenMapper;
 import com.alvis.exam.service.UserService;
 import com.alvis.exam.service.UserTokenService;
@@ -13,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,15 +38,20 @@ public class UserTokenServiceImpl extends BaseServiceImpl<UserToken> implements 
     private final SystemConfig systemConfig;
     private final CacheConfig cacheConfig;
     private final RedisTemplate<String, Object> redisTemplate;
+    
+
+    private final ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    public UserTokenServiceImpl(UserTokenMapper userTokenMapper, UserService userService, SystemConfig systemConfig, CacheConfig cacheConfig, RedisTemplate<String, Object> redisTemplate) {
+    public UserTokenServiceImpl(UserTokenMapper userTokenMapper, UserService userService, SystemConfig systemConfig, CacheConfig cacheConfig, RedisTemplate<String, Object> redisTemplate
+    							,ApplicationEventPublisher eventPublisher) {
         super(userTokenMapper);
         this.userTokenMapper = userTokenMapper;
         this.userService = userService;
         this.systemConfig = systemConfig;
         this.cacheConfig = cacheConfig;
         this.redisTemplate = redisTemplate;
+        this.eventPublisher = eventPublisher;
     }
 
 
@@ -107,6 +117,16 @@ public class UserTokenServiceImpl extends BaseServiceImpl<UserToken> implements 
 		if(user==null)
 		{
 			user = new User();
+	        user.setUserUuid(UUID.randomUUID().toString());
+	        user.setRole(RoleEnum.STUDENT.getCode());
+	        user.setStatus(UserStatusEnum.Enable.getCode());
+	        user.setLastActiveTime(new Date());
+	        user.setCreateTime(new Date());
+	        user.setDeleted(false);
+	        userService.insertByFilter(user);
+	        UserEventLog userEventLog = new UserEventLog(user.getId(), user.getUserName(), user.getRealName(), new Date());
+	        userEventLog.setContent("欢迎 " + user.getUserName() + " 注册来到学之思考试系统");
+	        eventPublisher.publishEvent(new UserEvent(userEventLog));
 			user.setWxOpenId(openId);
 			userService.insertByFilter(user);
 		}
