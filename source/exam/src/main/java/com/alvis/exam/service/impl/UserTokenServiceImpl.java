@@ -123,11 +123,12 @@ public class UserTokenServiceImpl extends BaseServiceImpl<UserToken> implements 
 	        user.setLastActiveTime(new Date());
 	        user.setCreateTime(new Date());
 	        user.setDeleted(false);
+			user.setWxOpenId(openId);
+			user.setUserName("共图社社员"+user.getUserUuid().substring(0, 6));//默认微信openid就是登入用户名
 	        userService.insertByFilter(user);
 	        UserEventLog userEventLog = new UserEventLog(user.getId(), user.getUserName(), user.getRealName(), new Date());
 	        userEventLog.setContent("欢迎 " + user.getUserName() + " 注册来到学之思考试系统");
 	        eventPublisher.publishEvent(new UserEvent(userEventLog));
-			user.setWxOpenId(openId);
 			userService.insertByFilter(user);
 		}
 		

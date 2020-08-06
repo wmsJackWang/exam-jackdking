@@ -15,6 +15,7 @@ App({
     let token = wx.getStorageSync('token')
     //如果token数据为空，表示用户未登入
     if (null == token || token == '') {
+      console.log("token",token)
       //微信登入
       wx.login({
         success(wxres) {
@@ -23,11 +24,14 @@ App({
               "code": wxres.code
             }).then(res => {
               if (res.code == 1) {
+                
+                console.log("返回成功，token",token)
                 wx.setStorageSync('token', res.response)
                 wx.reLaunch({
                   url: '/pages/index/index',
                 });
               } else if (res.code == 2) {
+                console.log("返回失败，回到bind界面，token",token)
                 wx.reLaunch({
                   url: '/pages/user/bind/index',
                 });
@@ -53,6 +57,49 @@ App({
   //这个方法是给所有需要登入才能使用的url调用的方法。token放入到url的header中
   formPost: function(url, data) {
     let _this = this
+    var token = wx.getStorageSync('token')
+    console.log("是否存在token",token)
+    if(token==null||token==''){
+
+      //微信登入
+      wx.login({
+        success(res) {
+          wx.request({
+            url: _this.globalData.baseAPI+'/api/wx/student/auth/checkBindV2', 
+            method: "POST",
+            data: {
+              code: res.code
+            },
+            dataType: 'json',
+            header: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            success (res) {
+              console.log("res",res.data.response)
+              
+              if (res.data.code == 1) {
+                    
+                console.log("返回成功，token",token)
+                wx.setStorageSync('token', res.data.response)
+                //登入成功，不做跳转
+                // wx.reLaunch({
+                //   url: '/pages/index/index',
+                // });
+              } else if (res.data.code == 2) {
+                console.log("返回失败，回到bind界面，token",token)
+                wx.reLaunch({
+                  url: '/pages/user/bind/index',
+                });
+              } else {
+                _this.message(res.message, 'error')
+              }
+
+            },
+          })
+        }
+      })
+    }
+
     return new Promise(function(resolve, reject) {
       wx.showNavigationBarLoading();
       wx.request({
@@ -64,12 +111,14 @@ App({
         method: 'POST',
         data,
         success(res) {
+          console.log("url",url)
           
           if (res.statusCode !== 200 || typeof res.data !== 'object') {
             reject('网络出错')
             return false;
           }
 
+          //后台切面逻辑判断token是否失效，失效则更新token值并返回400
           if (res.data.code === 400) {
             let token = res.data.response
             wx.setStorageSync('token', token)
