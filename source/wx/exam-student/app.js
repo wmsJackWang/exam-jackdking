@@ -18,25 +18,25 @@ App({
       console.log("token",token)
       //微信登入
       wx.login({
-        success(wxres) {
-          if (wxres.code) {
+        success(res) {
+          if (res.code) {
             _this.formPost('/api/wx/student/auth/checkBindV2', {
-              "code": wxres.code
+              "code": res.code
             }).then(res => {
-              if (res.code == 1) {
+              if (res.data.code == 1) {
                 
                 console.log("返回成功，token",token)
-                wx.setStorageSync('token', res.response)
+                wx.setStorageSync('token', res.data.response)
                 wx.reLaunch({
                   url: '/pages/index/index',
                 });
-              } else if (res.code == 2) {
+              } else if (res.data.code == 2) {
                 console.log("返回失败，回到bind界面，token",token)
                 wx.reLaunch({
                   url: '/pages/user/bind/index',
                 });
               } else {
-                _this.message(res.message, 'error')
+                _this.message(res.data.message, 'error')
               }
             }).catch(e => {
               _this.message(e, 'error')

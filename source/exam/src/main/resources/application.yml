@@ -34,7 +34,7 @@ mybatis:
 
 system:
   security-ignore-urls:
-#    - /api/wx/**
+    - /api/wx/**
     - /api/admin/upload/configAndUpload
     - /api/admin/upload/auth
     - /api/student/user/register
