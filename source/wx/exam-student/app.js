@@ -112,9 +112,11 @@ App({
               reject('login failed')
             },
           })
+        }else{
+          resolve('login success')
+          console.log("token不为空",token)
         }
-        resolve('login success')
-        console.log("token不为空",token)
+       
 
       }
     )
