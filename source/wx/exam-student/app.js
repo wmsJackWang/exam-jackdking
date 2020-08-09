@@ -14,39 +14,39 @@ App({
     //从用户微信本地获取token数据
     let token = wx.getStorageSync('token')
     //如果token数据为空，表示用户未登入
-    if (null == token || token == '') {
-      console.log("token",token)
-      //微信登入
-      wx.login({
-        success(res) {
-          if (res.code) {
-            _this.formPost('/api/wx/student/auth/checkBindV2', {
-              "code": res.code
-            }).then(res => {
-              if (res.data.code == 1) {
+    // if (null == token || token == '') {
+    //   console.log("onLaunch:token",token)
+    //   //微信登入
+    //   wx.login({
+    //     success(res) {
+    //       if (res.code) {
+    //         _this.formPost('/api/wx/student/auth/checkBindV2', {
+    //           "code": res.code
+    //         }).then(res => {
+    //           if (res.data.code == 1) {
                 
-                console.log("返回成功，token",token)
-                wx.setStorageSync('token', res.data.response)
-                wx.reLaunch({
-                  url: '/pages/index/index',
-                });
-              } else if (res.data.code == 2) {
-                console.log("返回失败，回到bind界面，token",token)
-                wx.reLaunch({
-                  url: '/pages/user/bind/index',
-                });
-              } else {
-                _this.message(res.data.message, 'error')
-              }
-            }).catch(e => {
-              _this.message(e, 'error')
-            })
-          } else {
-            _this.message(res.errMsg, 'error')
-          }
-        }
-      })
-    }
+    //             console.log("onLaunch:返回成功，token",token)
+    //             wx.setStorageSync('token', res.data.response)
+    //             wx.reLaunch({
+    //               url: '/pages/index/index',
+    //             });
+    //           } else if (res.data.code == 2) {
+    //             console.log("返回失败，回到bind界面，token",token)
+    //             wx.reLaunch({
+    //               url: '/pages/user/bind/index',
+    //             });
+    //           } else {
+    //             _this.message(res.data.message, 'error')
+    //           }
+    //         }).catch(e => {
+    //           _this.message(e, 'error')
+    //         })
+    //       } else {
+    //         _this.message(res.errMsg, 'error')
+    //       }
+    //     }
+    //   })
+    // }
   },
   message: function(content, type) {
     $Message({
@@ -54,52 +54,84 @@ App({
       type: type
     });
   },
-  //这个方法是给所有需要登入才能使用的url调用的方法。token放入到url的header中
-  formPost: function(url, data) {
+  checkLogin: function(){
     let _this = this
     var token = wx.getStorageSync('token')
-    console.log("是否存在token",token)
-    if(token==null||token==''){
-
-      //微信登入
-      wx.login({
-        success(res) {
-          wx.request({
-            url: _this.globalData.baseAPI+'/api/wx/student/auth/checkBindV2', 
-            method: "POST",
-            data: {
-              code: res.code
-            },
-            dataType: 'json',
-            header: {
-              'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            success (res) {
-              console.log("res",res.data.response)
-              
-              if (res.data.code == 1) {
+    console.log("formPost:是否存在token",token)
+    return new Promise(
+      (resolve,reject) => {
+        if(token==null||token==''){
+          //微信登入
+          
+          console.log("token为空，进行wx登入",token)
+          wx.login({
+            success(res) {
+              wx.request({
+                url: _this.globalData.baseAPI+'/api/wx/student/auth/checkBindV2', 
+                method: "POST",
+                data: {
+                  code: res.code
+                },
+                dataType: 'json',
+                header: {
+                  'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                //这里虽然判断了 如果没有token就登入，但是后续的代码跟此处的success方法不是串行执行，因此后续的
+                //url请求还是没有token，因此需要将此处的代码跟后续的代码进行promise先后串行起来。
+                success (res) {
+                  console.log("formPost:返回值res",res.data.response)
+                  
+                  if (res.data.code == 1) {
+                        
+                    console.log("formPost:返回成功，token",token)
+                    wx.setStorageSync('token', res.data.response)
+                    resolve('login success')
+                    //登入成功，不做跳转
+                    // wx.reLaunch({
+                    //   url: '/pages/index/index',
+                    // });
+                  } else if (res.data.code == 2) {
+                    console.log("formPost:返回失败，回到bind界面，token",token)
                     
-                console.log("返回成功，token",token)
-                wx.setStorageSync('token', res.data.response)
-                //登入成功，不做跳转
-                // wx.reLaunch({
-                //   url: '/pages/index/index',
-                // });
-              } else if (res.data.code == 2) {
-                console.log("返回失败，回到bind界面，token",token)
-                wx.reLaunch({
-                  url: '/pages/user/bind/index',
-                });
-              } else {
-                _this.message(res.message, 'error')
-              }
-
+                    reject('login failed')
+                    wx.reLaunch({
+                      url: '/pages/user/bind/index',
+                    });
+                  } else {
+                    _this.message(res.message, 'error')
+                    reject('login failed')
+                  }
+    
+                },
+              })
+            },
+            fail: function () {
+              wx.showToast({
+                title: '登陆异常'
+              })
+              reject('login failed')
             },
           })
         }
-      })
-    }
+        resolve('login success')
+        console.log("token不为空",token)
 
+      }
+    )
+  },  
+
+  //这个方法是给所有需要登入才能使用的url调用的方法。token放入到url的header中
+  formPost: function(url, data) {
+    
+    let _this = this
+
+    let p1 = _this.checkLogin();
+    return p1.then(() => {
+      return _this.jdkRequest(url, data)
+    })
+  },
+  jdkRequest: function(url, data){
+    let _this = this
     return new Promise(function(resolve, reject) {
       wx.showNavigationBarLoading();
       wx.request({
@@ -136,6 +168,7 @@ App({
               }
             })
           } else if (res.data.code === 401) {
+            //因为promise是异步执行的，这里的代码不会等待前面checkbindV2执行完后再执行的。
             wx.reLaunch({
               url: '/pages/user/bind/index',
             });
