@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.alvis.exam.configuration.property.SystemConfig;
@@ -15,6 +16,7 @@ import com.alvis.exam.configuration.property.SystemConfig;
 @SpringBootApplication
 @EnableTransactionManagement
 @EnableConfigurationProperties(value = { SystemConfig.class})
+@EnableRetry//启用重试功能
 @EnableCaching
 public class ExamApplication {
 

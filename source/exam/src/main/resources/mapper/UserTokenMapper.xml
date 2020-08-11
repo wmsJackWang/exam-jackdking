@@ -9,16 +9,25 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
     <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="VERSION_OPTIMIZED_LOCK" jdbcType="INTEGER" property="versionOptimizedLock" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, token, user_id, wx_open_id, create_time, end_time, user_name
+    id, token, user_id, wx_open_id, create_time, end_time, user_name,VERSION_OPTIMIZED_LOCK
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="selectByWxOpenId" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from t_user_token
-    where id = #{id,jdbcType=INTEGER}
+    where wx_open_id = #{wxOpenId,jdbcType=VARCHAR}
   </select>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+	select
+	<include refid="Base_Column_List" />
+	from t_user_token
+	where id = #{id,jdbcType=INTEGER}
+  </select>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from t_user_token
     where id = #{id,jdbcType=INTEGER}
@@ -26,10 +35,10 @@
   <insert id="insert" parameterType="com.alvis.exam.domain.UserToken"  useGeneratedKeys="true" keyProperty="id">
     insert into t_user_token (id, token, user_id,
       wx_open_id, create_time, end_time,
-      user_name)
+      user_name,VERSION_OPTIMIZED_LOCK)
     values (#{id,jdbcType=INTEGER}, #{token,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER},
       #{wxOpenId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP},
-      #{userName,jdbcType=VARCHAR})
+      #{userName,jdbcType=VARCHAR}, #{versionOptimizedLock,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.alvis.exam.domain.UserToken"  useGeneratedKeys="true" keyProperty="id">
     insert into t_user_token
@@ -55,6 +64,9 @@
       <if test="userName != null">
         user_name,
       </if>
+      <if test="versionOptimizedLock != null">
+        VERSION_OPTIMIZED_LOCK,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -78,8 +90,40 @@
       <if test="userName != null">
         #{userName,jdbcType=VARCHAR},
       </if>
+      <if test="versionOptimizedLock != null">
+        #{versionOptimizedLock,jdbcType=INTEGER},
+      </if>
     </trim>
   </insert>
+  
+  <update id="updateByPrimaryKeySelectiveOptimizedLock" parameterType="com.alvis.exam.domain.UserToken">
+    update t_user_token
+    <set>
+      <if test="token != null">
+        token = #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="wxOpenId != null">
+        wx_open_id = #{wxOpenId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="versionOptimizedLock != null">
+        VERSION_OPTIMIZED_LOCK = #{versionOptimizedLock,jdbcType=INTEGER}+1,
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER} and  VERSION_OPTIMIZED_LOCK = #{versionOptimizedLock,jdbcType=INTEGER}
+  </update>
+  
   <update id="updateByPrimaryKeySelective" parameterType="com.alvis.exam.domain.UserToken">
     update t_user_token
     <set>

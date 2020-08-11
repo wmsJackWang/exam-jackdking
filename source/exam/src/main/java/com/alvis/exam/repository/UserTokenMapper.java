@@ -13,6 +13,10 @@ public interface UserTokenMapper extends BaseMapper<UserToken> {
     int insertSelective(UserToken record);
 
     UserToken selectByPrimaryKey(Integer id);
+    
+    UserToken selectByWxOpenId(String wxOpenid);
+
+    int updateByPrimaryKeySelectiveOptimizedLock(UserToken record);
 
     int updateByPrimaryKeySelective(UserToken record);
 
