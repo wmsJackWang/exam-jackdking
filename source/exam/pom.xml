@@ -41,6 +41,17 @@
 
 
     <dependencies>
+    
+    	<!-- 使用retry组件，也要配置最新的 aspectj ，否则会出现的版本不兼容异常-->
+    	<dependency>
+			<groupId>org.springframework.retry</groupId>
+			<artifactId>spring-retry</artifactId>
+    	</dependency>
+        <dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+   		</dependency>
+    
         <!-- thyleaf 框架时间处理  -->
 <!-- 	    <dependency> -->
 <!-- 	        <groupId>org.thymeleaf.extras</groupId> -->

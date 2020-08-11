@@ -49,5 +49,5 @@ public interface UserTokenService extends BaseService<UserToken> {
      */
     void unBind(UserToken userToken);
 
-	UserToken existOrCreate(String openid);
+	UserToken existOrCreate(String openid)throws Exception;
 }

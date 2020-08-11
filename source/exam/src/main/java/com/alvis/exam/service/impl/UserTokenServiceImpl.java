@@ -1,5 +1,20 @@
 package com.alvis.exam.service.impl;
 
+import java.util.Date;
+import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.alvis.exam.configuration.property.SystemConfig;
 import com.alvis.exam.configuration.spring.cache.CacheConfig;
 import com.alvis.exam.domain.User;
@@ -12,18 +27,6 @@ import com.alvis.exam.repository.UserTokenMapper;
 import com.alvis.exam.service.UserService;
 import com.alvis.exam.service.UserTokenService;
 import com.alvis.exam.utility.DateTimeUtil;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
-import java.util.UUID;
 
 @Service
 public class UserTokenServiceImpl extends BaseServiceImpl<UserToken> implements UserTokenService {
@@ -109,32 +112,79 @@ public class UserTokenServiceImpl extends BaseServiceImpl<UserToken> implements 
         redisTemplate.delete(key);
     }
 
+	@Recover
+	public int recover(Exception e) {
+		System.out.println("回调方法执行！！！！");
+        //业务方法执行失败处理逻辑：记日志到数据库 或者调用其余的方法
+        return 400;
+	}
 
 	@Override
-	public UserToken existOrCreate(String openId) {
+	@Retryable(value = Exception.class , maxAttempts = 3  , backoff = @Backoff(delay = 2000 , multiplier = 1.5))
+	public UserToken existOrCreate(String openId) throws Exception {
 		// TODO Auto-generated method stub
-		User user = userService.selectByWxOpenId(openId);
-		if(user==null)
+		if(openId == null)
 		{
-			user = new User();
-	        user.setUserUuid(UUID.randomUUID().toString());
-	        user.setRole(RoleEnum.STUDENT.getCode());
-	        user.setStatus(UserStatusEnum.Enable.getCode());
-	        user.setLastActiveTime(new Date());
-	        user.setCreateTime(new Date());
-	        user.setDeleted(false);
-			user.setWxOpenId(openId);
-			user.setUserName("共图社社员"+user.getUserUuid().substring(0, 6));//默认微信openid就是登入用户名
-			user.setUserLevel(1);//默认用户年限级别为1
-	        userService.insertByFilter(user);
-	        UserEventLog userEventLog = new UserEventLog(user.getId(), user.getUserName(), user.getRealName(), new Date());
-	        userEventLog.setContent("欢迎 " + user.getUserName() + " 注册来到学之思考试系统");
-	        eventPublisher.publishEvent(new UserEvent(userEventLog));
+			System.out.println("openid为空，抛出异常");
+			throw new Exception("user数据插入失败");
+		}
+
+		User user = userService.selectByWxOpenId(openId);
+		try {
+			if(user==null)
+			{
+				user = new User();
+		        user.setUserUuid(UUID.randomUUID().toString());
+		        user.setRole(RoleEnum.STUDENT.getCode());
+		        user.setStatus(UserStatusEnum.Enable.getCode());
+		        user.setLastActiveTime(new Date());
+		        user.setCreateTime(new Date());
+		        user.setDeleted(false);
+				user.setWxOpenId(openId);
+				user.setUserName("共图社社员"+user.getUserUuid().substring(0, 6));//默认微信openid就是登入用户名
+				user.setUserLevel(1);//默认用户年限级别为1
+		        userService.insertByFilter(user);
+		        UserEventLog userEventLog = new UserEventLog(user.getId(), user.getUserName(), user.getRealName(), new Date());
+		        userEventLog.setContent("欢迎 " + user.getUserName() + " 注册来到学之思考试系统");
+		        eventPublisher.publishEvent(new UserEvent(userEventLog));
+			}else {
+	
+				//设置活跃时间为当前
+		        user.setLastActiveTime(new Date());
+		        userService.updateUser(user);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			throw new Exception("user数据插入失败");
 		}
 		
-		log.info("用戶信息：{}",user.toString());
+		UserToken token = userTokenMapper.selectByWxOpenId(openId);
 		
-	    return insertUserToken(user);
+		if(token==null) {
+			try {
+				//如果这个openid的token数据为空，则直接插入
+				//token插入也可能会因为其他并发线程已经插入而失败，结合方法注解的重试机制。
+			    return insertUserToken(user);
+			} catch (Exception e) {
+				// TODO: handle exception
+				throw new Exception("token数据插入失败");
+			}
+		    
+		}else {
+			
+			//不为空，则判断是否过期，过期了就更新
+			Date now = new Date();
+			if (now.before(token.getEndTime())) {
+				
+				return token;
+			}
+			Date endTime = DateTimeUtil.addDuration(now, systemConfig.getWx().getTokenToLive());
+			token.setEndTime(endTime);
+			if(1!=userTokenMapper.updateByPrimaryKeySelectiveOptimizedLock(token))
+				throw new Exception("token数据更新失败");
+		}
+		log.info("用戶信息：{}",user.toString());
+		return token;
 	}
 
 }

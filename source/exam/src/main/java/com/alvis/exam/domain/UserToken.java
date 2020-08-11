@@ -20,6 +20,13 @@ public class UserToken implements Serializable {
     private Date endTime;
 
     private String userName;
+    
+    private Integer versionOptimizedLock;
+    
+    public UserToken() {
+    	versionOptimizedLock = 0;
+    	createTime = new Date();
+    }
 
     public Integer getId() {
         return id;
@@ -76,4 +83,13 @@ public class UserToken implements Serializable {
     public void setUserName(String userName) {
         this.userName = userName == null ? null : userName.trim();
     }
+
+	public Integer getVersionOptimizedLock() {
+		return versionOptimizedLock;
+	}
+
+	public void setVersionOptimizedLock(Integer versionOptimizedLock) {
+		this.versionOptimizedLock = versionOptimizedLock;
+	}
+	
 }

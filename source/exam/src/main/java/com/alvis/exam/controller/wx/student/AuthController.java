@@ -5,6 +5,7 @@ import javax.validation.constraints.NotBlank;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,12 +22,10 @@ import com.alvis.exam.service.UserTokenService;
 import com.alvis.exam.utility.WxUtil;
 import com.alvis.exam.viewmodel.wx.student.user.BindInfo;
 
-import lombok.AllArgsConstructor;
-
 
 @Controller("WXStudentAuthController")
 @RequestMapping(value = "/api/wx/student/auth")
-@AllArgsConstructor
+//@AllArgsConstructor
 @ResponseBody
 public class AuthController extends BaseWXApiController {
 	
@@ -34,10 +33,14 @@ public class AuthController extends BaseWXApiController {
 	private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
 
-    private final SystemConfig systemConfig;
-    private final AuthenticationService authenticationService;
-    private final UserService userService;
-    private final UserTokenService userTokenService;
+	@Autowired
+    private  SystemConfig systemConfig;
+	@Autowired
+    private  AuthenticationService authenticationService;
+	@Autowired
+    private  UserService userService;
+	@Autowired
+    private  UserTokenService userTokenService;
 
     @RequestMapping(value = "/bind", method = RequestMethod.POST)
     public RestResponse bind(@Valid BindInfo model) {
@@ -89,22 +92,29 @@ public class AuthController extends BaseWXApiController {
      * checkBindV2 接口，无论用户是否绑定，是否在pc端注册，都会使用这个方式去登入
      */
     @RequestMapping(value = "/checkBindV2", method = RequestMethod.POST)
-    public RestResponse checkBindV2(@Valid @NotBlank String code) {
-    	System.out.println("進入到了checkBindV2接口，參數："+code);
+    public RestResponse checkBindV2(@Valid @NotBlank String  code) {
+    	System.out.println("進入到了checkBindV2接口，参数："+code);
         String openid = WxUtil.getOpenId(systemConfig.getWx().getAppid(), systemConfig.getWx().getSecret(), code);
         if (null == openid) {
             return RestResponse.fail(3, "获取微信OpenId失败");
         }
-        UserToken userToken = userTokenService.existOrCreate(openid);
-        if (null != userToken) {
-        	 
-        	System.out.println("checkBindV2  用戶token信息："+userToken.getToken());
-            return RestResponse.ok(userToken.getToken());
-        }
- 
-    	System.out.println("checkBindV2接口用戶token信息不存在"+code);
-    	
-        return RestResponse.fail(2, "用户未绑定");
+        UserToken userToken = null;
+		try {
+			userToken = userTokenService.existOrCreate(openid);
+	        
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+	        
+		}finally {
+			if (null != userToken) {
+	        	 
+	        	System.out.println("checkBindV2  用戶token信息："+userToken.getToken());
+	        	
+	            return RestResponse.ok(userToken.getToken());
+	        }
+			return RestResponse.fail(2, "系统繁忙，请稍后再试");
+		}
     }
 
 

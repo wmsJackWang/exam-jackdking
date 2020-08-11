@@ -153,6 +153,7 @@ App({
           }
 
           //后台切面逻辑判断token是否失效，失效则更新token值并返回400
+          //更新token后，再重新访问url
           if (res.data.code === 400) {
             let token = res.data.response
             wx.setStorageSync('token', token)
@@ -171,6 +172,8 @@ App({
             })
           } else if (res.data.code === 401) {
             //因为promise是异步执行的，这里的代码不会等待前面checkbindV2执行完后再执行的。
+            
+            console.log("跳转界，跳转到绑定页面面","")
             wx.reLaunch({
               url: '/pages/user/bind/index',
             });
