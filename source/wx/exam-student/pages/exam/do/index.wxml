@@ -19,7 +19,7 @@
               <radio-group class="radio-group" name="{{questionItem.itemOrder}}_{{questionItem.id}}_{{questionItem.questionType}}">
                 <label class="radio" wx:for="{{questionItem.items}}" wx:key="{{questionItem.prefix}}" wx:for-item="radioItem" class="exam-radio-item-label">
                   <radio color="#2d8cf0" value="{{radioItem.prefix}}" checked="{{radioItem.checked}}" class="exam-item-left" />
-                  <rich-text nodes="{{radioItem.prefix}}. {{radioItem.content}}" class="exam-item-left" />
+                  <rich-text nodes="{{radioItem.prefix}}. {{radioItem.content}}" />
                 </label>
               </radio-group>
             </view>
@@ -28,7 +28,7 @@
               <checkbox-group class="exam-item-left" style="margin-left:10px" name="{{questionItem.itemOrder}}_{{questionItem.id}}_{{questionItem.questionType}}">
                 <label wx:for="{{questionItem.items}}" wx:key="{{questionItem.prefix}}" wx:for-item="radioItem" class="exam-radio-item-label">
                   <checkbox color="#2d8cf0" value="{{radioItem.prefix}}" checked="{{radioItem.checked}}" class="exam-item-left" />
-                  <rich-text nodes="{{radioItem.prefix}}. {{radioItem.content}}" class="exam-item-left" />
+                  <rich-text nodes="{{radioItem.prefix}}. {{radioItem.content}}" />
                 </label>
               </checkbox-group>
             </view>

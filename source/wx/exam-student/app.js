@@ -54,13 +54,13 @@ App({
       type: type
     });
   },
-  checkLogin: function(){
+  checkLogin: function(flag){
     let _this = this
     var token = wx.getStorageSync('token')
     console.log("formPost:是否存在token",token)
     return new Promise(
       (resolve,reject) => {
-        if(token==null||token==''){
+        if(token==null||token==''||flag!=null){
           //微信登入
           
           console.log("token为空，进行wx登入",token)
@@ -113,6 +113,7 @@ App({
             },
           })
         }else{
+          //token不为空，是否验证token是否是过期的token，如果不是过期token，还是需要去通过checkBindV2来更新token的。
           resolve('login success')
           console.log("token不为空",token)
         }
@@ -126,8 +127,8 @@ App({
   formPost: function(url, data) {
     
     let _this = this
-
-    let p1 = _this.checkLogin();
+    let flag = null
+    let p1 = _this.checkLogin(flag);
     return p1.then(() => {
       return _this.jdkRequest(url, data)
     })
@@ -173,11 +174,35 @@ App({
           } else if (res.data.code === 401) {
             //因为promise是异步执行的，这里的代码不会等待前面checkbindV2执行完后再执行的。
             
-            console.log("跳转界，跳转到绑定页面面","")
-            wx.reLaunch({
-              url: '/pages/user/bind/index',
-            });
-            return false;
+            // console.log("跳转界，跳转到绑定页面面","")
+            // wx.reLaunch({
+            //   url: '/pages/user/bind/index',
+            // });
+
+
+
+            console.log("重新调用checkbindV2接口，更新token","")
+
+            let flag = "true"
+            let p1 = _this.checkLogin(flag);
+
+            return p1.then(() => {
+              wx.request({
+                url: _this.globalData.baseAPI + url,
+                header: {
+                  'content-type': 'application/x-www-form-urlencoded',
+                  'token': wx.getStorageSync('token')
+                },
+                method: 'POST',
+                data,
+                success(result) {
+                  resolve(result.data);
+                  return true;
+                }
+              })
+            })
+            return true
+
           } else if (res.data.code === 500) {
             reject(res.data.message)
             return false;
