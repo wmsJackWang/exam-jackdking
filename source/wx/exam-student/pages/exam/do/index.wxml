@@ -15,20 +15,19 @@
           <i-cell wx:for="{{titleItem.questionItems}}" wx:key="{{titleItem.id}}" wx:for-item="questionItem">
 
             <view wx:if="{{questionItem.questionType === 1}}">
-              <rich-text nodes="{{questionItem.itemOrder}}. {{questionItem.title}}" />
+              <rich-text nodes="{{questionItem.itemOrder}}. {{questionItem.title}}" class="questionitem" />
               <radio-group class="radio-group" name="{{questionItem.itemOrder}}_{{questionItem.id}}_{{questionItem.questionType}}">
-                <label class="radio" wx:for="{{questionItem.items}}" wx:key="{{questionItem.prefix}}" wx:for-item="radioItem" class="exam-radio-item-label">
-                  <radio color="#2d8cf0" value="{{radioItem.prefix}}" checked="{{radioItem.checked}}" class="exam-item-left" />
-                  <rich-text nodes="{{radioItem.prefix}}. {{radioItem.content}}" />
+                <label class="radio" wx:for="{{questionItem.items}}" wx:key="{{questionItem.prefix}}" wx:for-item="radioItem" >
+                  <radio color="#2d8cf0" value="{{radioItem.prefix}}" checked="{{radioItem.checked}}"/><text class="title">{{radioItem.prefix}}. {{radioItem.content}} \n\n</text>
                 </label>
               </radio-group>
             </view>
             <view wx:elif="{{questionItem.questionType === 2}}">
-              <rich-text nodes="{{questionItem.itemOrder}}. {{questionItem.title}}" class="exam-item-left" style="line-height:35px" />
+              <rich-text nodes="{{questionItem.itemOrder}}. {{questionItem.title}}"  style="line-height:35px" />
               <checkbox-group class="exam-item-left" style="margin-left:10px" name="{{questionItem.itemOrder}}_{{questionItem.id}}_{{questionItem.questionType}}">
-                <label wx:for="{{questionItem.items}}" wx:key="{{questionItem.prefix}}" wx:for-item="radioItem" class="exam-radio-item-label">
-                  <checkbox color="#2d8cf0" value="{{radioItem.prefix}}" checked="{{radioItem.checked}}" class="exam-item-left" />
-                  <rich-text nodes="{{radioItem.prefix}}. {{radioItem.content}}" />
+                <label wx:for="{{questionItem.items}}" wx:key="{{questionItem.prefix}}" wx:for-item="radioItem" >
+                  <checkbox color="#2d8cf0" value="{{radioItem.prefix}}" checked="{{radioItem.checked}}"/>
+                  <text class="title">{{radioItem.prefix}}. {{radioItem.content}} \n\n</text>
                 </label>
               </checkbox-group>
             </view>

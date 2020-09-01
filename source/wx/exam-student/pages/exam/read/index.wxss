@@ -34,6 +34,9 @@
 .exam-panel-title {
   margin-top: 20px;
 }
+.questionitem{
+  font-size:20px;
+}
 
 .exam-radio-item-label {
   float: left;
