@@ -83,6 +83,44 @@ public class UserTokenServiceImpl extends BaseServiceImpl<UserToken> implements 
     }
 
     @Override
+	@Retryable(value = Exception.class , maxAttempts = 3  , backoff = @Backoff(delay = 2000 , multiplier = 1.5))
+    public UserToken refreshUserToken(User user) throws Exception {
+    	
+
+		UserToken token = userTokenMapper.selectByWxOpenId(user.getWxOpenId());
+		
+		if(token==null) {
+			try {
+				//如果这个openid的token数据为空，则直接插入
+				//token插入也可能会因为其他并发线程已经插入而失败，结合方法注解的重试机制。
+			    return insertUserToken(user);
+			} catch (Exception e) {
+				// TODO: handle exception
+				throw new Exception("token数据插入失败");
+			}
+		    
+		}else {
+			
+			//不为空，则判断是否过期，过期了就更新
+			Date now = new Date();
+			if (now.before(token.getEndTime())) {
+				
+				return token;
+			}
+			Date endTime = DateTimeUtil.addDuration(now, systemConfig.getWx().getTokenToLive());
+			token.setEndTime(endTime);
+			token.setToken(UUID.randomUUID().toString());
+			if(1!=userTokenMapper.updateByPrimaryKeySelectiveOptimizedLock(token))
+				throw new Exception("token数据更新失败");
+			
+	        String key = cacheConfig.simpleKeyGenerator(CACHE_NAME, token.getToken());
+	        redisTemplate.opsForValue().set(key, token, systemConfig.getWx().getTokenToLive());
+		}
+		
+		return token;
+    }
+
+    @Override
     public UserToken insertUserToken(User user) {
         Date startTime = new Date();
         Date endTime = DateTimeUtil.addDuration(startTime, systemConfig.getWx().getTokenToLive());
@@ -185,8 +223,12 @@ public class UserTokenServiceImpl extends BaseServiceImpl<UserToken> implements 
 			token.setUserName(token.getUserName());
 			Date endTime = DateTimeUtil.addDuration(now, systemConfig.getWx().getTokenToLive());
 			token.setEndTime(endTime);
+			token.setToken(UUID.randomUUID().toString());//设置新的token值
 			if(1!=userTokenMapper.updateByPrimaryKeySelectiveOptimizedLock(token))
+			{
+				log.info("token更新失败！");
 				throw new Exception("token数据更新失败");
+			}
 		}
 		log.info("用戶信息：{}",user.toString());
 		return token;
