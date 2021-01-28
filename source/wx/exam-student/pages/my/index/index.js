@@ -50,5 +50,29 @@ Page({
       });
       app.message(e, 'error')
     })
+  },
+  scan(){
+    var that = this
+    wx.scanCode({
+      onlyFromCamera: true,//仅仅相机
+      success: (res) => {
+        console.log(res)
+      },
+      //错误返回
+      fail: (res) => {
+        wx.showToast({
+          title: 'fail',
+          icon: 'none',
+          duration: 1000
+        })
+      },
+      complete: function (res) { 
+        wx.showToast({
+          title: res.result,
+          icon: 'none',
+          duration: 1000
+        })
+       },
+    })
   }
 })

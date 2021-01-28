@@ -4,6 +4,15 @@
     <text class="userinfo-nickname">{{info.userName}}</text>
   </block>
 </view>
+
+<view>
+  <i-cell-group i-class="my-group-margin">
+    <i-cell title="扫一扫" bind:click="scan">
+      <i-icon type="flashlight_fill" slot="icon" size="20" />
+    </i-cell>
+  </i-cell-group>
+</view>
+
 <view>
   <i-cell-group i-class="my-group-margin">
     <i-cell title="个人资料" is-link url="/pages/my/info/index">

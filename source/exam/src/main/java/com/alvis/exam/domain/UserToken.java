@@ -91,5 +91,12 @@ public class UserToken implements Serializable {
 	public void setVersionOptimizedLock(Integer versionOptimizedLock) {
 		this.versionOptimizedLock = versionOptimizedLock;
 	}
+
+	@Override
+	public String toString() {
+		return "UserToken [id=" + id + ", token=" + token + ", userId=" + userId + ", wxOpenId=" + wxOpenId
+				+ ", createTime=" + createTime + ", endTime=" + endTime + ", userName=" + userName
+				+ ", versionOptimizedLock=" + versionOptimizedLock + "]";
+	}
 	
 }

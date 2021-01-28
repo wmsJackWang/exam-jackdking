@@ -50,4 +50,6 @@ public interface UserTokenService extends BaseService<UserToken> {
     void unBind(UserToken userToken);
 
 	UserToken existOrCreate(String openid)throws Exception;
+
+	UserToken refreshUserToken(User user)throws Exception;
 }

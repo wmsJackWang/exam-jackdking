@@ -6,32 +6,24 @@
     <div class="lowin-wrapper">
       <div class="lowin-box lowin-login">
         <div class="lowin-box-inner">
-          <el-form ref="loginForm" :model="loginForm" :rules="loginRules">
-            <p>比特课堂管理系统</p>            
+            <p>比特课堂管理系统</p>
             <div class="text-foot">
-	            <router-link to="/qrcodelogin" class="register-link">
-	                切换至  扫描二维码登录
+	            <router-link to="/login" class="register-link">
+	                切换至  用户名密码登录
 	            </router-link>
             </div>
-            <div class="lowin-group">
-              <label>用户名 </label>
-              <el-input ref="userName" v-model="loginForm.userName" class="lowin-input" placeholder="用户名" name="userName" type="text" tabindex="1" auto-complete="on"/>
-            </div>
-            <div class="lowin-group password-group">
-              <label>密码 <a href="#" class="forgot-link">忘记密码?</a></label>
-              <el-input  class="lowin-input" :key="passwordType" ref="password" v-model="loginForm.password" :type="passwordType"
-                placeholder="密码" name="password" tabindex="2" auto-complete="on" @keyup.native="checkCapslock" @blur="capsTooltip = false" @keyup.enter.native="handleLogin"/>
-            </div>
-
-            <el-button :loading="loading" type="text" class="lowin-btn login-btn"  @click.native.prevent="handleLogin">登录</el-button>
-
+            
+				    <div >
+				      <img src="@/assets/qianyankeji.jpg" alt="logo" style="margin-top: 12px">
+				    </div>
+				    
+						<div class="qrcode" ref="qrCodeUrl"></div>
             <div class="text-foot">
               还没有账号?
               <router-link to="/register" class="register-link">
                 注册
               </router-link>
             </div>
-          </el-form>
         </div>
       </div>
     </div>
@@ -41,6 +33,7 @@
 <script>
 import { mapMutations } from 'vuex'
 import loginApi from '@/api/login'
+import QRCode from 'qrcodejs2'
 
 export default {
   name: 'Login',
@@ -61,9 +54,7 @@ export default {
     }
     return {
       loginForm: {
-        userName: '',
-        password: '',
-        remember: false
+        userToken: ''
       },
       loginRules: {
         userName: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -79,16 +70,43 @@ export default {
     // window.addEventListener('storage', this.afterQRScan)
   },
   mounted () {
-    if (this.loginForm.userName === '') {
-      this.$refs.userName.focus()
-    } else if (this.loginForm.password === '') {
-      this.$refs.password.focus()
-    }
+	this.creatQrCode();
+	this.checkLogin();
+	this.timer = window.setInterval(() => {
+	    setTimeout(() => {
+	        this.checkLogin()
+	    },0)
+	},3000)
   },
   destroyed () {
     // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
+  	creatQrCode() {
+        var qrcode = new QRCode(this.$refs.qrCodeUrl, {
+            text: 'xxxx', // 需要转换为二维码的内容
+            width: 100,
+            height: 100,
+            colorDark: '#000000',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+        })
+    },
+  	checkLogin() {
+            // 发送接口
+      //alert(1);
+      loginApi.qrcodelogin(this.loginForm).then(function (result) {
+            if (result && result.code === 1) {
+              _this.setUserName(_this.loginForm.userName)
+              _this.$router.push({ path: '/' })
+            } else {
+              _this.loading = false
+              _this.$message.error(result.message)
+            }
+          }).catch(function (reason) {
+            _this.loading = false
+          })
+    },
     checkCapslock ({ shiftKey, key } = {}) {
       if (key && key.length === 1) {
         // eslint-disable-next-line no-mixed-operators

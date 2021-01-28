@@ -26,6 +26,7 @@ import com.alvis.exam.event.UserEvent;
 import com.alvis.exam.repository.UserTokenMapper;
 import com.alvis.exam.service.UserService;
 import com.alvis.exam.service.UserTokenService;
+import com.alvis.exam.service.impl.BaseServiceImpl;
 import com.alvis.exam.utility.DateTimeUtil;
 
 @Service
@@ -80,6 +81,44 @@ public class UserTokenServiceImpl extends BaseServiceImpl<UserToken> implements 
     @Cacheable(value = CACHE_NAME, key = "#token", unless = "#result == null")
     public UserToken getToken(String token) {
         return userTokenMapper.getToken(token);	
+    }
+
+    @Override
+	@Retryable(value = Exception.class , maxAttempts = 3  , backoff = @Backoff(delay = 2000 , multiplier = 1.5))
+    public UserToken refreshUserToken(User user) throws Exception {
+    	
+
+		UserToken token = userTokenMapper.selectByWxOpenId(user.getWxOpenId());
+		
+		if(token==null) {
+			try {
+				//如果这个openid的token数据为空，则直接插入
+				//token插入也可能会因为其他并发线程已经插入而失败，结合方法注解的重试机制。
+			    return insertUserToken(user);
+			} catch (Exception e) {
+				// TODO: handle exception
+				throw new Exception("token数据插入失败");
+			}
+		    
+		}else {
+			
+			//不为空，则判断是否过期，过期了就更新
+			Date now = new Date();
+			if (now.before(token.getEndTime())) {
+				
+				return token;
+			}
+			Date endTime = DateTimeUtil.addDuration(now, systemConfig.getWx().getTokenToLive());
+			token.setEndTime(endTime);
+			token.setToken(UUID.randomUUID().toString());
+			if(1!=userTokenMapper.updateByPrimaryKeySelectiveOptimizedLock(token))
+				throw new Exception("token数据更新失败");
+			
+	        String key = cacheConfig.simpleKeyGenerator(CACHE_NAME, token.getToken());
+	        redisTemplate.opsForValue().set(key, token, systemConfig.getWx().getTokenToLive());
+		}
+		
+		return token;
     }
 
     @Override
@@ -172,19 +211,93 @@ public class UserTokenServiceImpl extends BaseServiceImpl<UserToken> implements 
 		    
 		}else {
 			
+			
 			//不为空，则判断是否过期，过期了就更新
+			//如果用户名变更了，也更新token中的数据。
 			Date now = new Date();
-			if (now.before(token.getEndTime())) {
+			if (now.before(token.getEndTime())&&token.getUserName().equals(user.getUserName())) {
 				
 				return token;
 			}
+			
+			//将user表中数据更新到token表中。
+			token.setUserName(token.getUserName());
 			Date endTime = DateTimeUtil.addDuration(now, systemConfig.getWx().getTokenToLive());
 			token.setEndTime(endTime);
+			token.setToken(UUID.randomUUID().toString());//设置新的token值
 			if(1!=userTokenMapper.updateByPrimaryKeySelectiveOptimizedLock(token))
+			{
+				log.info("token更新失败！");
 				throw new Exception("token数据更新失败");
+			}
 		}
 		log.info("用戶信息：{}",user.toString());
 		return token;
+	}
+	
+	  // 将字符串转成hash值
+    public static String changeHash(String key) {
+        // 数组大小一般取质数
+        int arraySize = 11113;
+        int hashCode = 0;
+        String result=null;
+        // 从字符串的左边开始计算
+        for (int i = 0; i < key.length(); i++) {
+            // 将获取到的字符串转换成数字，比如a的码值是97，则97-96=1
+            int letterValue = key.charAt(i) - 96;
+            // 就代表a的值，同理b=2；
+            // 防止编码溢出，对每步结果都进行取模运算
+            hashCode = ((hashCode << 5) + letterValue) % arraySize;
+             result = String.valueOf(hashCode);
+        }
+        return result;
+    }
+
+    public static void main(String[] args) {
+        //System.out.println(changeHash("field_range_dyu"));
+        System.out.println(changeHash("-121221"));
+    }
+
+
+	@Override
+	public int deleteById(Integer id) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	@Override
+	public int insert(UserToken record) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	@Override
+	public int insertByFilter(UserToken record) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	@Override
+	public UserToken selectById(Integer id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public int updateByIdFilter(UserToken record) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	@Override
+	public int updateById(UserToken record) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

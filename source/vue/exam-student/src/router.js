@@ -7,6 +7,7 @@ const router = new Router({
   routes: [
     { path: '/login', name: 'Login', component: () => import('@/views/login/index'), meta: { title: '登录', bodyBackground: '#fbfbfb' } },
     { path: '/register', name: 'Register', component: () => import('@/views/register/index'), meta: { title: '注册', bodyBackground: '#fbfbfb' } },
+    { path: '/qrcodelogin', name: 'Qrcodelogin', component: () => import('@/views/qrcodelogin/index'), meta: { title: '扫码登录', bodyBackground: '#fbfbfb' } },
     {
       path: '/',
       component: Layout,

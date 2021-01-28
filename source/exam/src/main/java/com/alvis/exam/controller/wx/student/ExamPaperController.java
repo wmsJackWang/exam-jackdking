@@ -47,6 +47,7 @@ public class ExamPaperController extends BaseWXApiController {
 
     @RequestMapping(value = "/pageList", method = RequestMethod.POST)
     public RestResponse<PageInfo<ExamPaperPageResponseVM>> pageList(@Valid ExamPaperPageVM model) {
+    	model.setPageSize(examPaperService.selectAllCount());//试卷页面数据设置最大，查出所有数据。
         model.setLevelId(getCurrentUser().getUserLevel());
         PageInfo<ExamPaper> pageInfo = examPaperService.studentPage(model);
         PageInfo<ExamPaperPageResponseVM> page = PageInfoHelper.copyMap(pageInfo, e -> {
