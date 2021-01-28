@@ -29,4 +29,10 @@ public class Md5Util {
         }
         return hash;
     }
+    
+    public static void main(String[] args) {
+		System.out.println(encode("12"));//6512BD43D9CAA6E02C990B0A82652DCA
+		//C20AD4D76FE97759AA27A0C99BFF6710
+
+	}
 }

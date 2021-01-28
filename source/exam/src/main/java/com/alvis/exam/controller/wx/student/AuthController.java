@@ -87,13 +87,40 @@ public class AuthController extends BaseWXApiController {
         return RestResponse.fail(2, "用户未绑定");
     }
     
+    @RequestMapping(value = "/scanQrCode", method = RequestMethod.POST)
+    public RestResponse scanQrCode(@Valid @NotBlank String  code , @Valid @NotBlank String token) {
+    	log.info("進入到了scanQrCode接口，参数有code:{},token:{}",code,token);
+        String openid = WxUtil.getOpenId(systemConfig.getWx().getAppid(), systemConfig.getWx().getSecret(), code);
+        if (null == openid) {
+            return RestResponse.fail(3, "获取微信OpenId失败");
+        }
+        boolean result = false;
+		try { 
+			result = userService.pushTokenOpenid2Cache(token, openid);
+	        
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+	        
+		}finally {
+			if (result) {
+	        	 
+	        	System.out.println("scanQrCode 接口推送openid信息到缓存成功：" + openid);
+	        	log.info("scanQrCode接口推送openid信息到缓存成功，openid:{}",openid);
+	        	
+	            return RestResponse.ok("扫码登入成功");
+	        }
+			return RestResponse.fail(2, "系统繁忙，请稍后再试");
+		}
+    }    
+    
     
     /*
      * checkBindV2 接口，无论用户是否绑定，是否在pc端注册，都会使用这个方式去登入
      */
     @RequestMapping(value = "/checkBindV2", method = RequestMethod.POST)
     public RestResponse checkBindV2(@Valid @NotBlank String  code) {
-    	System.out.println("進入到了checkBindV2接口，参数："+code);
+    	log.info("進入到了checkBindV2接口，参数有code:{}",code);
         String openid = WxUtil.getOpenId(systemConfig.getWx().getAppid(), systemConfig.getWx().getSecret(), code);
         if (null == openid) {
             return RestResponse.fail(3, "获取微信OpenId失败");

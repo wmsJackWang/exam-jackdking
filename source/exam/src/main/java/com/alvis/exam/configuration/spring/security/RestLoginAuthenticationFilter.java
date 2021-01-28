@@ -34,6 +34,9 @@ public class RestLoginAuthenticationFilter extends AbstractAuthenticationProcess
         UsernamePasswordAuthenticationToken authRequest;
         try (InputStream is = request.getInputStream()) {
             AuthenticationBean authenticationBean = JsonUtil.toJsonObject(is, AuthenticationBean.class);
+            
+            //小程序扫码登入特殊处理
+            
             request.setAttribute(TokenBasedRememberMeServices.DEFAULT_PARAMETER, authenticationBean.isRemember());
             authRequest = new UsernamePasswordAuthenticationToken(authenticationBean.getUserName(), authenticationBean.getPassword());
         } catch (IOException e) {

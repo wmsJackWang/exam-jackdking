@@ -26,7 +26,6 @@ import com.alvis.exam.event.UserEvent;
 import com.alvis.exam.repository.UserTokenMapper;
 import com.alvis.exam.service.UserService;
 import com.alvis.exam.service.UserTokenService;
-import com.alvis.exam.service.impl.BaseServiceImpl;
 import com.alvis.exam.utility.DateTimeUtil;
 
 @Service
@@ -257,47 +256,5 @@ public class UserTokenServiceImpl extends BaseServiceImpl<UserToken> implements 
         //System.out.println(changeHash("field_range_dyu"));
         System.out.println(changeHash("-121221"));
     }
-
-
-	@Override
-	public int deleteById(Integer id) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-
-	@Override
-	public int insert(UserToken record) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-
-	@Override
-	public int insertByFilter(UserToken record) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-
-	@Override
-	public UserToken selectById(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public int updateByIdFilter(UserToken record) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-
-	@Override
-	public int updateById(UserToken record) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 }
