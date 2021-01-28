@@ -2,6 +2,8 @@ package com.alvis.exam.service.impl;
 
 import com.alvis.exam.domain.other.KeyValue;
 import com.alvis.exam.exception.BusinessException;
+import com.alvis.exam.configuration.property.SystemConfig;
+import com.alvis.exam.configuration.spring.cache.CacheConfig;
 import com.alvis.exam.domain.User;
 import com.alvis.exam.event.OnRegistrationCompleteEvent;
 import com.alvis.exam.repository.UserMapper;
@@ -14,6 +16,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.cache.RedisCache;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,14 +31,23 @@ import java.util.Map;
 public class UserServiceImpl extends BaseServiceImpl<User> implements UserService {
 
     private final static String CACHE_NAME = "User";
+    private final static String CACHE_OPENID = "OPENID";
     private final UserMapper userMapper;
     private final ApplicationEventPublisher eventPublisher;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final CacheConfig cacheConfig;
+    private final SystemConfig systemConfig;
 
     @Autowired
-    public UserServiceImpl(UserMapper userMapper, ApplicationEventPublisher eventPublisher) {
+    public UserServiceImpl(UserMapper userMapper, ApplicationEventPublisher eventPublisher, RedisTemplate<String, Object> redisTemplate, 
+    		CacheConfig cacheConfig, SystemConfig systemConfig) {
+    	
         super(userMapper);
         this.userMapper = userMapper;
         this.eventPublisher = eventPublisher;
+        this.redisTemplate = redisTemplate;
+        this.cacheConfig = cacheConfig;
+        this.systemConfig = systemConfig;
     }
 
 
@@ -168,4 +180,26 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
         changePictureUser.setImagePath(imagePath);
         userMapper.updateByPrimaryKeySelective(changePictureUser);
     }
+
+
+	@Override
+	public boolean pushTokenOpenid2Cache(String Token, String openid) {
+		// TODO Auto-generated method stub
+        String key = cacheConfig.simpleKeyGenerator(CACHE_OPENID, Token);
+        redisTemplate.opsForValue().set(key, openid, systemConfig.getWx().getTokenToLive());
+        return true;
+	}
+
+
+	@Override
+	public String getOpenidByLoginTokenFromCache(String Token) {
+		// TODO Auto-generated method stub
+		
+		String key = cacheConfig.simpleKeyGenerator(CACHE_OPENID, Token);
+		String openid = (String)redisTemplate.opsForValue().get(key);
+        redisTemplate.delete(key);
+		return openid;
+	}
+	
+	
 }

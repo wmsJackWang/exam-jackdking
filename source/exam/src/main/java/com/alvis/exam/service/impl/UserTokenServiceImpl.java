@@ -172,12 +172,17 @@ public class UserTokenServiceImpl extends BaseServiceImpl<UserToken> implements 
 		    
 		}else {
 			
+			
 			//不为空，则判断是否过期，过期了就更新
+			//如果用户名变更了，也更新token中的数据。
 			Date now = new Date();
-			if (now.before(token.getEndTime())) {
+			if (now.before(token.getEndTime())&&token.getUserName().equals(user.getUserName())) {
 				
 				return token;
 			}
+			
+			//将user表中数据更新到token表中。
+			token.setUserName(token.getUserName());
 			Date endTime = DateTimeUtil.addDuration(now, systemConfig.getWx().getTokenToLive());
 			token.setEndTime(endTime);
 			if(1!=userTokenMapper.updateByPrimaryKeySelectiveOptimizedLock(token))
@@ -186,5 +191,28 @@ public class UserTokenServiceImpl extends BaseServiceImpl<UserToken> implements 
 		log.info("用戶信息：{}",user.toString());
 		return token;
 	}
+	
+	  // 将字符串转成hash值
+    public static String changeHash(String key) {
+        // 数组大小一般取质数
+        int arraySize = 11113;
+        int hashCode = 0;
+        String result=null;
+        // 从字符串的左边开始计算
+        for (int i = 0; i < key.length(); i++) {
+            // 将获取到的字符串转换成数字，比如a的码值是97，则97-96=1
+            int letterValue = key.charAt(i) - 96;
+            // 就代表a的值，同理b=2；
+            // 防止编码溢出，对每步结果都进行取模运算
+            hashCode = ((hashCode << 5) + letterValue) % arraySize;
+             result = String.valueOf(hashCode);
+        }
+        return result;
+    }
+
+    public static void main(String[] args) {
+        //System.out.println(changeHash("field_range_dyu"));
+        System.out.println(changeHash("-121221"));
+    }
 
 }

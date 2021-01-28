@@ -127,4 +127,8 @@ public interface UserService extends BaseService<User> {
     User selectByWxOpenId(String wxOpenId);
 
     void changePicture(User user, String imagePath);
+    
+    boolean pushTokenOpenid2Cache(String Token , String openid);
+    
+    String getOpenidByLoginTokenFromCache(String Token );
 }
