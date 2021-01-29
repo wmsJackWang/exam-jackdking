@@ -1,7 +1,8 @@
 package com.alvis.exam.configuration.spring.security;
 
 import com.alvis.exam.configuration.property.CookieConfig;
-
+import com.alvis.exam.service.LoginTypeHandlerService;
+import com.alvis.exam.service.impl.LoginTypeHandlerRouter;
 import com.alvis.exam.utility.JsonUtil;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,14 +36,20 @@ public class RestLoginAuthenticationFilter extends AbstractAuthenticationProcess
         try (InputStream is = request.getInputStream()) {
             AuthenticationBean authenticationBean = JsonUtil.toJsonObject(is, AuthenticationBean.class);
             
-            //小程序扫码登入特殊处理
+            //小程序扫码登入特殊处理,此处扩展性非常强，未来可扩展 微信扫码登入，钉钉扫码登入，或者其他平台登入
+            LoginTypeHandlerService loginTypeHandlerService = LoginTypeHandlerRouter.getRouter();
+            loginTypeHandlerService.handle(authenticationBean);
             
             request.setAttribute(TokenBasedRememberMeServices.DEFAULT_PARAMETER, authenticationBean.isRemember());
             authRequest = new UsernamePasswordAuthenticationToken(authenticationBean.getUserName(), authenticationBean.getPassword());
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             authRequest = new UsernamePasswordAuthenticationToken("", "");
-        }
+        } catch (Exception e) {
+			// TODO Auto-generated catch block
+        	logger.error(e.getMessage(), e);
+            authRequest = new UsernamePasswordAuthenticationToken("", "");
+		}
         setDetails(request, authRequest);
         return this.getAuthenticationManager().authenticate(authRequest);
 

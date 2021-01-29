@@ -200,6 +200,15 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
         redisTemplate.delete(key);
 		return openid;
 	}
+
+
+	@Override
+	public boolean checkLoginTokenIsExist(String Token) {
+		// TODO Auto-generated method stub
+		
+		String key = cacheConfig.simpleKeyGenerator(CACHE_OPENID, Token);
+		return redisTemplate.hasKey(key);
+	}
 	
 	
 }

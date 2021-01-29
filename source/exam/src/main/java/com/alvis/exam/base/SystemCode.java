@@ -32,7 +32,12 @@ public enum SystemCode {
     /**
      * AccessDenied
      */
-    AccessDenied(502,"用户没有权限访问");
+    AccessDenied(502,"用户没有权限访问"),
+
+    /**
+     * WXAPPLETQRNOTREADY
+     */
+    WXAPPLETQRNOTREADY(503,"用户还未使用微信小程序扫码");
 
     int code;
     String message;

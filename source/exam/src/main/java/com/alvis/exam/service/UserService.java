@@ -129,6 +129,8 @@ public interface UserService extends BaseService<User> {
     void changePicture(User user, String imagePath);
     
     boolean pushTokenOpenid2Cache(String Token , String openid);
+
+    boolean checkLoginTokenIsExist(String key);
     
     String getOpenidByLoginTokenFromCache(String Token );
 }
