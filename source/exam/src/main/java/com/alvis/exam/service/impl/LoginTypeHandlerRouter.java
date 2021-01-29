@@ -22,7 +22,7 @@ public class LoginTypeHandlerRouter implements LoginTypeHandlerService{
 	}
 
 	@Override
-	public void handle(AuthenticationBean authenticationBean) {
+	public void handle(AuthenticationBean authenticationBean) throws Exception {
 		// TODO Auto-generated method stub
 		
 		Map<String, LoginTypeHandlerService> proxyAwares = ApplicationContextProvider.getBeanOfType(LoginTypeHandlerService.class);

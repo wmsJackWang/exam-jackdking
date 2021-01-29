@@ -3,6 +3,10 @@ package com.alvis.exam.configuration.spring.security;
 import com.alvis.exam.context.WebContext;
 import com.alvis.exam.domain.enums.RoleEnum;
 import com.alvis.exam.service.UserService;
+import com.alvis.exam.service.impl.UserTokenServiceImpl;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,6 +27,8 @@ import java.util.ArrayList;
 @Component
 public class RestDetailsServiceImpl implements UserDetailsService {
 
+	private static final Logger log = LoggerFactory.getLogger(RestDetailsServiceImpl.class);
+
     private final UserService userService;
 
     @Autowired
@@ -30,8 +36,11 @@ public class RestDetailsServiceImpl implements UserDetailsService {
         this.userService = userService;
     }
 
+    //本项目并没有使用userdetail查出用户信息
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    	
+    	log.info("使用userdetail 查出用户信息");
 
         com.alvis.exam.domain.User user = userService.getUserByUserName(username);
 

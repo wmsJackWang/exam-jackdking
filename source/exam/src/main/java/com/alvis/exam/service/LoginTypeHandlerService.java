@@ -6,6 +6,6 @@ public interface LoginTypeHandlerService {
 	
 	public String getHandlerName();
 	
-	public void handle(AuthenticationBean authenticationBean);
+	public void handle(AuthenticationBean authenticationBean)throws Exception ;
 
 }
