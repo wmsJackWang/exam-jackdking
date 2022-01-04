@@ -1,6 +1,17 @@
 package com.alvis.exam.controller.admin;
 
 
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.alvis.exam.base.BaseApiController;
 import com.alvis.exam.base.RestResponse;
 import com.alvis.exam.domain.Message;
@@ -14,16 +25,8 @@ import com.alvis.exam.viewmodel.admin.message.MessagePageRequestVM;
 import com.alvis.exam.viewmodel.admin.message.MessageResponseVM;
 import com.alvis.exam.viewmodel.admin.message.MessageSendVM;
 import com.github.pagehelper.PageInfo;
-import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
 
 @RestController("AdminMessageController")
 @RequestMapping(value = "/api/admin/message")

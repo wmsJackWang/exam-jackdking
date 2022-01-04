@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 public class ExamPaperPageVM extends BasePage {
     @NotNull
     private Integer paperType;
+    private Integer tabType;
     private Integer subjectId;
     private Integer levelId;
 }

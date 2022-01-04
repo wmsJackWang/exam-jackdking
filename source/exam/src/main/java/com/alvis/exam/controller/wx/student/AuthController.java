@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -87,8 +88,8 @@ public class AuthController extends BaseWXApiController {
         return RestResponse.fail(2, "用户未绑定");
     }
     
-    @RequestMapping(value = "/scanQrCode", method = RequestMethod.POST)
-    public RestResponse scanQrCode(@Valid @NotBlank String  code , @Valid @NotBlank String token) {
+    @RequestMapping(value = "/scanQrCode/{token}/{code}", method = RequestMethod.POST)
+    public RestResponse scanQrCode(@Valid @NotBlank @PathVariable("code") String  code , @Valid @NotBlank @PathVariable("token") String token) {
     	log.info("進入到了scanQrCode接口，参数有code:{},token:{}",code,token);
         String openid = WxUtil.getOpenId(systemConfig.getWx().getAppid(), systemConfig.getWx().getSecret(), code);
         if (null == openid) {
@@ -105,7 +106,7 @@ public class AuthController extends BaseWXApiController {
 		}finally {
 			if (result) {
 	        	 
-	        	System.out.println("scanQrCode 接口推送openid信息到缓存成功：" + openid);
+//	        	System.out.println("scanQrCode 接口推送openid信息到缓存成功：" + openid);
 	        	log.info("scanQrCode接口推送openid信息到缓存成功，openid:{}",openid);
 	        	
 	            return RestResponse.ok("扫码登入成功");

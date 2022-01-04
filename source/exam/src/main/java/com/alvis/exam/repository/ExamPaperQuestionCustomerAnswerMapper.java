@@ -28,6 +28,10 @@ public interface ExamPaperQuestionCustomerAnswerMapper extends BaseMapper<ExamPa
 
     List<ExamPaperQuestionCustomerAnswer> studentPage(QuestionPageStudentRequestVM requestVM);
 
+    List<ExamPaperQuestionCustomerAnswer> wrongQuestionRank(QuestionPageStudentRequestVM requestVM);
+
+    List<ExamPaperQuestionCustomerAnswer> questionWrongList(QuestionPageStudentRequestVM requestVM);
+
     int insertList(List<ExamPaperQuestionCustomerAnswer> list);
 
     Integer selectAllCount();

@@ -14,4 +14,8 @@ public class QuestionPageStudentResponseVM {
     private String subjectName;
 
     private String shortTitle;
+
+    private Integer countNum;
+
+    private Integer questionId;
 }

@@ -75,7 +75,6 @@ public class ExamPaperServiceImpl extends BaseServiceImpl<ExamPaper> implements 
                 examPaperMapper.studentPage(requestVM));
     }
 
-
     @Override
     @Transactional
     public ExamPaper savePaperFromVM(ExamPaperEditRequestVM examPaperEditRequestVM, User user) {

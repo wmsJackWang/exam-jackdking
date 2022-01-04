@@ -39,8 +39,55 @@
         </repository>
     </repositories>
 
+	<dependencyManagement>
+	  <dependencies>
+	          
+       	<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-core</artifactId>
+		    <version>5.2.9.RELEASE</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring</artifactId>
+		    <version>5.2.9.RELEASE</version>
+		    <type>pom</type>
+		</dependency>
+			
+	  
+		<dependency>
+		  <artifactId>jackson-databind</artifactId>
+		  <groupId>com.fasterxml.jackson.core</groupId>
+		  <version>2.12.0</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-core</artifactId>
+		    <version>2.12.0</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-annotations</artifactId>
+		    <version>2.12.0</version>
+		</dependency>
+	  </dependencies>
+	</dependencyManagement>
 
     <dependencies>
+    
+  
+		<!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+		<dependency>
+		    <groupId>com.alibaba</groupId>
+		    <artifactId>fastjson</artifactId>
+		    <version>1.2.76</version>
+		</dependency>
+
+    
     
     	<!-- 使用retry组件，也要配置最新的 aspectj ，否则会出现的版本不兼容异常-->
     	<dependency>

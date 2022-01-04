@@ -36,8 +36,8 @@ public class WxAppletScanQrHandlerServiceImpl implements LoginTypeHandlerService
 	public void handle(AuthenticationBean authenticationBean) throws Exception {
 		// TODO Auto-generated method stub
 		log.info("进入微信小程序扫码登入处理器：WxAppletScanQrHandlerServiceImpl，authenticationBean：{}"+authenticationBean.toString());
-//		String openid = userService.getOpenidByLoginTokenFromCache(authenticationBean.getLoginToken());
-		String openid = "oLF054y3bWF0ZwecYeimyenpoMTA";
+		String openid = userService.getOpenidByLoginTokenFromCache(authenticationBean.getLoginToken());
+//		String openid = "oLF054y3bWF0ZwecYeimyenpoMTA";
 		User user = null;
 		if(!StringUtils.isEmpty(openid))
 			user = userService.selectByWxOpenId(openid);

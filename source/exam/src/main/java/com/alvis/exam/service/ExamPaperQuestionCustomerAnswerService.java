@@ -12,6 +12,10 @@ public interface ExamPaperQuestionCustomerAnswerService extends BaseService<Exam
 
     PageInfo<ExamPaperQuestionCustomerAnswer> studentPage(QuestionPageStudentRequestVM requestVM);
 
+    PageInfo<ExamPaperQuestionCustomerAnswer> wrongQuestionRank(QuestionPageStudentRequestVM requestVM);
+
+    PageInfo<ExamPaperQuestionCustomerAnswer> questionWrongList(QuestionPageStudentRequestVM requestVM);
+
     List<ExamPaperQuestionCustomerAnswer> selectListByPaperAnswerId(Integer id);
 
     /**

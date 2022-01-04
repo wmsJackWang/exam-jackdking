@@ -43,6 +43,23 @@ public class ExamPaperQuestionCustomerAnswerServiceImpl extends BaseServiceImpl<
         );
     }
 
+
+    @Override
+    public PageInfo<ExamPaperQuestionCustomerAnswer> wrongQuestionRank(QuestionPageStudentRequestVM requestVM) {
+        return PageHelper.startPage(requestVM.getPageIndex(), requestVM.getPageSize(), "countNum desc").doSelectPageInfo(() ->
+                examPaperQuestionCustomerAnswerMapper.wrongQuestionRank(requestVM)
+        );
+    }
+
+
+    @Override
+    public PageInfo<ExamPaperQuestionCustomerAnswer> questionWrongList(QuestionPageStudentRequestVM requestVM) {
+        return PageHelper.startPage(requestVM.getPageIndex(), requestVM.getPageSize(), "id desc").doSelectPageInfo(() ->
+                examPaperQuestionCustomerAnswerMapper.questionWrongList(requestVM)
+        );
+    }
+
+
     @Override
     public List<ExamPaperQuestionCustomerAnswer> selectListByPaperAnswerId(Integer id) {
         return examPaperQuestionCustomerAnswerMapper.selectListByPaperAnswerId(id);

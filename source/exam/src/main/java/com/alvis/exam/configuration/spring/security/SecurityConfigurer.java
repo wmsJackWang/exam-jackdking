@@ -68,7 +68,7 @@ public class SecurityConfigurer {
         }
 
 
-        @Bean
+        @Bean//跨域
         public CorsConfigurationSource corsConfigurationSource() {
             final CorsConfiguration configuration = new CorsConfiguration();
             configuration.setMaxAge(3600L);

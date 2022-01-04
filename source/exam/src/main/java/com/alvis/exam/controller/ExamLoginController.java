@@ -1,16 +1,21 @@
 package com.alvis.exam.controller;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alvis.exam.base.RestResponse;
 import com.alvis.exam.base.SystemCode;
@@ -23,34 +28,27 @@ import lombok.AllArgsConstructor;
 @RequestMapping(value = "/api/user/login")
 @AllArgsConstructor
 public class ExamLoginController {
+	
+
+	private static final Logger log = LoggerFactory.getLogger(ExamLoginController.class);
 
     private final UserService userService;
+    
+    Map<String, String> parameter = new HashMap<String, String>();
 
+    @ResponseBody
     @RequestMapping(value = "/checkWxQrCodeLogin", method = RequestMethod.POST)
 	public RestResponse checkWxQrCodeLogin(@RequestBody @Valid UserLoginVM model,HttpServletRequest request ,HttpServletResponse response) {
 		
-//    	if(!userService.checkLoginTokenIsExist(model.getLoginToken()))
-//    		return RestResponse.fail(SystemCode.WXAPPLETQRNOTREADY.getCode(), SystemCode.WXAPPLETQRNOTREADY.getMessage());
+    	//如果token不存在，则表示 用户还未扫码
+    	boolean result = false;
+    	result = userService.checkLoginTokenIsExist(model.getLoginToken());
+    	log.info("微信小程序扫码登入，验证token是否存在：{}",result);
+    	//如果token的key不存在，则返回WXAPPLETQRNOTREADY(503,"用户还未使用微信小程序扫码");
+    	if(!result)
+    		return RestResponse.fail(SystemCode.WXAPPLETQRNOTREADY.getCode(), SystemCode.WXAPPLETQRNOTREADY.getMessage());
 //    	
-		try {
-			
-	        //response的值重新塞进去
-	        String result="{\"userName\":\"jack\",\"password\":\"ncl@1234\",\"remember\":false,\"loginType\":\"WxAppletScanQrHandler\"}";
-	        response.setContentLength(-1);//解决可能在运行的过程中页面只输出一部分
-	        response.setCharacterEncoding("UTF-8");
-	        PrintWriter out=response.getWriter();
-	        out.write(result);
-	        out.flush();
-	        out.close(); 
-			request.setAttribute("key", "key");
-			response.sendRedirect("/api/user/login");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			
-			e.printStackTrace();
-		}
     	
     	return RestResponse.ok();
 	}
-
 }

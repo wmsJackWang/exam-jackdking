@@ -1,12 +1,7 @@
 package com.alvis.exam.domain;
 
-import com.alvis.exam.domain.enums.QuestionTypeEnum;
-import com.alvis.exam.utility.ExamUtil;
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 public class ExamPaperQuestionCustomerAnswer implements Serializable {
 
@@ -41,6 +36,8 @@ public class ExamPaperQuestionCustomerAnswer implements Serializable {
     private Date createTime;
 
     private Integer itemOrder;
+
+    private Integer countNum;
 
     public Integer getId() {
         return id;
@@ -160,5 +157,13 @@ public class ExamPaperQuestionCustomerAnswer implements Serializable {
 
     public void setItemOrder(Integer itemOrder) {
         this.itemOrder = itemOrder;
+    }
+
+    public void setCountNum(Integer countNum) {
+        this.countNum = countNum;
+    }
+
+    public Integer getCountNum() {
+        return countNum;
     }
 }

@@ -6,4 +6,5 @@ import lombok.Data;
 @Data
 public class QuestionPageStudentRequestVM extends BasePage {
     private Integer createUser;
+    private Integer questionId;
 }
