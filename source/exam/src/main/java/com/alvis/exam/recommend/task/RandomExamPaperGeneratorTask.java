@@ -12,20 +12,19 @@ import com.alvis.exam.service.TextContentService;
 import com.alvis.exam.utility.*;
 import com.alvis.exam.viewmodel.admin.exam.ExamPaperEditRequestVM;
 import com.alvis.exam.viewmodel.admin.exam.ExamPaperTitleItemVM;
+import com.alvis.exam.viewmodel.admin.question.QuestionEditRequestVM;
 import com.alvis.exam.viewmodel.admin.question.QuestionPageRequestVM;
-import com.alvis.exam.viewmodel.admin.question.QuestionResponseVM;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /*
@@ -48,7 +47,7 @@ public class RandomExamPaperGeneratorTask {
 
     private int i ;
 
-    @Scheduled(cron = "*/2 * * * * ?")
+    @Scheduled(cron = "0 0 8,12,18,21 * * ?")
     public void createRandomPaper() {
         log.info("thread id:{},FixedPrintTask execute times:{}", Thread.currentThread().getId(), ++i);
 
@@ -60,40 +59,38 @@ public class RandomExamPaperGeneratorTask {
 
     private ExamPaperEditRequestVM createRandomExamPaper() {
 
+        Date dt = new Date();
+        DateFormat dFormat = new SimpleDateFormat("yyyy-MM-dd HH"); //HH表示24小时制；
+        String formatDate = dFormat.format(dt);
+
         ExamPaperEditRequestVM randomExamPaper = new ExamPaperEditRequestVM();
         randomExamPaper.setLevel(ExamConstant.randomLevel);
         randomExamPaper.setLimitDateTime(null);
-        randomExamPaper.setName(ExamConstant.randomPaperNamePrefix+System.currentTimeMillis());
+        randomExamPaper.setName(ExamConstant.randomPaperNamePrefix+formatDate);
         randomExamPaper.setPaperType(ExamConstant.randomPaperType);
         randomExamPaper.setSubjectId(ExamConstant.randomPaperSubjectId);
         randomExamPaper.setSuggestTime(ExamConstant.randomSuggestTime);
 
         QuestionPageRequestVM model = new QuestionPageRequestVM();
         model.setPageSize(questionService.selectAllCount());
+        model.setPageIndex(0);//默认第一页，查出所有数据
         PageInfo<Question> pageInfo = questionService.page(model);
-        PageInfo<QuestionResponseVM> page = PageInfoHelper.copyMap(pageInfo, q -> {
-            QuestionResponseVM vm = modelMapper.map(q, QuestionResponseVM.class);
-            vm.setCreateTime(DateTimeUtil.dateFormat(q.getCreateTime()));
-            vm.setScore(ExamUtil.scoreToVM(q.getScore()));
-            TextContent textContent = textContentService.selectById(q.getInfoTextContentId());
-            QuestionObject questionObject = JsonUtil.toJsonObject(textContent.getContent(), QuestionObject.class);
-            String clearHtml = HtmlUtil.clear(questionObject.getTitleContent());
-            vm.setShortTitle(clearHtml);
-            return vm;
-        });
 
-        List<ExamPaperTitleItemVM> result = Optional.ofNullable(page.getList()).orElse(Collections.emptyList())
-                .stream()
-                .map(questionResponseVM -> {
-                    ExamPaperTitleItemVM examPaperTitleItemVM = new ExamPaperTitleItemVM();
-                    return examPaperTitleItemVM;
+        List<Question> questionList = Optional.ofNullable(pageInfo.getList()).orElse(Collections.emptyList());
+        Collections.shuffle(questionList);
+        List<Question> subQuestionList = questionList.subList(0, 12);
+        List<QuestionEditRequestVM> questionItems = subQuestionList.stream()
+                .map(o -> {
+                    return questionService.getQuestionEditRequestVM(o.getId());
                 }).collect(Collectors.toList());
 
-        randomExamPaper.setTitleItems(result);
+        List<ExamPaperTitleItemVM> titleItems = new ArrayList<>();
+        ExamPaperTitleItemVM examPaperTitleItemVM = new ExamPaperTitleItemVM();
+        examPaperTitleItemVM.setName(ExamConstant.randomPaperNamePrefix+formatDate);
+        examPaperTitleItemVM.setQuestionItems(questionItems);
+        titleItems.add(examPaperTitleItemVM);
 
-        model.setPageSize(examPaperService.selectAllCount());//试卷页面数据设置最大，查出所有数据。
-
-
+        randomExamPaper.setTitleItems(titleItems);
         return randomExamPaper;
     }
 
@@ -102,5 +99,4 @@ public class RandomExamPaperGeneratorTask {
         defaultUser.setId(2);
         return defaultUser;
     }
-
 }
