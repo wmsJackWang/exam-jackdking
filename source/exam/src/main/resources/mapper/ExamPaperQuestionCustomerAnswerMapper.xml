@@ -224,8 +224,7 @@
 
 
   <select id="studentPage" resultMap="BaseResultMap" parameterType="com.alvis.exam.viewmodel.student.question.answer.QuestionPageStudentRequestVM">
-    SELECT
-    <include refid="Base_Column_List"/>
+    SELECT *
     FROM t_exam_paper_question_customer_answer
     <where>
       and do_right=FALSE

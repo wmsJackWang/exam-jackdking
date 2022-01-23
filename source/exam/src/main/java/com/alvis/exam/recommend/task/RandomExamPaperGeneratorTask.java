@@ -3,9 +3,7 @@ package com.alvis.exam.recommend.task;
 import com.alvis.exam.constants.ExamConstant;
 import com.alvis.exam.domain.ExamPaper;
 import com.alvis.exam.domain.Question;
-import com.alvis.exam.domain.TextContent;
 import com.alvis.exam.domain.User;
-import com.alvis.exam.domain.question.QuestionObject;
 import com.alvis.exam.service.ExamPaperService;
 import com.alvis.exam.service.QuestionService;
 import com.alvis.exam.service.TextContentService;
@@ -45,11 +43,9 @@ public class RandomExamPaperGeneratorTask {
 
     private final static ModelMapper modelMapper = ModelMapperSingle.Instance();
 
-    private int i ;
-
     @Scheduled(cron = "0 0 8,12,18,21 * * ?")
     public void createRandomPaper() {
-        log.info("thread id:{},FixedPrintTask execute times:{}", Thread.currentThread().getId(), ++i);
+        log.info("thread id:{},FixedPrintTask execute times:{}", Thread.currentThread().getId());
 
         ExamPaperEditRequestVM randomExamPaper = createRandomExamPaper();
         User defaultUser = getDefaultUser();
@@ -78,7 +74,11 @@ public class RandomExamPaperGeneratorTask {
 
         List<Question> questionList = Optional.ofNullable(pageInfo.getList()).orElse(Collections.emptyList());
         Collections.shuffle(questionList);
-        List<Question> subQuestionList = questionList.subList(0, 12);
+        List<Question> subQuestionList = questionList;
+        if (subQuestionList.size()<12) {
+            subQuestionList = questionList.subList(0, 12);
+        }
+
         List<QuestionEditRequestVM> questionItems = subQuestionList.stream()
                 .map(o -> {
                     return questionService.getQuestionEditRequestVM(o.getId());
