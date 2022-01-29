@@ -37,6 +37,11 @@ public class ExamPaperController extends BaseWXApiController {
         return RestResponse.ok(vm);
     }
 
+    @RequestMapping(value = "/pageListV2", method = RequestMethod.POST)
+    public RestResponse<PageInfo<ExamPaperPageResponseVM>> pageListV2(@Valid ExamPaperPageVM model) {
+
+    }
+
     //按照前端tab类型来区分
     @RequestMapping(value = "/pageShowTabList", method = RequestMethod.POST)
     public RestResponse<PageInfo<ExamPaperPageResponseVM>> pageTabShowList(@Valid ExamPaperPageVM model) {

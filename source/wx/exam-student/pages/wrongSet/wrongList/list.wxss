@@ -1,0 +1,4 @@
+/* pages/exam/index/index.wxss */
+.record-tab-view {
+  margin-top: 42px;
+}

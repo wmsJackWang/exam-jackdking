@@ -2,13 +2,14 @@
 let app = getApp()
 Page({
   data: {
-    paperType: 1,
+    paperType: 3,
     spinShow: false,
     loadMoreLoad: false,
     loadMoreTip: '暂无数据',
     queryParam: {
-      paperType: 1,
+      paperType: 3,
       pageIndex: 1,
+      tabType: 3,
       pageSize: app.globalData.pageSize
     },
     tableData: [],

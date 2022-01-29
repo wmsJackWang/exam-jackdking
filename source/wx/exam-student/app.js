@@ -6,7 +6,7 @@ const mtjwxsdk = require('./utils/bmap-wx.js');
 
 App({
   globalData: {
-    baseAPI: "https://exam.bittechblog.com",
+    baseAPI: "https://bittechblog.com",
     pageSize: 10
   },
   onLaunch: function() {
