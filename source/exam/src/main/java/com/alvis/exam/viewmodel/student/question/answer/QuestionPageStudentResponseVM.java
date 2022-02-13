@@ -9,6 +9,8 @@ public class QuestionPageStudentResponseVM {
 
     private Integer questionType;
 
+    private String questionTypeDesc;
+
     private String createTime;
 
     private String subjectName;

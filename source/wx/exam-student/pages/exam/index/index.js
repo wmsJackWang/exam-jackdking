@@ -32,6 +32,7 @@ Page({
       paperType: detail.key,
       queryParam: {
         paperType: detail.key,
+        tabType: detail.key,
         pageIndex: 1,
         pageSize: app.globalData.pageSize
       }
@@ -63,7 +64,7 @@ Page({
   },
   search: function(override) {
     let _this = this
-    app.formPost('/api/wx/student/exampaper/pageList', this.data.queryParam).then(res => {
+    app.formPost('/api/wx/student/exampaper/pageListV2', this.data.queryParam).then(res => {
       _this.setData({
         spinShow: false
       });

@@ -8,13 +8,16 @@
 <view>
   <i-cell-group i-class="my-group-margin">
     <i-cell title="扫一扫" bind:click="scan">
-      <i-icon type="flashlight_fill" slot="icon" size="20" />
+      <i-icon type="scan" slot="icon" size="20" />
     </i-cell>
   </i-cell-group>
 </view>
 
 <view>
-  <i-cell-group i-class="my-group-margin">
+  <i-cell-group i-class="my-group-margin">    
+    <i-cell title="考试记录" is-link url="/pages/record/index">
+      <i-icon type="remind_fill" slot="icon" size="20" />
+    </i-cell>
     <i-cell title="个人资料" is-link url="/pages/my/info/index">
       <i-icon type="mine_fill" slot="icon" size="20" />
     </i-cell>

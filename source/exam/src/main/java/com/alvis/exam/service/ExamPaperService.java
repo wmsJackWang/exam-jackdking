@@ -29,4 +29,6 @@ public interface ExamPaperService extends BaseService<ExamPaper> {
     Integer selectAllCount();
 
     List<Integer> selectMothCount();
+
+    void dealWithByTabType(Integer tabType, PageInfo<ExamPaperPageResponseVM> page);
 }

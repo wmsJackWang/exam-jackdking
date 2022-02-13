@@ -39,7 +39,22 @@ public class ExamPaperController extends BaseWXApiController {
 
     @RequestMapping(value = "/pageListV2", method = RequestMethod.POST)
     public RestResponse<PageInfo<ExamPaperPageResponseVM>> pageListV2(@Valid ExamPaperPageVM model) {
+//        model.setPageSize(examPaperService.selectAllCount());//试卷页面数据设置最大，查出所有数据。
+        model.setLevelId(getCurrentUser().getUserLevel());
+        model.setPaperType(PaperShowTabEnum.forPaperType(model.getTabType()).getPaperType());
+        PageInfo<ExamPaper> pageInfo = examPaperService.studentPage(model);
+        PageInfo<ExamPaperPageResponseVM> page = PageInfoHelper.copyMap(pageInfo, e -> {
+            ExamPaperPageResponseVM vm = modelMapper.map(e, ExamPaperPageResponseVM.class);
+            Subject subject = subjectService.selectById(vm.getSubjectId());
+            vm.setSubjectName(subject.getName());
+            vm.setCreateTime(DateTimeUtil.dateFormat(e.getCreateTime()));
+            return vm;
+        });
 
+        //根据tabType，选择不同逻辑模块来处理result list。
+        examPaperService.dealWithByTabType(model.getTabType(), page);
+
+        return RestResponse.ok(page);
     }
 
     //按照前端tab类型来区分

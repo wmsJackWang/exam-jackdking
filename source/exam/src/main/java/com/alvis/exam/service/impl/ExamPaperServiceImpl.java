@@ -5,6 +5,7 @@ import com.alvis.exam.domain.enums.ExamPaperTypeEnum;
 import com.alvis.exam.domain.exam.ExamPaperQuestionItemObject;
 import com.alvis.exam.domain.exam.ExamPaperTitleItemObject;
 import com.alvis.exam.domain.other.KeyValue;
+import com.alvis.exam.enums.PaperShowTabEnum;
 import com.alvis.exam.repository.ExamPaperMapper;
 import com.alvis.exam.repository.QuestionMapper;
 import com.alvis.exam.service.ExamPaperService;
@@ -22,6 +23,7 @@ import com.alvis.exam.viewmodel.admin.exam.ExamPaperTitleItemVM;
 import com.alvis.exam.viewmodel.admin.question.QuestionEditRequestVM;
 import com.alvis.exam.viewmodel.student.dashboard.PaperFilter;
 import com.alvis.exam.viewmodel.student.dashboard.PaperInfo;
+import com.alvis.exam.viewmodel.student.exam.ExamPaperPageResponseVM;
 import com.alvis.exam.viewmodel.student.exam.ExamPaperPageVM;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -30,10 +32,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import javax.swing.text.html.Option;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,6 +48,8 @@ public class ExamPaperServiceImpl extends BaseServiceImpl<ExamPaper> implements 
     private final QuestionService questionService;
     private final SubjectService subjectService;
 
+    private static Map<Integer, Consumer<PageInfo>> processorMap = new HashMap<>();
+
     @Autowired
     public ExamPaperServiceImpl(ExamPaperMapper examPaperMapper, QuestionMapper questionMapper, TextContentService textContentService, QuestionService questionService, SubjectService subjectService) {
         super(examPaperMapper);
@@ -54,8 +58,46 @@ public class ExamPaperServiceImpl extends BaseServiceImpl<ExamPaper> implements 
         this.textContentService = textContentService;
         this.questionService = questionService;
         this.subjectService = subjectService;
+
+//        TIME_SORT_PAPER(2, 1,"固定排序试卷-按时间倒排序"),
+//                TIME_AREA_PAPER(4, 6,"时段试卷"),
+//                SUBJECT_TYPE_PAPER(5, 1,"科目分类"),
+//                RANDOM_CREATE_PAPER(3, 1,"随机生成的试卷-每日试卷")
+
+        processorMap.put(PaperShowTabEnum.SUBJECT_TYPE_PAPER.getCode(), this::subjectTypeShuffleResult);
     }
 
+    @Override
+    public void dealWithByTabType(Integer tabType, PageInfo<ExamPaperPageResponseVM> page) {
+        Optional.ofNullable(processorMap.get(tabType))
+                .orElse((o) -> {})//没有注册处理器则不处理
+                .accept(page);
+    }
+
+    private void subjectTypeShuffleResult(PageInfo<ExamPaperPageResponseVM> page) {
+
+        Map<String, List<ExamPaperPageResponseVM>> subjectName2PaperList = page.getList()
+                .stream()
+                .collect(Collectors.groupingBy(ExamPaperPageResponseVM::getSubjectName));
+
+        List<String> subjectList = subjectName2PaperList.keySet().stream().collect(Collectors.toList());
+
+        Optional.ofNullable(subjectList)
+                .ifPresent(Collections::shuffle);
+
+        page.setList(
+                Optional.ofNullable(subjectList)
+                        .orElse(Collections.emptyList())
+                        .stream()
+                        .map(subjectName2PaperList::get)
+                        .flatMap(Collection::stream)
+                        .collect(Collectors.toList())
+        );
+    }
+
+    private void shuffleResult(PageInfo<ExamPaperPageResponseVM> page) {
+        Collections.shuffle(page.getList());
+    }
 
     @Override
     public PageInfo<ExamPaper> page(ExamPaperPageRequestVM requestVM) {

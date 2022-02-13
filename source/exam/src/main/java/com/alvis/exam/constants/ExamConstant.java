@@ -7,7 +7,7 @@ public interface ExamConstant {
     Integer randomLevel = 1;
     String randomPaperNamePrefix = "每日随机测试试卷";
     String randomErrorPaperNamePrefix = "每日错题随机测试试卷";
-    Integer randomPaperType = 1;
+    Integer randomPaperType = 2;
     Integer default_user_id = 188;
     Integer randomSuggestTime = 20;
 }

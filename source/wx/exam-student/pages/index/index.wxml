@@ -45,4 +45,8 @@
   </i-panel>
   <i-spin size="large" fix wx:if="{{ spinShow }}"></i-spin>
   <i-message id="message" />
+
+  <!-- <view class="content-info">
+    <towxml nodes="{{article}}"/>
+  </view> -->
 </view>

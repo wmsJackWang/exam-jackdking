@@ -1,10 +1,27 @@
 <wxs module="enumItem" src="../../wxs/enumItem.wxs"></wxs>
 <view>
-  <view>
-    <i-cell-group>
-      <i-cell wx:for="{{tableData}}" data-item="item" wx:key="{{item.id}}" title="{{item.paperName}}" is-link url="/pages/exam/read/index?id={{item.id}}" value="{{enumItem.format(enumItem.state.exam.examPaperAnswer.statusEnum,item.status)}}" label="{{item.subjectName}}  对错：{{item.questionCorrect}}/{{item.questionCount}} 时间：{{item.createTime}} "
-      />
-    </i-cell-group>
+  <i-tabs current="{{ paperType }}" bindchange="tabChange" fixed="true">
+    <i-tab key="1" title="考试记录"  value ="1" />
+    <i-tab key="2" title="错题记录"  value ="2" />
+    <i-tab key="3" title="错题排行"  value ="3" />
+  </i-tabs>
+  <view  class="exam-tab-view">
+      <i-cell-group>
+        <view wx:if="{{viewType==1}}">
+          <i-cell  wx:for="{{tableData}}" data-item="item" wx:key="{{item.id}}" title="{{item.paperName}}" is-link url="/pages/exam/read/index?id={{item.id}}" value="{{enumItem.format(enumItem.state.exam.examPaperAnswer.statusEnum,item.status)}}" label="{{item.subjectName}}  对错：{{item.questionCorrect}}/{{item.questionCount}} 时间：{{item.createTime}} "
+          />
+        </view>
+        <view wx:elif="{{viewType==2}}">
+          <i-cell  wx:for="{{tableData}}" data-item="item" wx:key="{{item.id}}" title="{{item.shortTitle}}" is-link url="/pages/wrongSet/question/question?id={{item.questionId}}" value="{{enumItem.format(enumItem.state.exam.question.typeEnum,item.questionType)}}" label="{{item.subjectName}}  时间：{{item.createTime}} "
+          />
+        </view>
+        <view wx:elif="{{viewType==3}}">
+          <i-cell  wx:for="{{tableData}}" data-item="item" wx:key="{{item.id}}" title="{{item.shortTitle}}" is-link url="/pages/wrongSet/wrongList/list?id={{item.questionId}}" value="{{item.questionTypeDesc}}" label="{{item.subjectName}}  时间：{{item.createTime}} 错了{{item.countNum}}次"
+          />
+        </view>
+        <view wx:else>
+        </view>
+      </i-cell-group>
   </view>
   <i-load-more tip="{{loadMoreTip}}" loading="{{loadMoreLoad}}" />
   <i-spin size="large" fix wx:if="{{ spinShow }}"></i-spin>

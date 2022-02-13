@@ -5,6 +5,7 @@ const {
 const mtjwxsdk = require('./utils/bmap-wx.js');
 
 App({
+  towxml:require('/towxml/index'),
   globalData: {
     baseAPI: "https://bittechblog.com",
     pageSize: 10
@@ -122,12 +123,31 @@ App({
       }
     )
   },  
+  send: function(url, method, data, success, fail){
+    wx.request({
+      url: url,
+      header: {
+        'content-type': 'application/json',
+      },
+      method: method,
+      data: data,
+      success(res) {
+        success(res);
+      },
+      fail(res) {
+        fail(res);
+      }
+    })
+  },
 
   //这个方法是给所有需要登入才能使用的url调用的方法。token放入到url的header中
   formPost: function(url, data) {
-    
     let _this = this
     let flag = null
+    //急需优化，每个api请求都需要提前判断下是否处于登录状态
+    //一次动作需要两次网络请求。
+    //纠正：经过验证，检查是否已经登入的点是：登录token是否存在。
+    //因此并不是有两次网络请求
     let p1 = _this.checkLogin(flag);
     return p1.then(() => {
       return _this.jdkRequest(url, data)

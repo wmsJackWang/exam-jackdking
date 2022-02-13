@@ -5,6 +5,7 @@ import com.alvis.exam.base.RestResponse;
 import com.alvis.exam.domain.ExamPaperQuestionCustomerAnswer;
 import com.alvis.exam.domain.Subject;
 import com.alvis.exam.domain.TextContent;
+import com.alvis.exam.domain.enums.QuestionTypeEnum;
 import com.alvis.exam.domain.question.QuestionObject;
 import com.alvis.exam.service.ExamPaperQuestionCustomerAnswerService;
 import com.alvis.exam.service.QuestionService;
@@ -48,6 +49,7 @@ public class QuestionAnswerController extends BaseApiController {
             String clearHtml = HtmlUtil.clear(questionObject.getTitleContent());
             vm.setShortTitle(clearHtml);
             vm.setSubjectName(subject.getName());
+            vm.setQuestionTypeDesc(QuestionTypeEnum.fromCode(vm.getQuestionType()).getName());
             return vm;
         });
         return RestResponse.ok(page);
@@ -66,6 +68,7 @@ public class QuestionAnswerController extends BaseApiController {
             String clearHtml = HtmlUtil.clear(questionObject.getTitleContent());
             vm.setShortTitle(clearHtml);
             vm.setSubjectName(subject.getName());
+            vm.setQuestionTypeDesc(QuestionTypeEnum.fromCode(vm.getQuestionType()).getName());
             return vm;
         });
         return RestResponse.ok(page);

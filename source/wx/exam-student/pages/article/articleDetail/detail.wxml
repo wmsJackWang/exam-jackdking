@@ -1,0 +1,5 @@
+<!--pages/article/articleDetail/detail.wxml-->
+
+<view class="content-info">
+  <towxml nodes="{{article}}"/>
+</view>

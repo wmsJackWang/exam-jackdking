@@ -1,5 +1,6 @@
 // pages/exam/index/index.js
 let app = getApp()
+let tmp = 1
 Page({
   data: {
     spinShow: false,
@@ -7,6 +8,7 @@ Page({
     loadMoreTip: '暂无数据',
     queryParam: {
       pageIndex: 1,
+      tabType: 1,
       pageSize: app.globalData.pageSize
     },
     tableData: [],
@@ -17,14 +19,35 @@ Page({
       spinShow: true
     });
     this.search(true)
+  },  
+  tabChange({
+    detail
+  }) {
+    this.setData({
+      spinShow: true
+    });
+    let size = app.globalData.pageSize
+    tmp = detail.key
+    console.log(tmp)
+    this.setData({
+      queryParam: {
+        tabType: detail.key,
+        pageIndex: 1,
+        pageSize: app.globalData.pageSize
+      }
+    });
+    this.search(true)
   },
   onPullDownRefresh() {
     this.setData({
       spinShow: true
     });
     if (!this.loading) {
+
+      console.log(tmp)
       this.setData({
-        ['queryParam.pageIndex']: 1
+        ['queryParam.pageIndex']: 1 ,
+        viewType: tmp
       });
       this.search(true)
     }
@@ -43,7 +66,26 @@ Page({
   },
   search: function(override) {
     let _this = this
-    app.formPost('/api/wx/student/exampaper/answer/pageList', this.data.queryParam)
+    //默认的url
+    let requireUrl = "/api/wx/student/exampaper/answer/pageList" 
+    switch (tmp) {
+      case "1":
+        requireUrl = "/api/wx/student/exampaper/answer/pageList"
+        break;
+      case "2":
+        
+        requireUrl = "/api/wx/student/question/answer/page"
+        break;
+    
+      case "3":
+        
+        requireUrl = "/api/wx/student/question/answer/rankPage"
+        break;
+      default:
+        break;
+    }
+
+    app.formPost(requireUrl, this.data.queryParam)
       .then(res => {
         _this.setData({
           spinShow: false
@@ -53,9 +95,13 @@ Page({
           const re = res.response
           _this.setData({
             ['queryParam.pageIndex']: re.pageNum,
+            viewType: tmp,
             tableData: override ? re.list : this.data.tableData.concat(re.list),
             total: re.pages
           });
+          console.log("pageNum "+re.pageNum)
+          console.log("pages "+ re.pages)
+          console.log("viewType "+ tmp)
           if (re.pageNum >= re.pages) {
             this.setData({
               loadMoreLoad: false,

@@ -5,6 +5,7 @@ const app = getApp()
 Page({
   data: {
     spinShow: false,
+    article: {},
     fixedPaper: [],
     pushPaper: [],
     timeLimitPaper: [],
@@ -14,12 +15,39 @@ Page({
     this.setData({
       spinShow: true
     });
+    this.articleLoad()
     this.indexLoad()
+  },
+  articleLoad(){
+    app.send('https://www.vvadd.com/wxml_demo/demo.txt?v=2', 'GET' , null, res => {
+      
+      let obj = app.towxml(res.data,'markdown',{
+        theme:'light', //主题 dark 黑色，light白色，不填默认是light
+        base:"www.xxx.com",
+        events:{      //为元素绑定的事件方法
+          tap:e => {
+            console.log('tap',e);
+          },
+          change:e => {
+            console.log('todo',e);
+          }
+        }
+      });
+      console.log(obj)
+      //更新解析数据
+      this.setData({
+        article:obj,
+      });
+    }, res => {
+      return false;
+    });
+
   },
   onPullDownRefresh() {
     this.setData({
       spinShow: true
     });
+    this.articleLoad()
     if (!this.loading) {
       this.indexLoad()
     }

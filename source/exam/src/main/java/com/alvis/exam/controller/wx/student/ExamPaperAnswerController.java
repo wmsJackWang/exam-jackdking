@@ -41,7 +41,7 @@ public class ExamPaperAnswerController extends BaseWXApiController {
 
     @RequestMapping(value = "/pageList", method = RequestMethod.POST)
     public RestResponse<PageInfo<ExamPaperAnswerPageResponseVM>> pageList(@Valid ExamPaperAnswerPageVM model) {
-    	model.setPageSize(examPaperAnswerService.selectAllCount());//过往做过的试卷页面数据设置最大，查出所有数据。
+//    	model.setPageSize(examPaperAnswerService.selectAllCount());//过往做过的试卷页面数据设置最大，查出所有数据。
         model.setCreateUser(getCurrentUser().getId());
         PageInfo<ExamPaperAnswer> pageInfo = examPaperAnswerService.studentPage(model);
         PageInfo<ExamPaperAnswerPageResponseVM> page = PageInfoHelper.copyMap(pageInfo, e -> {
@@ -57,7 +57,6 @@ public class ExamPaperAnswerController extends BaseWXApiController {
         });
         return RestResponse.ok(page);
     }
-
 
     @RequestMapping(value = "/answerSubmit", method = RequestMethod.POST)
     public RestResponse answerSubmit(HttpServletRequest request) {

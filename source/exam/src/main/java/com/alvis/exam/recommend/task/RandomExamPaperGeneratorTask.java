@@ -43,7 +43,7 @@ public class RandomExamPaperGeneratorTask {
 
     private final static ModelMapper modelMapper = ModelMapperSingle.Instance();
 
-    @Scheduled(cron = "0 0 8,12,18,21 * * ?")
+    @Scheduled(cron = "0 0 8,12 * * ?")
     public void createRandomPaper() {
         log.info("thread id:{},FixedPrintTask execute times:{}", Thread.currentThread().getId());
 
