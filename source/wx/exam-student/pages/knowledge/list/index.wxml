@@ -1,0 +1,26 @@
+<!--pages/exam/index/index.wxml-->
+<view>
+  <view >
+    <view hidden="{{isshow}}">
+      <view class="section">
+        <form bindsubmit="bindFormSubmit">
+          <textarea placeholder="写下新思考" name="textarea"/>
+          <button form-type="submit"> 提交 </button>
+        </form>
+      </view>
+    </view>
+    <view class="showbutton"  bindtap="show">
+      <text  class="showbutton">{{!isshow? '收起︿' : '展开﹀'}}</text>
+    </view>
+  </view>
+
+
+  <view class="exam-tab-view">
+    <i-cell-group>
+      <i-cell  wx:for="{{tableData}}" data-item="item" wx:key="{{item.id}}" title="{{item.content}}" ></i-cell>
+    </i-cell-group>
+  </view>
+  <i-load-more tip="{{loadMoreTip}}" loading="{{loadMoreLoad}}" />
+  <i-spin size="large" fix wx:if="{{ spinShow }}"></i-spin>
+  <i-message id="message" />
+</view>

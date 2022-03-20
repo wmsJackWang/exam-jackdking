@@ -16,6 +16,19 @@ Page({
     result: 0,
     timeOutShow: false
   },
+  gotoMorePage: function(event){
+    const number = event.target.id;//1或者2得到点击了按钮1或者按钮2 
+    console.log('navigateTo more page')
+    const url = "/pages/knowledge/list/index?id="+number;//得到页面url 
+    wx.navigateTo({
+    url: url,   
+    success: function(res) {
+      // 通过eventChannel向被打开页面传送数据
+      res.eventChannel.emit('acceptDataFromOpenerPage', { data: 'test' })
+      console.log('navigateTo more page success')
+    }
+    }) 
+  },
   onLoad: function(options) {
     let paperId = options.id
     let _this = this

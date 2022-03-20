@@ -11,6 +11,13 @@
   z-index: 999;
 }
 
+.mini-btn{
+  margin-right: 10rpx;
+}
+button{
+  margin-top: 5rpx;
+  margin-bottom: 5rpx;
+}
 .view-wrap-hidden {
   height: 15px;
 }

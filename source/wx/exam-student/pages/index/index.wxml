@@ -16,6 +16,11 @@
       </swiper-item>
     </swiper>
   </view>
+  <i-panel title="考试记录">
+    <i-cell-group>
+      <i-cell  title="错题本" is-link url="/pages/record/index"></i-cell>
+    </i-cell-group>
+  </i-panel>
 
   <i-panel title="任务中心">
     <i-collapse accordion i-class="index-collapse">

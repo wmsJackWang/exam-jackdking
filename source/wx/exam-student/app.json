@@ -16,7 +16,8 @@
     "pages/wrongSet/wrongList/list",
     "pages/wrongSet/question/question",
     "pages/article/list/articleList",
-    "pages/article/articleDetail/detail"
+    "pages/article/articleDetail/detail",
+    "pages/knowledge/list/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#ffffff",
@@ -43,10 +44,10 @@
         "selectedIconPath": "/assets/tabBar/exam-select.png"
       },
       {
-        "pagePath": "pages/article/articleDetail/detail",
+        "pagePath": "pages/article/list/articleList",
         "text": "文章",
         "iconPath": "/assets/tabBar/record.png",
-        "selectedIconPath": "/assets/tabBar/exam-select.png"
+        "selectedIconPath": "/assets/tabBar/record-select.png"
       },
       {
         "pagePath": "pages/my/index/index",

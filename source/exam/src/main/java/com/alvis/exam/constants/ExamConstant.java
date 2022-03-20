@@ -10,4 +10,10 @@ public interface ExamConstant {
     Integer randomPaperType = 2;
     Integer default_user_id = 188;
     Integer randomSuggestTime = 20;
+    /**
+     * UTF-8 字符集
+     */
+    public static final String UTF8 = "UTF-8";
+    String blogArticleDetailUrl = "http://bittechblog.com/article/detail";
+    String blogArticleListUrl = "http://bittechblog.com/page/json";
 }

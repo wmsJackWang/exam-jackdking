@@ -1,0 +1,14 @@
+.exam-tab-view {
+  margin-top: 0px;
+}
+.conts {
+  display: -webkit-box;
+}
+.hide {
+  -webkit-box-orient: vertical;
+}
+.showbutton {
+  margin-right: 5px;
+  height: 30px;
+  width: inherit;
+}

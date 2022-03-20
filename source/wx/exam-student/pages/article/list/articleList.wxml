@@ -1,2 +1,28 @@
-<!--pages/article/list/articleList.wxml-->
-<text>pages/article/list/articleList.wxml</text>
+<!--index.wxml-->
+<view class="container1">
+  <view class="a-section a-groupon" wx:if="{{tableData.length > 0}}">
+    <view class="b">
+      <view class="item" wx:for="{{tableData}}" wx:for-index="index" wx:for-item="item" wx:key="id">
+        <navigator url="/pages/article/articleDetail/detail?id={{item.cid}}">
+          <!-- <image class="img" src="{{item.picUrl}}" background-size="cover"></image> -->
+          <view class="right">
+            <view class="text1">
+              <view class="header1">
+                <text class="name jhx_f7">{{item.title}}</text>
+              </view>
+              <text class="desc jhx_f5">类别：{{item.categories}}</text>
+              <view class="price">
+                <view class="jhx_f8">
+                  <text class="jhx_f9">时间：{{item.createdOn}}，类别：{{item.categories}}</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </navigator>
+      </view>
+    </view>
+  </view>
+  <i-load-more tip="{{loadMoreTip}}" loading="{{loadMoreLoad}}" />
+  <i-spin size="large" fix wx:if="{{ spinShow }}"></i-spin>
+  <i-message id="message" />
+</view>

@@ -1,7 +1,13 @@
 .exam-page {
   background: white;
 }
-
+.mini-btn{
+  margin-right: 10rpx;
+}
+button{
+  margin-top: 5rpx;
+  margin-bottom: 5rpx;
+}
 .view-wrap {
   position: fixed;
   width: 100%;

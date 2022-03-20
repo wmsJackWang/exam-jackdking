@@ -76,6 +76,7 @@ Page({
           tableData: override ? re.list : this.data.tableData.concat(re.list),
           total: re.pages
         });
+        console.log('pageNum: '+re.pageNum + "pages: " + re.pages)
         if (re.pageNum >= re.pages) {
           this.setData({
             loadMoreLoad: false,

@@ -33,7 +33,6 @@ public class AuthController extends BaseWXApiController {
 	
 	private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
-
 	@Autowired
     private  SystemConfig systemConfig;
 	@Autowired

@@ -19,6 +19,14 @@ public class RestResponse<T> {
         this.response = response;
     }
 
+    public static RestResponse fail(String message){
+        return new RestResponse<>(SystemCode.InnerError.getCode(), message);
+    }
+
+    public static RestResponse fail(){
+        return new RestResponse<>(SystemCode.InnerError.getCode(), SystemCode.InnerError.getMessage());
+    }
+
     public static RestResponse fail(Integer code, String msg) {
         return new RestResponse<>(code, msg);
     }

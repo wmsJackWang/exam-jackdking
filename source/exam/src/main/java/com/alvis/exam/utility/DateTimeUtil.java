@@ -18,6 +18,10 @@ public class DateTimeUtil {
     public static final String STANDER_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public static final String STANDER_SHORT_FORMAT = "yyyy-MM-dd";
 
+    public static Date getNowDate() {
+        return new Date();
+    }
+
     public static Date addDuration(Date date, Duration duration) {
         Calendar ca = Calendar.getInstance();
         ca.setTime(date);

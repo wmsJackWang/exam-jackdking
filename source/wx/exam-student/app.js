@@ -8,7 +8,7 @@ App({
   towxml:require('/towxml/index'),
   globalData: {
     baseAPI: "https://bittechblog.com",
-    pageSize: 10
+    pageSize: 15
   },
   onLaunch: function() {
     let _this = this

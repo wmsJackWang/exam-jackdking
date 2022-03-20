@@ -1,66 +1,76 @@
-// pages/article/list/articleList.js
+let app = getApp()
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
-
+    spinShow: false,
+    loadMoreLoad: false,
+    loadMoreTip: '暂无数据',
+    queryParam: {
+      pageIndex: 1,
+      pageSize: app.globalData.pageSize
+    },
+    tableData: [],
+    total: 1
+  },
+  onLoad: function(options) {
+    this.setData({
+      spinShow: true
+    });
+    this.search(true)
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad: function (options) {
-
+  onPullDownRefresh() {
+    this.setData({
+      spinShow: true
+    });
+    console.log('文章列表')
+    if (!this.loading) {
+      this.setData({
+        ['queryParam.pageIndex']: 1
+      });
+      this.search(true)
+    }
   },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-
+  onReachBottom() {
+    if (!this.loading && this.data.queryParam.pageIndex < this.data.total) {
+      console.log("到达底部")
+      this.setData({
+        loadMoreLoad: true,
+        loadMoreTip: '正在加载'
+      });
+      console.log("到达底部pageIndex "+this.data.queryParam.pageIndex)
+      this.setData({
+        ['queryParam.pageIndex']: this.data.queryParam.pageIndex + 1
+      });
+      console.log("到达底部加1后pageIndex "+this.data.queryParam.pageIndex)
+      this.search(false)
+    }
   },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-
+  search: function(override) {
+    let _this = this
+    app.formPost('/api/wx/student/article/list', this.data.queryParam).then(res => {
+      _this.setData({
+        spinShow: false
+      });
+      wx.stopPullDownRefresh()
+      if (res.code === 1) {
+        const re = res.response.articles
+        _this.setData({
+          ['queryParam.pageIndex']: re.pageNum,
+          tableData: override ? re.list : this.data.tableData.concat(re.list),
+          total: re.pages
+        });
+        if (re.pageNum >= re.pages) {
+          this.setData({
+            loadMoreLoad: false,
+            loadMoreTip: '暂无数据'
+          });
+        }
+      }
+    }).catch(e => {
+      _this.setData({
+        spinShow: false
+      });
+      console.log(e, 'error')
+    })
   }
 })

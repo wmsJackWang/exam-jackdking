@@ -1,6 +1,6 @@
 <wxs module="enumItem" src="../../wxs/enumItem.wxs"></wxs>
 <view>
-  <i-tabs current="{{ paperType }}" bindchange="tabChange" fixed="true">
+  <i-tabs current="{{ viewType }}" bindchange="tabChange" fixed="true">
     <i-tab key="1" title="考试记录"  value ="1" />
     <i-tab key="2" title="错题记录"  value ="2" />
     <i-tab key="3" title="错题排行"  value ="3" />

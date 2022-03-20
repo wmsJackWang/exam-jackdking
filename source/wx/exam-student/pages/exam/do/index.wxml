@@ -4,7 +4,6 @@
   </view>
   <view class="view-wrap-hidden">
   </view>
-
   <view>
     <view class="exam-name-title">
       <h1>{{form.name}}</h1>
@@ -15,6 +14,7 @@
           <i-cell wx:for="{{titleItem.questionItems}}" wx:key="{{titleItem.id}}" wx:for-item="questionItem">
 
             <view wx:if="{{questionItem.questionType === 1}}">
+              <button id="{{questionItem.id}}" bindtap='gotoMorePage'  class="mini-btn" type="default" size="mini" >更多</button>
               <rich-text nodes="{{questionItem.itemOrder}}. {{questionItem.title}}" class="questionitem" />
               <radio-group class="radio-group" name="{{questionItem.itemOrder}}_{{questionItem.id}}_{{questionItem.questionType}}">
                 <label class="radio" wx:for="{{questionItem.items}}" wx:key="{{questionItem.prefix}}" wx:for-item="radioItem" >
@@ -23,6 +23,7 @@
               </radio-group>
             </view>
             <view wx:elif="{{questionItem.questionType === 2}}">
+              <button id="{{questionItem.id}}" bindtap='gotoMorePage'  class="mini-btn" type="default" size="mini" >更多</button>
               <rich-text nodes="{{questionItem.itemOrder}}. {{questionItem.title}}"  style="line-height:35px" />
               <checkbox-group class="exam-item-left" style="margin-left:10px" name="{{questionItem.itemOrder}}_{{questionItem.id}}_{{questionItem.questionType}}">
                 <label wx:for="{{questionItem.items}}" wx:key="{{questionItem.prefix}}" wx:for-item="radioItem" >
@@ -32,6 +33,7 @@
               </checkbox-group>
             </view>
             <view wx:elif="{{questionItem.questionType === 3}}">
+              <button id="{{questionItem.id}}" bindtap='gotoMorePage'  class="mini-btn" type="default" size="mini" >更多</button>
               <rich-text nodes="{{questionItem.itemOrder}}. {{questionItem.title}}" class="exam-item-left" style="line-height:35px" />
               <radio-group class="radio-group" class="exam-item-left" style="margin-left:10px" name="{{questionItem.itemOrder}}_{{questionItem.id}}_{{questionItem.questionType}}">
                 <label class="radio" wx:for="{{questionItem.items}}" wx:key="{{questionItem.prefix}}" wx:for-item="radioItem" class="exam-radio-item-label">
@@ -41,6 +43,7 @@
               </radio-group>
             </view>
             <view wx:elif="{{questionItem.questionType === 4}}">
+              <button id="{{questionItem.id}}" bindtap='gotoMorePage'  class="mini-btn" type="default" size="mini" >更多</button>
               <rich-text nodes="{{questionItem.itemOrder}}. {{questionItem.title}}" />
               <view class="exam-input-contain" wx:for="{{questionItem.items}}" wx:key="{{questionItem.prefix}}" wx:for-item="inputItem" wx:for-index="idx">
                 <view class="exam-input-contain-label">{{inputItem.prefix}}</view>

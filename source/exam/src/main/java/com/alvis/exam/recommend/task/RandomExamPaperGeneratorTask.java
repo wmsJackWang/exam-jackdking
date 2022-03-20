@@ -15,6 +15,8 @@ import com.alvis.exam.viewmodel.admin.question.QuestionPageRequestVM;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -75,7 +77,7 @@ public class RandomExamPaperGeneratorTask {
         List<Question> questionList = Optional.ofNullable(pageInfo.getList()).orElse(Collections.emptyList());
         Collections.shuffle(questionList);
         List<Question> subQuestionList = questionList;
-        if (subQuestionList.size()<12) {
+        if (subQuestionList.size()>12) {
             subQuestionList = questionList.subList(0, 12);
         }
 
@@ -99,4 +101,5 @@ public class RandomExamPaperGeneratorTask {
         defaultUser.setId(2);
         return defaultUser;
     }
+
 }

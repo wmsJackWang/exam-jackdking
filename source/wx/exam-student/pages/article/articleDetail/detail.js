@@ -2,7 +2,7 @@
 //index.js
 //获取应用实例
 const app = getApp()
-
+let articleId
 Page({
 
   /**
@@ -17,20 +17,38 @@ Page({
    */
   onLoad: function (options) {
 
-    this.articleLoad()
+    let id = options.id
+    articleId = options.id
+    console.log("文章id: ", id)
+    this.articleLoad(id)
   },
-  articleLoad(){
-    app.send('https://www.vvadd.com/wxml_demo/demo.txt?v=2', 'GET' , null, res => {
-      
-      let obj = app.towxml(res.data,'markdown',{
+  articleLoad: function(id){
+
+    app.formPost('/api/wx/student/article/detail?articleId='+id, null)
+    .then(res => {
+      console.log('res', res);
+      let obj = app.towxml(res.response.payload.article.content,'markdown',{
         theme:'light', //主题 dark 黑色，light白色，不填默认是light
-        base:"www.xxx.com",
+        base:"http://bittechblog.com",
         events:{      //为元素绑定的事件方法
-          tap:e => {
-            console.log('tap',e);
+          tap:event => {
+            console.log('tap',event);
+            // console.log(event, "towxml event")
+            // 只处理图片的点击事件
+            if (event.currentTarget.dataset.data && event.currentTarget.dataset.data.attrs && (event.currentTarget.dataset.data.attrs.class == "h2w__img")) {
+              console.log("chain deal img");
+              // 传入图片地址，调用微信图片预览 API
+              var imgUrls = [event.currentTarget.dataset.data.attrs.src];
+              wx.previewImage({
+                current: event.currentTarget.dataset.data.attrs.src, // 当前显示图片的http链接
+                urls: imgUrls
+              })
+            } else{
+              console.log("not image");
+            }
           },
-          change:e => {
-            console.log('todo',e);
+          change:event => {
+            console.log('todo',event);
           }
         }
       });
@@ -39,9 +57,33 @@ Page({
       this.setData({
         article:obj,
       });
-    }, res => {
+    }).catch(e => {
       return false;
     });
+
+
+    // app.send('https://bittechblog.com/api/wx/student/article/detail?articleId=192', 'POST' , null, res => {
+      
+    //   let obj = app.towxml(res.payload.article.content,'markdown',{
+    //     theme:'light', //主题 dark 黑色，light白色，不填默认是light
+    //     base:"www.xxx.com",
+    //     events:{      //为元素绑定的事件方法
+    //       tap:e => {POST
+    //         console.log('tap',e);
+    //       },
+    //       change:e => {
+    //         console.log('todo',e);
+    //       }
+    //     }
+    //   });
+    //   console.log(obj)
+    //   //更新解析数据
+    //   this.setData({
+    //     article:obj,
+    //   });
+    // }, res => {
+    //   return false;
+    // });
 
   },
   /**
@@ -77,7 +119,7 @@ Page({
    */
   onPullDownRefresh: function () {
 
-    this.articleLoad()
+    this.articleLoad(articleId)
   },
 
   /**
