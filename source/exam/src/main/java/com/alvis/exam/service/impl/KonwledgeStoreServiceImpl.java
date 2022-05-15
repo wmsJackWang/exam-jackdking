@@ -63,16 +63,24 @@ public class KonwledgeStoreServiceImpl implements IKonwledgeStoreService
     @Override
     public int insertKonwledgeStore(KonwledgeStore konwledgeStore)
     {
-        TextContent textContent = buildTextContent(konwledgeStore);
+        TextContent textContent = buildInsertTextContent(konwledgeStore);
         textContentService.insertByFilter(textContent);
         konwledgeStore.setContentId(Long.valueOf(textContent.getId()));
         return konwledgeStoreMapper.insertKonwledgeStore(konwledgeStore);
     }
 
-    private TextContent buildTextContent(KonwledgeStore konwledgeStore) {
+    private TextContent buildInsertTextContent(KonwledgeStore konwledgeStore) {
 
         TextContent textContent = new TextContent();
         textContent.setCreateTime(new Date());
+        textContent.setContent(konwledgeStore.getContent());
+        return textContent;
+    }
+
+    private TextContent buildUpdateTextContent(KonwledgeStore konwledgeStore) {
+
+        TextContent textContent = new TextContent();
+        textContent.setId(konwledgeStore.getContentId().intValue());
         textContent.setContent(konwledgeStore.getContent());
         return textContent;
     }
@@ -86,6 +94,9 @@ public class KonwledgeStoreServiceImpl implements IKonwledgeStoreService
     @Override
     public int updateKonwledgeStore(KonwledgeStore konwledgeStore)
     {
+        TextContent textContent = buildUpdateTextContent(konwledgeStore);
+        textContentService.updateByIdFilter(textContent);
+
         konwledgeStore.setUpdateTime(DateTimeUtil.getNowDate());
         return konwledgeStoreMapper.updateKonwledgeStore(konwledgeStore);
     }

@@ -30,6 +30,18 @@ public class KonwledgeStore  extends BasePage {
     /** $column.columnComment */
     private Long questionId;
 
+    //父知识点id
+    private Long parentKonwledgeId;
+
+    //学科id
+    private Long subjectId;
+
+    //标签信息
+    private String tagInfo;
+
+    //知识类型QIRC
+    private String konwledgeType;
+
     private Date updateTime;
 
     private Date createTime;

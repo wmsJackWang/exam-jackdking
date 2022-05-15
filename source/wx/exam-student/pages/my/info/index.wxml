@@ -1,7 +1,7 @@
 <wxs module="enumItem" src="../../../wxs/enumItem.wxs"></wxs>
 
-<form bindsubmit='formSubmit'>
-  <i-panel title="真实姓名">
+ <form bindsubmit='formSubmit'>
+  <!--<i-panel title="真实姓名">
     <i-input value="{{ userInfo.realName }}" name="realName" maxlength="-1" />
   </i-panel>
   <i-panel title="年龄">
@@ -23,7 +23,8 @@
   </i-panel>
   <i-panel title="手机">
     <i-input value="{{ userInfo.phone }}" name="phone" maxlength="-1" />
-  </i-panel>
+  </i-panel> -->
+
   <i-panel title="年级">
     <picker mode="selector" range="{{ enumItem.state.user.levelEnum }}" range-key="{{'value'}}" value="{{levelIndex}}" bindchange="bindLevelChange">
       <view class="i-cell i-input exam-pick-input">{{ enumItem.state.user.levelEnum[levelIndex].value }}</view>

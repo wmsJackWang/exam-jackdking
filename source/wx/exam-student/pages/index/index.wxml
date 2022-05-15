@@ -16,6 +16,13 @@
       </swiper-item>
     </swiper>
   </view>
+  
+  <i-panel title="知识殿堂">
+    <i-cell-group>
+      <i-cell  title="思维风暴" is-link url="/pages/knowledge/list/index"></i-cell>
+    </i-cell-group>
+  </i-panel>
+
   <i-panel title="考试记录">
     <i-cell-group>
       <i-cell  title="错题本" is-link url="/pages/record/index"></i-cell>

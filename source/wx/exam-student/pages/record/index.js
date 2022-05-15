@@ -1,6 +1,6 @@
 // pages/exam/index/index.js
 let app = getApp()
-let tmp = 1
+let tmp = 2 //默认页面是错题页
 Page({
   data: {
     spinShow: false,
@@ -67,7 +67,7 @@ Page({
   search: function(override) {
     let _this = this
     //默认的url
-    let requireUrl = "/api/wx/student/exampaper/answer/pageList" 
+    let requireUrl = "" 
     switch (tmp) {
       case "1":
         requireUrl = "/api/wx/student/exampaper/answer/pageList"
@@ -82,6 +82,7 @@ Page({
         requireUrl = "/api/wx/student/question/answer/rankPage"
         break;
       default:
+        requireUrl = "/api/wx/student/question/answer/page" ;
         break;
     }
 

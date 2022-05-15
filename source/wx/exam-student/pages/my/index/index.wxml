@@ -15,6 +15,9 @@
 
 <view>
   <i-cell-group i-class="my-group-margin">    
+    <i-cell title="思维风暴" is-link url="/pages/knowledge/list/index">
+      <i-icon type="right" slot="icon" size="20" />
+    </i-cell>
     <i-cell title="考试记录" is-link url="/pages/record/index">
       <i-icon type="remind_fill" slot="icon" size="20" />
     </i-cell>
