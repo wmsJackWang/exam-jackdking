@@ -119,10 +119,11 @@ public class KonwledgeStoreController extends BaseWXApiController
         return RestResponse.ok(result);
     }
 
-    private TextContent getParentKonwledge(Long parentKonwledgeId) {
+    private KonwledgeStore getParentKonwledge(Long parentKonwledgeId) {
         KonwledgeStore parentKonwledgeStore = konwledgeStoreService.selectKonwledgeStoreById(parentKonwledgeId);
         TextContent textContent = textContentService.selectById(parentKonwledgeStore.getContentId().intValue());
-        return textContent;
+        parentKonwledgeStore.setContent(textContent.getContent());
+        return parentKonwledgeStore;
     }
 
     private QuestionAnswerVM getQuestionAnswerVm(Long questionId) {

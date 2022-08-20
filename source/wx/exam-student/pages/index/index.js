@@ -17,6 +17,25 @@ Page({
     });
     this.articleLoad()
     this.indexLoad()
+
+    wx.startGyroscope({
+      interval: "normal",
+      success(){
+        wx.onGyroscopeChange((result) => {
+          // console.log('tuoluoyi' + result.x + ' ' + result.y + ' ' +  result.z);
+        })
+      }
+    })
+
+    wx.startAccelerometer({
+      interval: "normal",
+      success(){
+        wx.onAccelerometerChange((result) => {
+          console.log('jiasuduji' + result.x + ' ' + result.y + ' ' +  result.z);
+        })
+      }
+    })
+
   },
   articleLoad(){
     app.send('https://www.vvadd.com/wxml_demo/demo.txt?v=2', 'GET' , null, res => {

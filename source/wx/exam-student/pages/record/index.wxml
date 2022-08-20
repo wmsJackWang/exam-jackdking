@@ -12,7 +12,7 @@
           />
         </view>
         <view wx:elif="{{viewType==2}}">
-          <i-cell  wx:for="{{tableData}}" data-item="item" wx:key="{{item.id}}" title="{{item.shortTitle}}" is-link url="/pages/wrongSet/question/question?id={{item.questionId}}" value="{{enumItem.format(enumItem.state.exam.question.typeEnum,item.questionType)}}" label="{{item.subjectName}}  时间：{{item.createTime}} "
+          <i-cell  wx:for="{{tableData}}" data-item="item" wx:key="{{item.id}}" title="{{item.shortTitle}}" is-link url="/pages/wrongSet/question/question?id={{item.id}}" value="{{enumItem.format(enumItem.state.exam.question.typeEnum,item.questionType)}}" label="{{item.subjectName}}  时间：{{item.createTime}} "
           />
         </view>
         <view wx:elif="{{viewType==3}}">

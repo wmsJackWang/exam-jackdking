@@ -1,10 +1,11 @@
 const {
   $Message
 } = require('/component/iView/base/index');
-// const mtjwxsdk = require('./utils/mtj-wx-sdk.js');
-const mtjwxsdk = require('./utils/bmap-wx.js');
+
+import touch from './utils/touch.js'
 
 App({
+  touch: new touch(),
   towxml:require('/towxml/index'),
   globalData: {
     baseAPI: "https://bittechblog.com",

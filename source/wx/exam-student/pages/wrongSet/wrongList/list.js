@@ -79,6 +79,7 @@ Page({
         wx.stopPullDownRefresh()
         if (res.code === 1) {
           const re = res.response
+          console.log(res.response)
           _this.setData({
             ['queryParam.pageIndex']: re.pageNum,
             tableData: override ? re.list : this.data.tableData.concat(re.list),

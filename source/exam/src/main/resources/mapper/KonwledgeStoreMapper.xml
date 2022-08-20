@@ -29,7 +29,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="infotextcontentid != null "> and infoTextContentId = #{infotextcontentid}</if>
             <if test="questionId != null "> and question_id = #{questionId}</if>
             <if test="parentKonwledgeId != null "> and parent_konwledge_id = #{parentKonwledgeId}</if>
-            <if test="konwledgeType != null "> and konwledge_type = #{konwledgeType}</if>
+            <if test="konwledgeType != null and konwledgeType != ''"> and konwledge_type = #{konwledgeType}</if>
         </where>
     </select>
     
@@ -85,7 +85,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="konwledgeType != null ">konwledge_type = #{konwledgeType},</if>
 
             <if test="updateTime != null ">update_time = #{updateTime},</if>
-            <if test="createTime != null ">create_time = #{createTime},</if>
         </trim>
         where id = #{id}
     </update>

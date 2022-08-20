@@ -1,21 +1,29 @@
 <!--pages/exam/index/index.wxml-->
 <view>
   <view >
-    <view class="content-view" wx:if="{{titleType === 1}}">
+    <view  wx:if="{{titleType === 1}}">
       <view wx:if="{{isEdit === false}}">
         <i-cell title="{{thinkKonwledge.content}}" ></i-cell>
-        <button  bindtap="edit" type="warn" size="min"> 修改 </button>
+        <view class="showbutton"  bindtap="edit">
+          <text  class="showbutton">{{!isEdit? '修改﹀' : '收起︿'}}</text>
+        </view>
       </view>
       <view wx:if="{{isEdit === true}}">
         <form bindsubmit="editSubmit">
           <textarea value="{{thinkKonwledge.content}}" name="editContent" maxlength="-1" />
+          <!--隐藏属性，作为表单提交-->
+          <textarea  style="display:none"  name="contentId"  value = "{{thinkKonwledge.contentId}}"/>
           知识类型：<radio-group name="editContentKonwledgeType" value = " {{thinkKonwledge.konwledgeType}} " bindchange="handleChange">
-              <radio value="Q">Q</radio>
-              <radio value="I">I</radio>
-              <radio value="R">R</radio>
-              <radio value="C">C</radio>
+              <radio value="Q" checked="{{thinkKonwledge.konwledgeType == 'Q'}}">Q</radio>
+              <radio value="I" checked="{{thinkKonwledge.konwledgeType == 'I'}}">I</radio>
+              <radio value="R" checked="{{thinkKonwledge.konwledgeType == 'R'}}">R</radio>
+              <radio value="C" checked="{{thinkKonwledge.konwledgeType == 'C'}}">C</radio>
           </radio-group>
+          
           <button form-type="submit"  > 提交 </button>
+        <view class="showbutton"  bindtap="edit">
+          <text  form-type="submit"  class="showbutton">{{!isEdit? '展开﹀' : '收起︿'}}</text>
+        </view>
         </form>
       </view>
     </view>
@@ -108,19 +116,40 @@
       </view>
     </view>
     <view class="showbutton"  bindtap="show">
-      <text  class="showbutton">{{!isshow? '收起︿' : '展开﹀'}}</text>
+      <text  class="showbutton">{{!isshow? '收起︿' : '新建知识﹀'}}</text>
     </view>
   </view>
 
 
-  <view class="exam-tab-view">
+  <!-- <i-tabs current="2" bindchange="tabChange" fixed="true">
+    <i-tab key="3" title="每日试卷" />
+    <i-tab key="5" title="科目分类" />
+    <i-tab key="2" title="固定试卷" />
+    <i-tab key="4" title="时段试卷" />
+  </i-tabs> -->
+  <view class="exam-tab-view touch-item touch-move-active">
   
     <i-cell-group>
 
-      <i-cell  wx:for="{{tableData}}" data-item="item" wx:key="{{item.id}}" title="{{item.content}}" is-link url="/pages/knowledge/list/index?parentKonwledgeId={{item.id}}"  ></i-cell>
+      <i-cell  wx:for="{{tableData}}"  bindtouchstart="touchstart" bindtouchmove="touchmove"  data-item="item" wx:key="{{item.id}}" title="{{item.content}}" is-link url="/pages/knowledge/list/index?parentKonwledgeId={{item.id}}"  ></i-cell>
     </i-cell-group>
+<!-- 
+    <view class="touch-item touch-move-active" data-index="{{index}}" bindtouchstart="touchstart" bindtouchmove="touchmove" wx:for="{{tableData}}" wx:key="">
+      <view class='content' bindtap='showDetail'  data-index="{{index}}">
+        <view class='column'>
+          <view class='row full_width'>
+            <text style='font-weight: bold;line-height:60rpx;'>{{item.content}}</text>
+            <text style='margin-left:30rpx;color:gray;line-height:60rpx;'>{{item.content}}</text>
+            <text style='margin-left:20rpx;color:gray;line-height:60rpx;'>{{item.content}}</text>
+          </view>
+          <text style='margin-top:10rpx;color:gray;'>{{item.content}}</text>
+        </view>
+      </view>
+      <view class="del" catchtap="del" data-index="{{index}}">删除</view>
+    </view> -->
+
   </view>
   <i-load-more tip="{{loadMoreTip}}" loading="{{loadMoreLoad}}" />
   <i-spin size="large" fix wx:if="{{ spinShow }}"></i-spin>
-  <i-message id="message" />
+  <i-message id="message"  />
 </view>
