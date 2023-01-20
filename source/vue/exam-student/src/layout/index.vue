@@ -23,13 +23,15 @@
         <el-menu-item index="/paper/index">试卷中心</el-menu-item>
         <el-menu-item index="/record/index">考试记录</el-menu-item>
         <el-menu-item index="/question/index">错题本</el-menu-item>
+        <el-menu-item index="/knowledge/index">知识风暴</el-menu-item>
       </el-menu>
       <div>
         <a href="/"><img src="@/assets/logo2.png" height="56"/></a>
       </div>
     </el-header>
     <el-main class="student-main">
-      <router-view/>
+      <router-view v-if="defaultUrl == '/knowledge/index'" style="height:600px;width: 100%"/>
+      <router-view v-if="defaultUrl != '/knowledge/index'"/>
     </el-main>
     <el-footer height="340" class="student-footer">
       <div class="container">
@@ -90,7 +92,7 @@ export default {
   },
   methods: {
     routeSelect (path) {
-      let topPath = ['/', '/index', '/paper/index', '/record/index', '/question/index']
+      let topPath = ['/', '/index', '/paper/index', '/record/index', '/question/index', '/knowledge/index']
       if (topPath.indexOf(path)) {
         return path
       }

@@ -11,7 +11,7 @@ const state = {
   },
   exam: {
     examPaper: {
-      paperTypeEnum: [{ key: 1, value: '固定试卷' }, { key: 4, value: '时段试卷' }]
+      paperTypeEnum: [{ key: 1, value: '固定试卷' }, { key: 4, value: '时段试卷' }, { key: 2, value: '每日试卷' }]
     },
     examPaperAnswer: {
       statusEnum: [{ key: 1, value: '待批改' }, { key: 2, value: '完成' }],

@@ -10,7 +10,9 @@ import '@/styles/index.scss' // global css
 import './icons' // icon
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
-
+//  引入Echarts
+import * as echarts from 'echarts'
+Vue.prototype.$echarts = echarts
 Vue.use(Element, {
   size: 'medium' // set element-ui default size
 })

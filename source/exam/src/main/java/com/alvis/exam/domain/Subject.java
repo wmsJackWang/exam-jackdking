@@ -16,6 +16,8 @@ public class Subject implements Serializable {
 
     private Integer itemOrder;
 
+    private Integer paperType;
+
     private Boolean deleted;
 
     public Integer getId() {
@@ -58,9 +60,17 @@ public class Subject implements Serializable {
         this.itemOrder = itemOrder;
     }
 
-    public Boolean getDeleted() {
-        return deleted;
+    public Integer getPaperType() {
+      return paperType;
     }
+
+    public void setPaperType(Integer paperType) {
+      this.paperType = paperType;
+    }
+
+    public Boolean getDeleted() {
+          return deleted;
+      }
 
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;

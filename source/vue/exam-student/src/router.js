@@ -46,6 +46,18 @@ const router = new Router({
       ]
     },
     {
+      path: '/knowledge',
+      component: Layout,
+      children: [
+        {
+          path: 'index',
+          component: () => import('@/views/knowledge/index'),
+          name: 'QuestionErrorIndex',
+          meta: { title: '错题本' }
+        }
+      ]
+    },
+    {
       path: '/question',
       component: Layout,
       children: [
