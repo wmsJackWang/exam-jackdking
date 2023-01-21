@@ -1,11 +1,13 @@
-package com.alvis.exam.controller.wx.student;
+package com.alvis.exam.controller.student;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.alvis.exam.base.BaseApiController;
 import com.alvis.exam.base.RestResponse;
-import com.alvis.exam.controller.wx.BaseWXApiController;
-import com.alvis.exam.domain.*;
+import com.alvis.exam.domain.ExamPaperQuestionCustomerAnswer;
+import com.alvis.exam.domain.KonwledgeStore;
+import com.alvis.exam.domain.KonwledgeTag;
+import com.alvis.exam.domain.TextContent;
 import com.alvis.exam.service.ExamPaperQuestionCustomerAnswerService;
 import com.alvis.exam.service.IKonwledgeStoreService;
 import com.alvis.exam.service.QuestionService;
@@ -32,9 +34,9 @@ import java.util.*;
  * @author ruoyi
  * @date 2022-03-20
  */
-@RestController("WXKonwledgeStoreController")
-@RequestMapping("/api/wx/student/konwledge")
-public class KonwledgeStoreController extends BaseWXApiController
+@RestController("StudentKonwledgeStoreController")
+@RequestMapping("/api/student/konwledge")
+public class KonwledgeStoreController extends BaseApiController
 {
 
     @Autowired

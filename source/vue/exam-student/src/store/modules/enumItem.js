@@ -9,6 +9,9 @@ const state = {
       readText: [{ key: true, value: '已读' }, { key: false, value: '未读' }]
     }
   },
+  knowledge: {
+    knowledgeTypeEnum: [{ key: 'Q', value: '主要问题' }, { key: 'I', value: '核心概念' }, { key: 'R', value: '重要关系' }, { key: 'C', value: '应用' }]
+  },
   exam: {
     examPaper: {
       paperTypeEnum: [{ key: 1, value: '固定试卷' }, { key: 4, value: '时段试卷' }, { key: 2, value: '每日试卷' }]
