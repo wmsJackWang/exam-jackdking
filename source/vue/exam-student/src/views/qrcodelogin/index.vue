@@ -8,16 +8,16 @@
         <div class="lowin-box-inner">
             <p>比特课堂管理系统</p>
             <div class="text-foot">
-	            <router-link to="/login" class="register-link">
-	                切换至  用户名密码登录
-	            </router-link>
+              <router-link to="/login" class="register-link">
+                切换至  用户名密码登录
+              </router-link>
             </div>
-            
-				    <div >
-				      <img src="@/assets/qianyankeji.jpg" alt="logo" style="margin-top: 12px">
-				    </div>
-				    
-						<div class="qrcode" ref="qrCodeUrl"></div>
+
+            <div >
+              <img src="@/assets/qianyankeji.jpg" alt="logo" style="margin-top: 12px">
+            </div>
+
+            <div class="qrcode" ref="qrCodeUrl"></div>
             <div class="text-foot">
               还没有账号?
               <router-link to="/register" class="register-link">
@@ -33,7 +33,7 @@
 <script>
 import { mapMutations } from 'vuex'
 import loginApi from '@/api/login'
-import QRCode from 'qrcodejs2'
+// import QRCode from 'qrcodejs2'
 
 export default {
   name: 'Login',
@@ -70,42 +70,48 @@ export default {
     // window.addEventListener('storage', this.afterQRScan)
   },
   mounted () {
-	this.creatQrCode();
-	this.checkLogin();
-	this.timer = window.setInterval(() => {
-	    setTimeout(() => {
+    this.creatQrCode()
+    this.checkLogin()
+    // eslint-disable-next-line no-mixed-spaces-and-tabs
+    this.timer = window.setInterval(() => {
+      // eslint-disable-next-line no-mixed-spaces-and-tabs
+      setTimeout(() => {
+        // eslint-disable-next-line no-mixed-spaces-and-tabs,no-tabs
 	        this.checkLogin()
-	    },0)
-	},3000)
+        // eslint-disable-next-line no-mixed-spaces-and-tabs,no-tabs
+	    }, 0)
+    }, 3000)
   },
   destroyed () {
     // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
-  	creatQrCode() {
-        var qrcode = new QRCode(this.$refs.qrCodeUrl, {
-            text: 'xxxx', // 需要转换为二维码的内容
-            width: 100,
-            height: 100,
-            colorDark: '#000000',
-            colorLight: '#ffffff',
-            correctLevel: QRCode.CorrectLevel.H
-        })
+    // eslint-disable-next-line no-mixed-spaces-and-tabs
+    creatQrCode () {
+      // var qrcode = new QRCode(this.$refs.qrCodeUrl, {
+      //   text: 'xxxx', // 需要转换为二维码的内容
+      //   width: 100,
+      //   height: 100,
+      //   colorDark: '#000000',
+      //   colorLight: '#ffffff',
+      //   correctLevel: QRCode.CorrectLevel.H
+      // })
     },
-  	checkLogin() {
-            // 发送接口
-      //alert(1);
+    // eslint-disable-next-line no-mixed-spaces-and-tabs
+    checkLogin () {
+      // 发送接口
+      // alert(1);
       loginApi.qrcodelogin(this.loginForm).then(function (result) {
-            if (result && result.code === 1) {
-              _this.setUserName(_this.loginForm.userName)
-              _this.$router.push({ path: '/' })
-            } else {
-              _this.loading = false
-              _this.$message.error(result.message)
-            }
-          }).catch(function (reason) {
-            _this.loading = false
-          })
+        if (result && result.code === 1) {
+          this.setUserName(this.loginForm.userName)
+          this.$router.push({ path: '/' })
+        } else {
+          this.loading = false
+          this.$message.error(result.message)
+        }
+      }).catch(function (reason) {
+        this.loading = false
+      })
     },
     checkCapslock ({ shiftKey, key } = {}) {
       if (key && key.length === 1) {

@@ -3,7 +3,7 @@
     <el-tabs tab-position="left"  v-model="tabId"  @tab-click="subjectChange" >
       <el-tab-pane :label="item.name"  :key="item.id" :name="item.id" v-for="item in subjectList" style="margin-left: 20px;" >
         <el-row  style="float: right">
-          <el-radio-group v-model="queryParam.knowledgeType" size="mini" @change="knowledgeTypeChange" >
+          <el-radio-group v-model="queryParam.konwledgeType" size="mini" @change="knowledgeTypeChange" >
             <el-radio v-for="item in knowledgeTypeEnum" size="mini" :key="item.key" :label="item.key">{{item.value}}</el-radio>
           </el-radio-group>
         </el-row>
@@ -13,11 +13,11 @@
           <el-table-column prop="shortText" label="简称" width="90px"/>
           <el-table-column prop="content" label="名称"  />
           <el-table-column align="right">
-            <template slot-scope="{row}">
-              <router-link target="_blank" :to="{path:'/do',query:{id:row.id}}">
+            <template slot-scope="scope">
+              <router-link target="_blank" :to="{path:'/do',query:{id:scope.row.id}}">
                 <el-button  type="text" size="small">查看图谱</el-button>
               </router-link>
-              <el-button  type="text" size="small" style="margin-left: 10px" @click="handleEdit(row)">编辑</el-button>
+              <el-button  type="text" size="small" style="margin-left: 10px" @click="handleEdit(scope.row)">编辑</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -31,7 +31,7 @@
       <el-form :model="knowledgeForm" :rules="rules" ref="knowledgeForm" label-width="100px">
         <el-form-item label="知识：">
           <!-- 下拉框 -->
-          <el-select v-model="knowledgeForm.knowledgeType" placeholder="请选择">
+          <el-select v-model="knowledgeForm.konwledgeType" placeholder="请选择">
             <el-option v-for="item in knowledgeTypeEnum" :key="item.key" :label="item.value" :value="item.key"></el-option>
           </el-select>
         </el-form-item>
@@ -40,13 +40,13 @@
         </el-form-item>
         <el-form-item label="全部内容">
           <el-card style="height: 210px;">
-            <el-input v-model="knowledgeForm.content" ref="myQuillEditor" style="height: 500px;"></el-input>
+            <el-input type="textarea" v-model="knowledgeForm.content" ref="myQuillEditor" style="height: 500px;"></el-input>
 <!--            <quill-editor v-model="knowledgeForm.content" ref="myQuillEditor" style="height: 500px;" :options="editorOption">-->
 <!--            </quill-editor>-->
           </el-card>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submitForm('ruleForm')" style="float:right">确定</el-button>
+          <el-button type="primary" @click="confirmUpdate('knowledgeForm')" style="float:right">确定</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -56,7 +56,7 @@
 <script>
 import { mapState } from 'vuex'
 import Pagination from '@/components/Pagination'
-import examPaperApi from '@/api/knowledge/knowledge'
+import knowledgeApi from '@/api/knowledge/knowledge'
 import subjectApi from '@/api/subject'
 
 export default {
@@ -64,13 +64,14 @@ export default {
   data () {
     return {
       knowledgeForm: {
-        knowledgeType: undefined,
+        id: undefined,
+        konwledgeType: undefined,
         shortText: undefined,
         content: undefined
       },
       editDialogVisible: false,
       queryParam: {
-        knowledgeType: 1,
+        konwledgeType: 1,
         subjectId: 0,
         pageIndex: 1,
         pageSize: 10
@@ -88,8 +89,16 @@ export default {
     this.initSubject()
   },
   methods: {
-    handleEdit () {
+    handleEdit (row) {
       this.editDialogVisible = true
+      console.log('row:' + JSON.stringify(row))
+      this.knowledgeForm = Object.assign({}, row)
+      console.log('knowledgeForm:' + JSON.stringify(this.knowledgeForm))
+      this.knowledgeForm.konwledgeType = row.konwledgeType
+
+      this.$nextTick(() => {
+        this.$refs['knowledgeForm'].clearValidate()
+      })
     },
     initSubject () {
       let _this = this
@@ -103,7 +112,7 @@ export default {
     },
     search () {
       this.listLoading = true
-      examPaperApi.pageList(this.queryParam).then(data => {
+      knowledgeApi.pageList(this.queryParam).then(data => {
         const re = data.response.page
         this.tableData = re.list
         console.log('data:' + JSON.stringify(data))
@@ -119,6 +128,25 @@ export default {
     subjectChange (tab, event) {
       this.queryParam.subjectId = Number(this.tabId)
       this.search()
+    },
+    confirmUpdate () {
+      this.$refs['knowledgeForm'].validate((valid) => {
+        if (valid) {
+          knowledgeApi.update(this.knowledgeForm).then(response => {
+            this.approveDialogVisible = false
+            this.$notify.success({
+              title: '成功',
+              message: '更新成功'
+            })
+            this.getList()
+          }).catch(response => {
+            this.$notify.error({
+              title: '更新失败',
+              message: response.data.errmsg
+            })
+          })
+        }
+      })
     }
   },
   computed: {
