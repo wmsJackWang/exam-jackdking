@@ -39,11 +39,9 @@
           <el-input v-model="knowledgeForm.shortText" placeholder="简略内容" style="margin-top: 10px;"></el-input>
         </el-form-item>
         <el-form-item label="全部内容">
-          <el-card style="height: 210px;">
-            <el-input type="textarea" v-model="knowledgeForm.content" ref="myQuillEditor" style="height: 500px;"></el-input>
+            <el-input type="textarea" v-model="knowledgeForm.content" ref="myQuillEditor" rows="10"></el-input>
 <!--            <quill-editor v-model="knowledgeForm.content" ref="myQuillEditor" style="height: 500px;" :options="editorOption">-->
 <!--            </quill-editor>-->
-          </el-card>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="confirmUpdate('knowledgeForm')" style="float:right">确定</el-button>
@@ -71,7 +69,7 @@ export default {
       },
       editDialogVisible: false,
       queryParam: {
-        konwledgeType: 1,
+        konwledgeType: 'Q',
         subjectId: 0,
         pageIndex: 1,
         pageSize: 10
@@ -133,7 +131,7 @@ export default {
       this.$refs['knowledgeForm'].validate((valid) => {
         if (valid) {
           knowledgeApi.update(this.knowledgeForm).then(response => {
-            this.approveDialogVisible = false
+            this.editDialogVisible = false
             this.$notify.success({
               title: '成功',
               message: '更新成功'

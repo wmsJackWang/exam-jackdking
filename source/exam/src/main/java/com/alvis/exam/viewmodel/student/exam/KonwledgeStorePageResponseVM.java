@@ -36,6 +36,9 @@ public class KonwledgeStorePageResponseVM {
     //知识类型 QIRC
     private String konwledgeType;
 
+    //简称
+    private String shortText;
+
     //标签json
     private List<KonwledgeTag> tagInfoList;
 

@@ -16,10 +16,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="konwledgeType"    column="konwledge_type"    />
         <result property="updateTime"    column="update_time"    />
         <result property="createTime"    column="create_time"    />
+        <result property="shortText"    column="short_text"    />
     </resultMap>
 
     <sql id="selectKonwledgeStoreVo">
-        select id, userid, infoTextContentId, question_id,content_id, parent_konwledge_id, subject_id, tag_info, konwledge_type, update_time, create_time from konwledge_store
+        select id, userid, infoTextContentId, question_id,content_id, parent_konwledge_id, subject_id, tag_info, konwledge_type, update_time, create_time, short_text from konwledge_store
     </sql>
 
     <select id="selectKonwledgeStoreList" parameterType="com.alvis.exam.domain.KonwledgeStore" resultMap="KonwledgeStoreResult">
@@ -53,6 +54,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
             <if test="updateTime != null ">update_time,</if>
             <if test="createTime != null ">create_time,</if>
+            <if test="shortText != null ">short_text,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="userid != null ">#{userid},</if>
@@ -67,6 +69,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="createTime != null ">#{createTime},</if>
+            <if test="shortText != null ">#{shortText},</if>
          </trim>
     </insert>
 
@@ -85,6 +88,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="konwledgeType != null ">konwledge_type = #{konwledgeType},</if>
 
             <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="shortText != null ">short_text = #{shortText},</if>
         </trim>
         where id = #{id}
     </update>

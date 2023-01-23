@@ -21,10 +21,7 @@ import com.github.pagehelper.PageInfo;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -56,7 +53,7 @@ public class KonwledgeStoreController extends BaseApiController
      */
     @PostMapping("/pageList")
     @ResponseBody
-    public RestResponse<PageInfo<KonwledgeStorePageResponseVM>> list(KonwledgeStore konwledgeStore)
+    public RestResponse<PageInfo<KonwledgeStorePageResponseVM>> list(@RequestBody KonwledgeStore konwledgeStore)
     {
         long userid = Optional.ofNullable(konwledgeStore.getUserid()).orElseGet(() -> Long.parseLong(getCurrentUser().getId().toString()));
         konwledgeStore.setUserid(userid);//获取当前用户下的知识list
@@ -84,7 +81,7 @@ public class KonwledgeStoreController extends BaseApiController
      */
     @PostMapping("/pageListV2")
     @ResponseBody
-    public RestResponse<Map<String, Object>> listV2(KonwledgeStore konwledgeStore)
+    public RestResponse<Map<String, Object>> listV2(@RequestBody KonwledgeStore konwledgeStore)
     {
         Map<String, Object> result = new HashMap<>();
         long userid = Optional.ofNullable(konwledgeStore.getUserid()).orElseGet(() -> Long.parseLong(getCurrentUser().getId().toString()));
@@ -150,11 +147,23 @@ public class KonwledgeStoreController extends BaseApiController
     }
 
     /**
+     * 查询得到链接关系
+     * 节点list，以及link列表
+     */
+    @PostMapping("/knowledgeGraph")
+    @ResponseBody
+    public RestResponse<Object> queryGraphNodes(@RequestBody List<Integer> knowledgeIds, Integer graphDeep) {
+
+        konwledgeStoreService.queryKnowledgeGraphNodes(knowledgeIds, graphDeep);
+        return null;
+    }
+
+    /**
      * 新增保存【请填写功能名称】
      */
     @PostMapping("/add")
     @ResponseBody
-    public RestResponse<Integer> addSave(KonwledgeStore konwledgeStore)
+    public RestResponse<Integer> addSave(@RequestBody KonwledgeStore konwledgeStore)
     {
         long userid = Optional.ofNullable(konwledgeStore.getUserid()).orElseGet(() -> Long.parseLong(getCurrentUser().getId().toString()));
         konwledgeStore.setUserid(userid);//获取当前用户下的知识list
@@ -167,7 +176,7 @@ public class KonwledgeStoreController extends BaseApiController
      */
     @PostMapping("/update")
     @ResponseBody
-    public RestResponse<Integer> update(KonwledgeStore konwledgeStore)
+    public RestResponse<Integer> update(@RequestBody KonwledgeStore konwledgeStore)
     {
         long userid = Optional.ofNullable(konwledgeStore.getUserid()).orElseGet(() -> Long.parseLong(getCurrentUser().getId().toString()));
         konwledgeStore.setUserid(userid);//获取当前用户下的知识list

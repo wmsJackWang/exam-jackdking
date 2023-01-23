@@ -1,9 +1,11 @@
 package com.alvis.exam.service;
 
 import com.alvis.exam.domain.KonwledgeStore;
+import com.alvis.exam.viewmodel.admin.knowledge.KnowledgeGraphVm;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -63,4 +65,7 @@ public interface IKonwledgeStoreService
     public int deleteKonwledgeStoreById(Long id);
 
     PageInfo<KonwledgeStore> studentPage(KonwledgeStore konwledgeStore);
+
+    KnowledgeGraphVm queryKnowledgeGraphNodes(List<Integer> knowledgeIds, Integer graphDeep);
+
 }

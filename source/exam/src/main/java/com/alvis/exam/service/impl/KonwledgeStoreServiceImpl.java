@@ -1,7 +1,8 @@
 package com.alvis.exam.service.impl;
 
-import java.util.Date;
-import java.util.List;
+import java.sql.Array;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.alvis.exam.domain.KonwledgeStore;
 import com.alvis.exam.domain.TextContent;
@@ -10,8 +11,12 @@ import com.alvis.exam.service.IKonwledgeStoreService;
 import com.alvis.exam.service.TextContentService;
 import com.alvis.exam.utility.Convert;
 import com.alvis.exam.utility.DateTimeUtil;
+import com.alvis.exam.viewmodel.admin.knowledge.KnowledgeGraphVm;
+import com.alvis.exam.viewmodel.admin.knowledge.Link;
+import com.alvis.exam.viewmodel.admin.knowledge.Node;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.sun.xml.internal.fastinfoset.tools.XML_SAX_StAX_FI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -80,7 +85,10 @@ public class KonwledgeStoreServiceImpl implements IKonwledgeStoreService
     private TextContent buildUpdateTextContent(KonwledgeStore konwledgeStore) {
 
         TextContent textContent = new TextContent();
-        textContent.setId(konwledgeStore.getContentId().intValue());
+        Optional.ofNullable(konwledgeStore.getInfotextcontentid())
+                .ifPresent(o -> {
+                    textContent.setId(o.intValue());
+                });
         textContent.setContent(konwledgeStore.getContent());
         return textContent;
     }
@@ -129,5 +137,60 @@ public class KonwledgeStoreServiceImpl implements IKonwledgeStoreService
     public PageInfo<KonwledgeStore> studentPage(KonwledgeStore konwledgeStore) {
         return PageHelper.startPage(konwledgeStore.getPageIndex(), konwledgeStore.getPageSize(), "id desc").doSelectPageInfo(() ->
                 konwledgeStoreMapper.selectKonwledgeStoreList(konwledgeStore));
+    }
+
+    @Override
+    public KnowledgeGraphVm queryKnowledgeGraphNodes(List<Integer> knowledgeIds, Integer maxGraphDeep) {
+
+        AtomicInteger atomicId = new AtomicInteger(0);
+        List<Node> nodes = new ArrayList();
+        List<Link> links = new ArrayList();
+        Optional.ofNullable(knowledgeIds).orElseGet(Collections::emptyList)
+                .parallelStream()
+                .forEach(id -> {
+
+                    KonwledgeStore konwledgeStore = konwledgeStoreMapper.selectKonwledgeStoreById(Long.valueOf(id));
+                    Node node = new Node();
+                    node.setDeepGrade(0);
+                    node.setId(id);
+                    node.setName(konwledgeStore.getShortText());
+                    node.setContent(konwledgeStore.getContent());
+                    node.setKnowledgeType(konwledgeStore.getKonwledgeType());
+
+                    nodes.add(node);
+                    getCurrentKnowledgeGraphNode(node, maxGraphDeep, atomicId, nodes, links);
+
+                });
+
+        return new KnowledgeGraphVm(nodes, links);
+    }
+
+    private void getCurrentKnowledgeGraphNode(Node node, Integer maxGraphDeep, AtomicInteger atomicId, List<Node> nodes, List<Link> links) {
+        if (Objects.isNull(node) || node.getDeepGrade() > maxGraphDeep) {
+            return;
+        }
+        KonwledgeStore query = new KonwledgeStore();
+        query.setParentKonwledgeId(Long.valueOf(node.getId()));
+        List<KonwledgeStore> konwledgeStoreList = konwledgeStoreMapper.selectKonwledgeStoreList(query);
+        Optional.ofNullable(konwledgeStoreList).orElseGet(Collections::emptyList)
+                .parallelStream()
+                .forEach(konwledgeStore -> {
+                    Node childNode = new Node();
+                    childNode.setKnowledgeType(konwledgeStore.getKonwledgeType());
+                    childNode.setName(konwledgeStore.getShortText());
+                    childNode.setDeepGrade(node.getDeepGrade()+1);
+                    childNode.setContent(konwledgeStore.getContent());
+
+                    nodes.add(childNode);
+
+                    Link link = new Link();
+                    link.setName(childNode.getKnowledgeType());
+                    link.setSource(node.getId().toString());
+                    link.setTarget(childNode.getId().toString());
+                    links.add(link);
+
+                    getCurrentKnowledgeGraphNode(childNode, maxGraphDeep, atomicId, nodes, links);
+                });
+
     }
 }
