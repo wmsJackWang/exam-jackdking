@@ -1,8 +1,11 @@
 package com.alvis.exam.service.impl;
 
-import java.sql.Array;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import com.alvis.exam.domain.KonwledgeStore;
 import com.alvis.exam.domain.TextContent;
@@ -16,7 +19,6 @@ import com.alvis.exam.viewmodel.admin.knowledge.Link;
 import com.alvis.exam.viewmodel.admin.knowledge.Node;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.sun.xml.internal.fastinfoset.tools.XML_SAX_StAX_FI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -71,7 +73,8 @@ public class KonwledgeStoreServiceImpl implements IKonwledgeStoreService
         TextContent textContent = buildInsertTextContent(konwledgeStore);
         textContentService.insertByFilter(textContent);
         konwledgeStore.setContentId(Long.valueOf(textContent.getId()));
-        return konwledgeStoreMapper.insertKonwledgeStore(konwledgeStore);
+        int result = konwledgeStoreMapper.insertKonwledgeStore(konwledgeStore);
+        return result == 1 ? konwledgeStore.getId().intValue() : -1;
     }
 
     private TextContent buildInsertTextContent(KonwledgeStore konwledgeStore) {
@@ -148,38 +151,102 @@ public class KonwledgeStoreServiceImpl implements IKonwledgeStoreService
         Optional.ofNullable(knowledgeIds).orElseGet(Collections::emptyList)
                 .parallelStream()
                 .forEach(id -> {
-
                     KonwledgeStore konwledgeStore = konwledgeStoreMapper.selectKonwledgeStoreById(Long.valueOf(id));
+                    TextContent textContent = textContentService.selectById(Integer.valueOf(konwledgeStore.getContentId().toString()));
+
                     Node node = new Node();
                     node.setDeepGrade(0);
                     node.setId(id);
                     node.setName(konwledgeStore.getShortText());
-                    node.setContent(konwledgeStore.getContent());
+                    node.setContent(textContent.getContent());
                     node.setKnowledgeType(konwledgeStore.getKonwledgeType());
 
                     nodes.add(node);
-                    getCurrentKnowledgeGraphNode(node, maxGraphDeep, atomicId, nodes, links);
+                    Integer sonSize = getCurrentSonKnowledgeGraphNode(node, maxGraphDeep, atomicId, nodes, links);
+                    node.setSymbolSize(getSymbolSize(20 + sonSize * 10));
+                    getCurrentAncestorKnowledgeGraphNode(konwledgeStore, node, maxGraphDeep, sonSize+1, nodes, links);
 
                 });
+        List<Node> distinctNodes = Optional.ofNullable(nodes).orElseGet(Collections::emptyList)
+                        .stream()
+                        .filter(distinctByKey(item -> item.getId()))
+                        .collect(Collectors.toList());
 
-        return new KnowledgeGraphVm(nodes, links);
+        List<Link> distinctLinks = Optional.ofNullable(links).orElseGet(Collections::emptyList)
+                        .stream()
+                        .distinct()
+                        .collect(Collectors.toList());
+
+
+        return new KnowledgeGraphVm(distinctNodes, distinctLinks);
     }
 
-    private void getCurrentKnowledgeGraphNode(Node node, Integer maxGraphDeep, AtomicInteger atomicId, List<Node> nodes, List<Link> links) {
+    private void getCurrentAncestorKnowledgeGraphNode(KonwledgeStore konwledgeStore, Node node, Integer maxGraphDeep, Integer size, List<Node> nodes, List<Link> links) {
+        if (Objects.isNull(konwledgeStore.getParentKonwledgeId())) {
+            return;
+        }
+
         if (Objects.isNull(node) || node.getDeepGrade() > maxGraphDeep) {
             return;
         }
+
+        KonwledgeStore parentKonwledge = konwledgeStoreMapper.selectKonwledgeStoreById(konwledgeStore.getParentKonwledgeId());
+        TextContent textContent = textContentService.selectById(Integer.valueOf(konwledgeStore.getContentId().toString()));
+
+        Node parentNode = new Node();
+        parentNode.setId(parentKonwledge.getId().intValue());
+        parentNode.setKnowledgeType(konwledgeStore.getKonwledgeType());
+        parentNode.setName(parentKonwledge.getShortText());
+        parentNode.setDeepGrade(node.getDeepGrade()+1);
+        parentNode.setContent(textContent.getContent());
+        parentNode.setSymbolSize(getSymbolSize(20 + size * 10));
+
+        nodes.add(parentNode);
+
+        Link link = new Link();
+        link.setName(parentNode.getKnowledgeType());
+        link.setTarget(node.getId().toString());
+        link.setSource(parentNode.getId().toString());
+        links.add(link);
+
+        getCurrentAncestorKnowledgeGraphNode(parentKonwledge, parentNode, maxGraphDeep,size +1, nodes, links);
+    }
+
+    private Integer getSymbolSize(int i) {
+
+        return i > 100 ? 100 : i;
+    }
+
+    // 自定义去重方法
+    static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
+
+    private Integer getCurrentSonKnowledgeGraphNode(Node node, Integer maxGraphDeep, AtomicInteger atomicId, List<Node> nodes, List<Link> links) {
+        if (Objects.isNull(node) || node.getDeepGrade() > maxGraphDeep) {
+            return 0;
+        }
+        Integer size = 1;
         KonwledgeStore query = new KonwledgeStore();
         query.setParentKonwledgeId(Long.valueOf(node.getId()));
-        List<KonwledgeStore> konwledgeStoreList = konwledgeStoreMapper.selectKonwledgeStoreList(query);
+        List<KonwledgeStore> konwledgeStoreList = queryKnowledgeStoreList(query);
+        if ((konwledgeStoreList == null || konwledgeStoreList.size() == 0)) {
+            node.setSymbolSize(20);
+            return size;
+        }
+        AtomicInteger allChildNodeSize = new AtomicInteger(0);
         Optional.ofNullable(konwledgeStoreList).orElseGet(Collections::emptyList)
                 .parallelStream()
                 .forEach(konwledgeStore -> {
+                    TextContent textContent = textContentService.selectById(Integer.valueOf(konwledgeStore.getContentId().toString()));
+
                     Node childNode = new Node();
+                    childNode.setId(konwledgeStore.getId().intValue());
                     childNode.setKnowledgeType(konwledgeStore.getKonwledgeType());
                     childNode.setName(konwledgeStore.getShortText());
                     childNode.setDeepGrade(node.getDeepGrade()+1);
-                    childNode.setContent(konwledgeStore.getContent());
+                    childNode.setContent(textContent.getContent());
 
                     nodes.add(childNode);
 
@@ -189,8 +256,16 @@ public class KonwledgeStoreServiceImpl implements IKonwledgeStoreService
                     link.setTarget(childNode.getId().toString());
                     links.add(link);
 
-                    getCurrentKnowledgeGraphNode(childNode, maxGraphDeep, atomicId, nodes, links);
+                    Integer childNodeSize = getCurrentSonKnowledgeGraphNode(childNode, maxGraphDeep, atomicId, nodes, links);
+                    childNode.setSymbolSize(getSymbolSize(20 + 10 * childNodeSize));
+                    allChildNodeSize.getAndAdd(childNodeSize);
                 });
+        size = allChildNodeSize.get();
+        return size;
+    }
 
+    private List<KonwledgeStore> queryKnowledgeStoreList(KonwledgeStore query) {
+        query.setQueryRoot("1");
+        return konwledgeStoreMapper.selectKonwledgeStoreList(query);
     }
 }

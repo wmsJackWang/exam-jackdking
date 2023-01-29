@@ -30,6 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="infotextcontentid != null "> and infoTextContentId = #{infotextcontentid}</if>
             <if test="questionId != null "> and question_id = #{questionId}</if>
             <if test="parentKonwledgeId != null "> and parent_konwledge_id = #{parentKonwledgeId}</if>
+            <if test="queryRoot != 1 "> and parent_konwledge_id is null  </if>
             <if test="konwledgeType != null and konwledgeType != ''"> and konwledge_type = #{konwledgeType}</if>
         </where>
     </select>

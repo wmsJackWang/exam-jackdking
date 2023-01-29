@@ -13,6 +13,8 @@ import com.alvis.exam.service.IKonwledgeStoreService;
 import com.alvis.exam.service.QuestionService;
 import com.alvis.exam.service.TextContentService;
 import com.alvis.exam.utility.PageInfoHelper;
+import com.alvis.exam.viewmodel.admin.knowledge.KnowledgeGraphRequestVm;
+import com.alvis.exam.viewmodel.admin.knowledge.KnowledgeGraphVm;
 import com.alvis.exam.viewmodel.admin.question.QuestionEditRequestVM;
 import com.alvis.exam.viewmodel.student.exam.ExamPaperSubmitItemVM;
 import com.alvis.exam.viewmodel.student.exam.KonwledgeStorePageResponseVM;
@@ -152,10 +154,9 @@ public class KonwledgeStoreController extends BaseApiController
      */
     @PostMapping("/knowledgeGraph")
     @ResponseBody
-    public RestResponse<Object> queryGraphNodes(@RequestBody List<Integer> knowledgeIds, Integer graphDeep) {
-
-        konwledgeStoreService.queryKnowledgeGraphNodes(knowledgeIds, graphDeep);
-        return null;
+    public RestResponse<Object> queryGraphNodes(@RequestBody KnowledgeGraphRequestVm requestVm) {
+        KnowledgeGraphVm knowledgeGraphVm = konwledgeStoreService.queryKnowledgeGraphNodes(requestVm.getKnowledgeIds(), requestVm.getGraphDeep());
+        return RestResponse.ok(knowledgeGraphVm);
     }
 
     /**
@@ -168,7 +169,8 @@ public class KonwledgeStoreController extends BaseApiController
         long userid = Optional.ofNullable(konwledgeStore.getUserid()).orElseGet(() -> Long.parseLong(getCurrentUser().getId().toString()));
         konwledgeStore.setUserid(userid);//获取当前用户下的知识list
         int result = konwledgeStoreService.insertKonwledgeStore(konwledgeStore);
-        return RestResponse.ok(result);
+
+        return result == -1 ? RestResponse.fail() : RestResponse.ok(result);
     }
 
     /**

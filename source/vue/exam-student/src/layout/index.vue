@@ -24,7 +24,6 @@
         <el-menu-item index="/record/index">考试记录</el-menu-item>
         <el-menu-item index="/question/index">错题本</el-menu-item>
         <el-menu-item index="/knowledge/list">知识风暴</el-menu-item>
-        <el-menu-item index="/knowledge/index">知识风暴</el-menu-item>
       </el-menu>
       <div>
         <a href="/"><img src="@/assets/logo2.png" height="56"/></a>
@@ -93,7 +92,7 @@ export default {
   },
   methods: {
     routeSelect (path) {
-      let topPath = ['/', '/index', '/paper/index', '/record/index', '/question/index', '/knowledge/index']
+      let topPath = ['/', '/index', '/paper/index', '/record/index', '/question/index']
       if (topPath.indexOf(path)) {
         return path
       }

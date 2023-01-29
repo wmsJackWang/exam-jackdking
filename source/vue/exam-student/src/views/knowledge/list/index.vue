@@ -2,7 +2,12 @@
   <div style="margin-top: 10px" class="app-contain">
     <el-tabs tab-position="left"  v-model="tabId"  @tab-click="subjectChange" >
       <el-tab-pane :label="item.name"  :key="item.id" :name="item.id" v-for="item in subjectList" style="margin-left: 20px;" >
+
+        <el-radio-group v-model="queryParam.queryRoot" size="mini" @change="knowledgeClassChange" >
+          <el-radio v-for="item in knowledgeClassList" size="mini" :key="item.id" :label="item.id">{{item.value}}</el-radio>
+        </el-radio-group>
         <el-row  style="float: right">
+          <el-button  type="primary" style="margin-right: 20px" size="small" @click="handleCreate()" :disabled="requestLock">创建知识</el-button>
           <el-radio-group v-model="queryParam.konwledgeType" size="mini" @change="knowledgeTypeChange" >
             <el-radio v-for="item in knowledgeTypeEnum" size="mini" :key="item.key" :label="item.key">{{item.value}}</el-radio>
           </el-radio-group>
@@ -14,7 +19,10 @@
           <el-table-column prop="content" label="名称"  />
           <el-table-column align="right">
             <template slot-scope="scope">
-              <router-link target="_blank" :to="{path:'/do',query:{id:scope.row.id}}">
+              <router-link target="_blank" :to="{path:'/knowledge/list', query:{id:scope.row.id}}">
+                <el-button  type="text" size="small">查看下级</el-button>
+              </router-link>
+              <router-link target="_blank" style="margin-left: 10px" :to="{path:'/graph', query:{id:scope.row.id}}">
                 <el-button  type="text" size="small">查看图谱</el-button>
               </router-link>
               <el-button  type="text" size="small" style="margin-left: 10px" @click="handleEdit(scope.row)">编辑</el-button>
@@ -25,6 +33,29 @@
                     @pagination="search" style="margin-top: 20px"/>
       </el-tab-pane>
     </el-tabs>
+
+    <!-- 弹出的页面内容 -->
+    <el-dialog :visible.sync="createDialogVisible">
+      <el-form :model="createKnowledgeForm" :rules="rules" ref="createKnowledgeForm" label-width="100px">
+        <el-form-item label="知识：">
+          <!-- 下拉框 -->
+          <el-select v-model="createKnowledgeForm.konwledgeType" placeholder="请选择">
+            <el-option v-for="item in knowledgeTypeEnum" :key="item.key" :label="item.value" :value="item.key"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="简略内容">
+          <el-input v-model="createKnowledgeForm.shortText" placeholder="简略内容" style="margin-top: 10px;"></el-input>
+        </el-form-item>
+        <el-form-item label="全部内容">
+          <el-input type="textarea" v-model="createKnowledgeForm.content" ref="myQuillEditor" rows="10"></el-input>
+          <!--            <quill-editor v-model="knowledgeForm.content" ref="myQuillEditor" style="height: 500px;" :options="editorOption">-->
+          <!--            </quill-editor>-->
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="confirmCreate('createKnowledgeForm')" style="float:right">确定</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
 
     <!-- 弹出的页面内容 -->
     <el-dialog :visible.sync="editDialogVisible">
@@ -61,6 +92,17 @@ export default {
   components: { Pagination },
   data () {
     return {
+      knowledgeClassList: [
+        {
+          id: 1,
+          value: '非根知识'
+        },
+        {
+          id: 2,
+          value: '根知识'
+        }
+      ],
+      requestLock: false,
       knowledgeForm: {
         id: undefined,
         konwledgeType: undefined,
@@ -68,7 +110,17 @@ export default {
         content: undefined
       },
       editDialogVisible: false,
+      createDialogVisible: false,
+      createKnowledgeForm: {
+        id: undefined,
+        konwledgeType: undefined,
+        shortText: undefined,
+        content: undefined,
+        parentKonwledgeId: undefined
+      },
       queryParam: {
+        queryRoot: 1,
+        parentKonwledgeId: undefined,
         konwledgeType: 'Q',
         subjectId: 0,
         pageIndex: 1,
@@ -84,6 +136,11 @@ export default {
     }
   },
   created () {
+    this.queryParam.parentKonwledgeId = this.$route.query.id
+    console.log('parentKonwledgeId:' + this.queryParam.parentKonwledgeId)
+    if (this.queryParam.parentKonwledgeId !== undefined) {
+      this.queryParam.konwledgeType = undefined
+    }
     this.initSubject()
   },
   methods: {
@@ -98,6 +155,12 @@ export default {
         this.$refs['knowledgeForm'].clearValidate()
       })
     },
+    handleCreate () {
+      this.createDialogVisible = true
+      this.$nextTick(() => {
+        this.$refs['createKnowledgeForm'].clearValidate()
+      })
+    },
     initSubject () {
       let _this = this
       subjectApi.list().then(re => {
@@ -110,6 +173,7 @@ export default {
     },
     search () {
       this.listLoading = true
+      console.log('this.queryParam:' + JSON.stringify(this.queryParam))
       knowledgeApi.pageList(this.queryParam).then(data => {
         const re = data.response.page
         this.tableData = re.list
@@ -121,6 +185,9 @@ export default {
       })
     },
     knowledgeTypeChange (val) {
+      this.search()
+    },
+    knowledgeClassChange (val) {
       this.search()
     },
     subjectChange (tab, event) {
@@ -136,12 +203,35 @@ export default {
               title: '成功',
               message: '更新成功'
             })
-            this.getList()
+            this.search()
           }).catch(response => {
             this.$notify.error({
               title: '更新失败',
               message: response.data.errmsg
             })
+          })
+        }
+      })
+    },
+    confirmCreate () {
+      this.requestLock = true
+      this.createKnowledgeForm.parentKonwledgeId = this.queryParam.parentKonwledgeId
+      this.$refs['createKnowledgeForm'].validate((valid) => {
+        if (valid) {
+          knowledgeApi.create(this.createKnowledgeForm).then(response => {
+            this.createDialogVisible = false
+            this.$notify.success({
+              title: '成功',
+              message: '创建成功'
+            })
+            this.search()
+            this.requestLock = false
+          }).catch(response => {
+            this.$notify.error({
+              title: '创建失败',
+              message: response.data.errmsg
+            })
+            this.requestLock = false
           })
         }
       })

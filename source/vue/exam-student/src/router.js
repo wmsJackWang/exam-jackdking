@@ -51,7 +51,7 @@ const router = new Router({
       children: [
         {
           path: 'index',
-          component: () => import('@/views/knowledge/index'),
+          component: () => import('@/views/knowledge'),
           name: 'QuestionErrorIndex',
           meta: { title: '错题本' }
         }
@@ -105,6 +105,7 @@ const router = new Router({
         }
       ]
     },
+    { path: '/graph', name: 'GraphNodePic', component: () => import('@/views/graph/index'), meta: { title: '知识图谱' } },
     { path: '/do', name: 'ExamPaperDo', component: () => import('@/views/exam/paper/do'), meta: { title: '试卷答题' } },
     { path: '/edit', name: 'ExamPaperEdit', component: () => import('@/views/exam/paper/edit'), meta: { title: '试卷批改' } },
     { path: '/read', name: 'ExamPaperRead', component: () => import('@/views/exam/paper/read'), meta: { title: '试卷查看' } },

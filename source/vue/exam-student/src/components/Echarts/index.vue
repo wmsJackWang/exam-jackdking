@@ -55,6 +55,10 @@ export default {
     }
   },
   methods: {
+    doubleClickNode (data, maxId) {
+      console.log('maxId:' + maxId + '  调用父类方法NodeClick:' + JSON.stringify(data))
+      this.$parent.doubleClickGraphNode(data, maxId)
+    },
     clickNode (data, maxId) {
       console.log('maxId:' + maxId + '  调用父类方法NodeClick:' + JSON.stringify(data))
       this.$parent.clickGraphNode(data, maxId)
@@ -67,15 +71,30 @@ export default {
       this.clickNode(params.data, this.maxId)
     },
     /**
+     * 节点双击事件
+     */
+    async nodeDoubleClick (params) {
+      console.log('maxId:' + this.maxId + '双击了节点:' + JSON.stringify(params.data), 'clicked')
+      this.doubleClickNode(params.data, this.maxId)
+    },
+    /**
      * 设置echarts配置项,重绘画布
      */
     initCharts () {
       if (!this.myChart) {
         this.myChart = echarts.init(document.getElementById('chart'))
         this.myChart.on('click', (params) => {
+          console.log('params:')
           if (params.dataType === 'node') {
             // 判断点击的是图表的节点部分
             this.nodeClick(params)
+          }
+        })
+        this.myChart.on('dblclick', (params) => {
+          console.log('dblclick')
+          if (params.dataType === 'node') {
+            // 判断点击的是图表的节点部分
+            this.nodeDoubleClick(params)
           }
         })
       }
@@ -85,7 +104,10 @@ export default {
         animationDurationUpdate: 100,
         animationEasingUpdate: 'quinticInOut',
         tooltip: {
-          show: true
+          // show: true
+          formatter: function (params) {
+            return params.data.content
+          }
         },
         toolbox: {
           // 显示工具箱

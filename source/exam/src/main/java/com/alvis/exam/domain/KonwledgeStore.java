@@ -48,6 +48,8 @@ public class KonwledgeStore  extends BasePage {
 
     private String shortText;
 
+    private String queryRoot;
+
     public KonwledgeStore() {
         Date now = new Date();
         updateTime = now;

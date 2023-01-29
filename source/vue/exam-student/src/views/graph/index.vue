@@ -1,6 +1,6 @@
 <template>
 
-  <div style="margin-top: 10px" class="app-contain">
+  <div style="margin-top: 10px;height:100%;width: 100%" class="app-contain">
     <Charts ref="charts" v-loading="formLoading" v-show="type === 2" :chartList="searchList" />
 
     <!-- 弹出的页面内容 -->
