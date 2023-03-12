@@ -7,8 +7,9 @@
           <el-radio v-for="item in knowledgeClassList" size="mini" :key="item.id" :label="item.id">{{item.value}}</el-radio>
         </el-radio-group>
         <el-row  style="float: right">
+          <el-button size="small" v-if="total == 0" @click="searchUpLevel()">返回</el-button>
           <el-button  type="primary" style="margin-right: 20px" size="small" @click="handleCreate()" :disabled="requestLock">创建知识</el-button>
-          <el-radio-group v-model="queryParam.konwledgeType" size="mini" @change="knowledgeTypeChange" >
+          <el-radio-group v-model="knowledgeType" size="mini" @change="knowledgeTypeChange" >
             <el-radio v-for="item in knowledgeTypeEnum" size="mini" :key="item.key" :label="item.key">{{item.value}}</el-radio>
           </el-radio-group>
         </el-row>
@@ -19,13 +20,18 @@
           <el-table-column prop="content" label="名称"  />
           <el-table-column align="right">
             <template slot-scope="scope">
-              <router-link target="_blank" :to="{path:'/knowledge/list', query:{id:scope.row.id}}">
-                <el-button  type="text" size="small">查看下级</el-button>
-              </router-link>
+              <el-tooltip class="item" effect="dark" content="复习完一次该知识，增加复习分" placement="top">
+                <el-button  type="text" size="small" style="margin-left: 10px" @click="addReviewScore(scope.row)">复习分({{ scope.row.reviewScore }})</el-button>
+              </el-tooltip>
+              <el-button  type="text" size="small" style="margin-left: 10px" @click="searchUpLevel()">上层</el-button>
+              <el-button  type="text" size="small" style="margin-left: 10px" @click="searchDownLevel(scope.row.id)">下层</el-button>
               <router-link target="_blank" style="margin-left: 10px" :to="{path:'/graph', query:{id:scope.row.id}}">
                 <el-button  type="text" size="small">查看图谱</el-button>
               </router-link>
               <el-button  type="text" size="small" style="margin-left: 10px" @click="handleEdit(scope.row)">编辑</el-button>
+              <el-tooltip class="item" effect="dark" content="知识设置为已检测，已经做过这知识的题型" placement="top">
+                <el-button  type="text" size="small" style="margin-left: 10px" @click="searchUpLevel(scope.row)">检测状态({{ scope.row.isChecked==1? "已检测" : "未检测" }})</el-button>
+              </el-tooltip>
             </template>
           </el-table-column>
         </el-table>
@@ -92,6 +98,7 @@ export default {
   components: { Pagination },
   data () {
     return {
+      pageKnowledgeStack: [],
       knowledgeClassList: [
         {
           id: 1,
@@ -100,6 +107,10 @@ export default {
         {
           id: 2,
           value: '根知识'
+        },
+        {
+          id: 3,
+          value: '所有'
         }
       ],
       requestLock: false,
@@ -107,7 +118,9 @@ export default {
         id: undefined,
         konwledgeType: undefined,
         shortText: undefined,
-        content: undefined
+        content: undefined,
+        isChecked: undefined,
+        reviewScore: undefined
       },
       editDialogVisible: false,
       createDialogVisible: false,
@@ -118,10 +131,11 @@ export default {
         content: undefined,
         parentKonwledgeId: undefined
       },
+      knowledgeType: 'A',
       queryParam: {
         queryRoot: 1,
         parentKonwledgeId: undefined,
-        konwledgeType: 'Q',
+        konwledgeType: undefined,
         subjectId: 0,
         pageIndex: 1,
         pageSize: 10
@@ -161,6 +175,35 @@ export default {
         this.$refs['createKnowledgeForm'].clearValidate()
       })
     },
+    searchDownLevel (id) {
+      let param = {}
+      param.parentKonwledgeId = this.queryParam.parentKonwledgeId
+      param.queryRoot = this.queryParam.queryRoot
+      param.knowledgeType = this.knowledgeType
+      this.pageKnowledgeStack.push(param)
+
+      this.queryParam.parentKonwledgeId = id
+      this.queryParam.queryRoot = 3
+      this.knowledgeType = 'A'
+      this.queryParam.konwledgeType = 'A'
+      this.search()
+    },
+    searchUpLevel () {
+      this.queryParam.queryRoot = 3
+      if (this.pageKnowledgeStack.length === 0) {
+        this.queryParam.parentKonwledgeId = undefined
+        this.queryParam.konwledgeType = 'A'
+        this.queryParam.queryRoot = 3
+      } else {
+        let param = this.pageKnowledgeStack.pop()
+        console.log('param:' + JSON.stringify(param))
+        this.queryParam.parentKonwledgeId = param.parentKonwledgeId
+        this.queryParam.konwledgeType = param.konwledgeType
+        this.konwledgeType = param.konwledgeType
+        this.queryParam.queryRoot = param.queryRoot
+      }
+      this.search()
+    },
     initSubject () {
       let _this = this
       subjectApi.list().then(re => {
@@ -172,6 +215,11 @@ export default {
       })
     },
     search () {
+      if (this.knowledgeType === 'A') {
+        this.queryParam.konwledgeType = undefined
+      } else {
+        this.queryParam.konwledgeType = this.knowledgeType
+      }
       this.listLoading = true
       console.log('this.queryParam:' + JSON.stringify(this.queryParam))
       knowledgeApi.pageList(this.queryParam).then(data => {
@@ -211,6 +259,26 @@ export default {
             })
           })
         }
+      })
+    },
+    addReviewScore (row) {
+      console.log('row:' + JSON.stringify(row))
+      this.knowledgeForm = Object.assign({}, row)
+      console.log('knowledgeForm:' + JSON.stringify(this.knowledgeForm))
+      this.knowledgeForm.konwledgeType = row.konwledgeType
+      this.knowledgeForm.reviewScore = this.knowledgeForm.reviewScore + 1
+      knowledgeApi.update(this.knowledgeForm).then(response => {
+        this.editDialogVisible = false
+        this.$notify.success({
+          title: '成功',
+          message: '更新成功'
+        })
+        this.search()
+      }).catch(response => {
+        this.$notify.error({
+          title: '更新失败',
+          message: response.data.errmsg
+        })
       })
     },
     confirmCreate () {

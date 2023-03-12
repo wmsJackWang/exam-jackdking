@@ -1,8 +1,13 @@
 <template>
 
   <div style="margin-top: 10px;height:100%;width: 100%" class="app-contain">
+    <div v-if="showMenu" class="position-absolute popup-menu flex flex-col" :style="{top:clientY, left:clientX}">
+      <div v-for="item in menuData" :key="item.key"
+           class="popup-menu-item pointer flex flex-center-cz padding-left-m" :data-id="item.id"
+           @click="itemClick" >{{item.name}}
+      </div>
+    </div>
     <Charts ref="charts" v-loading="formLoading" v-show="type === 2" :chartList="searchList" />
-
     <!-- 弹出的页面内容 -->
     <el-dialog :visible.sync="createDialogVisible">
       <el-form :model="createKnowledgeForm" :rules="rules" ref="createKnowledgeForm" label-width="100px">
@@ -38,6 +43,10 @@ export default {
   components: { Charts },
   data () {
     return {
+      showMenu: false,
+      clientX: '',
+      clientY: '',
+      menuData: [{ id: 'rename', name: '重命名', key: '1' }, { id: 'remove', name: '移动', key: '2' }, { id: 'delete', name: '删除', key: '3' }], // 菜单数据
       createKnowledgeForm: {
         id: undefined,
         konwledgeType: undefined,
@@ -202,6 +211,43 @@ export default {
     })
   },
   methods: {
+    show (event) {
+      console.log('父组件传过来的event', event)
+      let x = event.offsetX // 鼠标点击的x坐标
+      let y = event.offsetY // 鼠标点击的y坐标
+      let menuWidth = 150// 菜单宽度，这个与.popup-menu样式对应的宽度一致
+      let menuHeight = this.menuData.length * 30 + 20 // 菜单高度，根据菜单项自动计算的高度
+
+      console.log('x:' + x + 'y:' + y)
+      this.clientX = (parseFloat(x) - 10) + 'px'
+      this.clientY = (parseFloat(y) + 10) + 'px'
+
+      let windowWidth = document.documentElement.clientWidth // 实时屏幕宽度
+      let windowHeight = document.documentElement.clientHeight // 实时屏幕高度
+
+      if (parseFloat(x) + menuWidth > windowWidth) {
+        this.clientX = (parseFloat(windowWidth) - menuWidth - 50) + 'px'
+      }
+      if (parseFloat(y) + menuHeight > windowHeight) {
+        this.clientY = (parseFloat(windowHeight) - menuHeight - 50) + 'px'
+      }
+      console.log('x:' + this.clientX + 'y:' + this.clientY)
+      this.clientX = '100px'
+      this.clientY = '100px'
+      this.showMenu = true
+      // event.stopPropagation()// 阻止事件冒泡
+      document.addEventListener('click', this.closeMenu, false)// 添加关闭事件
+    },
+    closeMenu () {
+      console.log('销毁监听事件。')
+      document.removeEventListener('click', this.closeMenu, false)// 销毁关闭事件
+      this.showMenu = false
+    },
+    itemClick (event) {
+      let id = event.target.getAttribute('data-id')// 获取菜单项id
+      // this.$emit('menuClick', id)// 传参调用父组件事件，让父组件知道是点击到哪个菜单项
+      alert(id)
+    },
     handleCreate () {
       this.createDialogVisible = true
       this.$nextTick(() => {
@@ -245,6 +291,11 @@ export default {
           })
         }
       })
+    },
+    contextMenuGraphNode (data, maxId, event) {
+      console.log('Execute contextmenuGraphNode:' + JSON.stringify(data) + 'maxId:' + maxId + 'this.maxId:' + this.maxId)
+      console.log('x:' + event.offsetX + 'y:' + event.offsetY)
+      this.show(event)
     },
     doubleClickGraphNode (data, maxId) {
       console.log('Execute NodeDbClick:' + JSON.stringify(data) + 'maxId:' + maxId + 'this.maxId:' + this.maxId)
@@ -308,3 +359,25 @@ export default {
   }
 }
 </script>
+<style>
+.popup-menu {
+
+  width: 150px;
+  padding: 10px;
+  border-radius: 10px;
+  background-color:#fff;
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgba(0, 0, 0, .2);
+  z-index: 999;
+}
+
+.popup-menu-item {
+  height: 30px;
+}
+.popup-menu-item:hover {
+  border-radius: 5px;
+  background: rgba(0, 0, 0, .1);
+}
+
+</style>

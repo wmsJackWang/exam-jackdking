@@ -63,6 +63,10 @@ export default {
       console.log('maxId:' + maxId + '  调用父类方法NodeClick:' + JSON.stringify(data))
       this.$parent.clickGraphNode(data, maxId)
     },
+    contextMenuClick (data, maxId, event) {
+      console.log('maxId:' + maxId + '  contextmenuGraphNode:' + JSON.stringify(data))
+      this.$parent.contextMenuGraphNode(data, maxId, event)
+    },
     /**
      * 节点点击事件
      */
@@ -76,6 +80,14 @@ export default {
     async nodeDoubleClick (params) {
       console.log('maxId:' + this.maxId + '双击了节点:' + JSON.stringify(params.data), 'clicked')
       this.doubleClickNode(params.data, this.maxId)
+    },
+    /**
+     * 节点菜单事件
+     */
+    async nodeContextMenuClick (params) {
+      console.log('maxId:' + this.maxId + '双击了节点:' + JSON.stringify(params.data), 'clicked')
+      console.log('event:' + JSON.stringify(params.event.offsetX))
+      this.contextMenuClick(params.data, this.maxId, params.event)
     },
     /**
      * 设置echarts配置项,重绘画布
@@ -95,6 +107,19 @@ export default {
           if (params.dataType === 'node') {
             // 判断点击的是图表的节点部分
             this.nodeDoubleClick(params)
+          }
+        })
+
+        // 去除默认的鼠标事件
+        document.oncontextmenu = function () {
+          return false
+        }
+        this.myChart.off('contextmenu')
+        this.myChart.on('contextmenu', (params) => {
+          console.log('dblclick')
+          if (params.dataType === 'node') {
+            // 判断点击的是图表的节点部分contextmenuGraphNode
+            this.nodeContextMenuClick(params)
           }
         })
       }

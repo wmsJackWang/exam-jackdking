@@ -50,6 +50,10 @@ public class KonwledgeStore  extends BasePage {
 
     private String queryRoot;
 
+    private Long isChecked;
+
+    private Long reviewScore;
+
     public KonwledgeStore() {
         Date now = new Date();
         updateTime = now;

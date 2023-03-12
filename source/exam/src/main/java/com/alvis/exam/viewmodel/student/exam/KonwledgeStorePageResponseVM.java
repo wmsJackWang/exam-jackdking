@@ -46,4 +46,9 @@ public class KonwledgeStorePageResponseVM {
 
     private Date createTime;
 
+    private Long isChecked;
+
+    private Long reviewScore;
+
+
 }

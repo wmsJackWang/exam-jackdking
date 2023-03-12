@@ -186,7 +186,6 @@ public class KonwledgeStoreController extends BaseApiController
         return RestResponse.ok(result);
     }
 
-
     public static <K, V> Map<K, V> parseToMap(String json,
                                               Class<K> keyType,
                                               Class<V> valueType) {

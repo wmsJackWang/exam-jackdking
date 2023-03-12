@@ -275,25 +275,6 @@ export default {
     },
     clickGraphNode (data, maxId) {
       console.log('Execute NodeClick:' + JSON.stringify(data) + 'maxId:' + maxId + 'this.maxId:' + this.maxId)
-      // var index = maxId + 1
-      // 展示一个dialog，将要添加的数据更新到库中去。
-      // 先更新到数据库，然后再更新list
-      // link类型：Q  I  R  C
-      // 数据类型。
-
-      // this.searchList.seriesData.push({
-      //   id: index,
-      //   name: 'mysql' + index,
-      //   categary: '1',
-      //   symbolSize: 10
-      // })
-      //
-      // this.searchList.linksData.push(
-      //   {
-      //     source: '' + data.id,
-      //     target: '' + index,
-      //     name: 'Q'
-      //   })
     },
     sleep (n) {
       var start = new Date().getTime()

@@ -138,7 +138,7 @@ public class KonwledgeStoreServiceImpl implements IKonwledgeStoreService
 
     @Override
     public PageInfo<KonwledgeStore> studentPage(KonwledgeStore konwledgeStore) {
-        return PageHelper.startPage(konwledgeStore.getPageIndex(), konwledgeStore.getPageSize(), "id desc").doSelectPageInfo(() ->
+        return PageHelper.startPage(konwledgeStore.getPageIndex(), konwledgeStore.getPageSize(), "review_score desc ,id desc").doSelectPageInfo(() ->
                 konwledgeStoreMapper.selectKonwledgeStoreList(konwledgeStore));
     }
 
