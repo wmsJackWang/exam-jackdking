@@ -16,7 +16,12 @@
         <el-table v-loading="listLoading" :data="tableData" fit highlight-current-row style="width: 100%">
           <el-table-column prop="id" label="序号" width="90px"/>
           <el-table-column prop="konwledgeType" label="类型" width="90px"/>
-          <el-table-column prop="shortText" label="简称" width="90px"/>
+          <el-table-column prop="shortText" label="简称" width="90px">
+            <template slot-scope="scope">
+              <!-- 注意：这个地方要传参数进去才能进行操作  函数名称(scope.row) -->
+              <div @click="handleRead(scope.row)">{{ scope.row.shortText }}</div>
+            </template>
+          </el-table-column>
           <el-table-column prop="content" label="名称"  />
           <el-table-column align="right">
             <template slot-scope="scope">
@@ -85,6 +90,26 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+
+    <!-- 弹出的页面内容 -->
+    <el-dialog :visible.sync="readDialogVisible">
+      <el-form :model="knowledgeForm" :rules="rules" ref="knowledgeForm" label-width="100px">
+        <el-form-item label="知识：">
+          <!-- 下拉框 -->
+          <el-select v-model="knowledgeForm.konwledgeType" placeholder="请选择" :disabled="true">
+            <el-option v-for="item in knowledgeTypeEnum" :key="item.key" :label="item.value" :value="item.key"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="简略内容">
+          <el-input v-model="knowledgeForm.shortText" placeholder="简略内容" style="margin-top: 10px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="全部内容" :disabled="true">
+          <el-input type="textarea" v-model="knowledgeForm.content" ref="myQuillEditor" rows="10" :disabled="true"></el-input>
+          <!--            <quill-editor v-model="knowledgeForm.content" ref="myQuillEditor" style="height: 500px;" :options="editorOption">-->
+          <!--            </quill-editor>-->
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -123,6 +148,7 @@ export default {
         reviewScore: undefined
       },
       editDialogVisible: false,
+      readDialogVisible: false,
       createDialogVisible: false,
       createKnowledgeForm: {
         id: undefined,
@@ -158,6 +184,17 @@ export default {
     this.initSubject()
   },
   methods: {
+    handleRead (row) {
+      this.readDialogVisible = true
+      console.log('row:' + JSON.stringify(row))
+      this.knowledgeForm = Object.assign({}, row)
+      console.log('knowledgeForm:' + JSON.stringify(this.knowledgeForm))
+      this.knowledgeForm.konwledgeType = row.konwledgeType
+
+      this.$nextTick(() => {
+        this.$refs['knowledgeForm'].clearValidate()
+      })
+    },
     handleEdit (row) {
       this.editDialogVisible = true
       console.log('row:' + JSON.stringify(row))

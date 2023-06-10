@@ -160,6 +160,7 @@ public class KonwledgeStoreServiceImpl implements IKonwledgeStoreService
                     node.setName(konwledgeStore.getShortText());
                     node.setContent(textContent.getContent());
                     node.setKnowledgeType(konwledgeStore.getKonwledgeType());
+                    node.setInfotextcontentid(textContent.getId());
 
                     nodes.add(node);
                     Integer sonSize = getCurrentSonKnowledgeGraphNode(node, maxGraphDeep, atomicId, nodes, links);

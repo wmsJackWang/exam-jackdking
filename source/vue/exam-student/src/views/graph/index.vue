@@ -1,7 +1,7 @@
 <template>
 
   <div style="margin-top: 10px;height:100%;width: 100%" class="app-contain">
-    <div v-if="showMenu" class="position-absolute popup-menu flex flex-col" :style="{top:clientY, left:clientX}">
+    <div v-if="showMenu" ref="popMenu" class="position-absolute popup-menu flex flex-col">
       <div v-for="item in menuData" :key="item.key"
            class="popup-menu-item pointer flex flex-center-cz padding-left-m" :data-id="item.id"
            @click="itemClick" >{{item.name}}
@@ -30,6 +30,28 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+
+    <el-dialog :visible.sync="updateDialogVisible">
+      <el-form :model="createKnowledgeForm" :rules="rules" ref="updateKnowledgeForm" label-width="100px">
+        <el-form-item label="知识：">
+          <!-- 下拉框 -->
+          <el-select v-model="createKnowledgeForm.konwledgeType" placeholder="请选择">
+            <el-option v-for="item in knowledgeTypeEnum" :key="item.key" :label="item.value" :value="item.key"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="简略内容">
+          <el-input v-model="createKnowledgeForm.shortText" placeholder="简略内容" style="margin-top: 10px;"></el-input>
+        </el-form-item>
+        <el-form-item label="全部内容">
+          <el-input type="textarea" v-model="createKnowledgeForm.content" ref="myQuillEditor" rows="10"></el-input>
+          <!--            <quill-editor v-model="knowledgeForm.content" ref="myQuillEditor" style="height: 500px;" :options="editorOption">-->
+          <!--            </quill-editor>-->
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="confirmUpdate()" style="float:right">确定</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -50,11 +72,13 @@ export default {
       createKnowledgeForm: {
         id: undefined,
         konwledgeType: undefined,
+        infotextcontentid: undefined,
         shortText: undefined,
         content: undefined,
         parentKonwledgeId: undefined
       },
       createDialogVisible: false,
+      updateDialogVisible: false,
       formLoading: false,
       nodeQueryParam: {
         graphDeep: 30,
@@ -231,9 +255,9 @@ export default {
       if (parseFloat(y) + menuHeight > windowHeight) {
         this.clientY = (parseFloat(windowHeight) - menuHeight - 50) + 'px'
       }
-      console.log('x:' + this.clientX + 'y:' + this.clientY)
-      this.clientX = '100px'
-      this.clientY = '100px'
+      console.log('1x:' + this.clientX + '  1y:' + this.clientY)
+      // this.clientX = '100px'
+      // this.clientY = '100px'
       this.showMenu = true
       // event.stopPropagation()// 阻止事件冒泡
       document.addEventListener('click', this.closeMenu, false)// 添加关闭事件
@@ -247,11 +271,43 @@ export default {
       let id = event.target.getAttribute('data-id')// 获取菜单项id
       // this.$emit('menuClick', id)// 传参调用父组件事件，让父组件知道是点击到哪个菜单项
       alert(id)
+      console.log('x: ' + event.offsetX + '  y:' + event.offsetY)
+    },
+    handleUpdate (row) {
+      this.updateDialogVisible = true
+      console.log('row:' + JSON.stringify(row))
+      this.createKnowledgeForm = Object.assign({}, row)
+      let data = Object.assign({}, row)
+      this.createKnowledgeForm.id = data.id
+      this.createKnowledgeForm.shortText = data.name
+      this.createKnowledgeForm.konwledgeType = data.knowledgeType
+      this.createKnowledgeForm.content = data.content
+      console.log('knowledgeForm:' + JSON.stringify(this.knowledgeForm))
     },
     handleCreate () {
       this.createDialogVisible = true
       this.$nextTick(() => {
         this.$refs['createKnowledgeForm'].clearValidate()
+      })
+    },
+    confirmUpdate () {
+      console.log('createKnowledgeForm:' + JSON.stringify(this.createKnowledgeForm))
+      this.$refs['updateKnowledgeForm'].validate((valid) => {
+        if (valid) {
+          knowledgeAPI.update(this.createKnowledgeForm).then(response => {
+            this.updateDialogVisible = false
+            this.$notify.success({
+              title: '成功',
+              message: '更新成功'
+            })
+            this.$router.go(0)
+          }).catch(response => {
+            this.$notify.error({
+              title: '更新失败',
+              message: response.data.errmsg
+            })
+          })
+        }
       })
     },
     confirmCreate () {
@@ -295,7 +351,8 @@ export default {
     contextMenuGraphNode (data, maxId, event) {
       console.log('Execute contextmenuGraphNode:' + JSON.stringify(data) + 'maxId:' + maxId + 'this.maxId:' + this.maxId)
       console.log('x:' + event.offsetX + 'y:' + event.offsetY)
-      this.show(event)
+      // this.show(event) // 展示菜单
+      this.handleUpdate(data)
     },
     doubleClickGraphNode (data, maxId) {
       console.log('Execute NodeDbClick:' + JSON.stringify(data) + 'maxId:' + maxId + 'this.maxId:' + this.maxId)

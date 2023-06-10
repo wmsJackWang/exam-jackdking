@@ -14,6 +14,7 @@ public class Node {
     Integer deepGrade;
     String content;
     String knowledgeType;
+    Integer infotextcontentid;
 
     @Override
     public boolean equals(Object o) {
