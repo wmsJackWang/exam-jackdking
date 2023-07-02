@@ -58,13 +58,23 @@
           <el-input v-model="createKnowledgeForm.shortText" placeholder="简略内容" style="margin-top: 10px;"></el-input>
         </el-form-item>
         <el-form-item label="全部内容">
-          <el-input type="textarea" v-model="createKnowledgeForm.content" ref="myQuillEditor" rows="10"></el-input>
-          <!--            <quill-editor v-model="knowledgeForm.content" ref="myQuillEditor" style="height: 500px;" :options="editorOption">-->
-          <!--            </quill-editor>-->
+
+          <quill-editor
+            ref="myQuillEditor"
+            v-model="knowledgeForm.content"
+            :options="editorOption"
+            @blur="onEditorBlur($event)"
+            @focus="onEditorFocus($event)"
+            @ready="onEditorReady($event)"
+          />
+        </el-form-item>
+        <el-form-item label="知识画板">
+          <a href="https://bittechblog.com/excalidraw/index.html" target="_blank">跳转到画板</a>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="confirmCreate('createKnowledgeForm')" style="float:right">确定</el-button>
         </el-form-item>
+
       </el-form>
     </el-dialog>
 
@@ -81,9 +91,14 @@
           <el-input v-model="knowledgeForm.shortText" placeholder="简略内容" style="margin-top: 10px;"></el-input>
         </el-form-item>
         <el-form-item label="全部内容">
-            <el-input type="textarea" v-model="knowledgeForm.content" ref="myQuillEditor" rows="10"></el-input>
-<!--            <quill-editor v-model="knowledgeForm.content" ref="myQuillEditor" style="height: 500px;" :options="editorOption">-->
-<!--            </quill-editor>-->
+          <quill-editor
+            ref="myQuillEditor"
+            v-model="knowledgeForm.content"
+            :options="editorOption"
+          />
+        </el-form-item>
+        <el-form-item label="知识画板">
+          <a href="https://bittechblog.com/excalidraw/index.html" target="_blank">跳转到画板</a>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="confirmUpdate('knowledgeForm')" style="float:right">确定</el-button>
@@ -103,10 +118,15 @@
         <el-form-item label="简略内容">
           <el-input v-model="knowledgeForm.shortText" placeholder="简略内容" style="margin-top: 10px;" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="全部内容" :disabled="true">
-          <el-input type="textarea" v-model="knowledgeForm.content" ref="myQuillEditor" rows="10" :disabled="true"></el-input>
-          <!--            <quill-editor v-model="knowledgeForm.content" ref="myQuillEditor" style="height: 500px;" :options="editorOption">-->
-          <!--            </quill-editor>-->
+        <el-form-item label="全部内容">
+          <quill-editor
+            ref="myQuillEditor"
+            v-model="knowledgeForm.content"
+            :options="editorOption"
+          />
+        </el-form-item>
+        <el-form-item label="知识画板">
+          <a href="https://bittechblog.com/excalidraw/index.html" target="_blank">跳转到画板</a>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -118,9 +138,14 @@ import { mapState } from 'vuex'
 import Pagination from '@/components/Pagination'
 import knowledgeApi from '@/api/knowledge/knowledge'
 import subjectApi from '@/api/subject'
+import { quillEditor } from 'vue-quill-editor'
+
+import 'quill/dist/quill.core.css' // 引入样式
+import 'quill/dist/quill.snow.css' // snow theme
+import 'quill/dist/quill.bubble.css' // bubble theme
 
 export default {
-  components: { Pagination },
+  components: { Pagination, quillEditor },
   data () {
     return {
       pageKnowledgeStack: [],

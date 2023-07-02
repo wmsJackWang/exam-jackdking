@@ -21,9 +21,14 @@
           <el-input v-model="createKnowledgeForm.shortText" placeholder="简略内容" style="margin-top: 10px;"></el-input>
         </el-form-item>
         <el-form-item label="全部内容">
-          <el-input type="textarea" v-model="createKnowledgeForm.content" ref="myQuillEditor" rows="10"></el-input>
-          <!--            <quill-editor v-model="knowledgeForm.content" ref="myQuillEditor" style="height: 500px;" :options="editorOption">-->
-          <!--            </quill-editor>-->
+          <quill-editor
+            ref="myQuillEditor"
+            v-model="createKnowledgeForm.content"
+            :options="editorOption"
+          />
+        </el-form-item>
+        <el-form-item label="知识画板">
+          <a href="https://bittechblog.com/excalidraw/index.html" target="_blank">跳转到画板</a>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="confirmCreate('createKnowledgeForm')" style="float:right">确定</el-button>
@@ -43,9 +48,14 @@
           <el-input v-model="createKnowledgeForm.shortText" placeholder="简略内容" style="margin-top: 10px;"></el-input>
         </el-form-item>
         <el-form-item label="全部内容">
-          <el-input type="textarea" v-model="createKnowledgeForm.content" ref="myQuillEditor" rows="10"></el-input>
-          <!--            <quill-editor v-model="knowledgeForm.content" ref="myQuillEditor" style="height: 500px;" :options="editorOption">-->
-          <!--            </quill-editor>-->
+          <quill-editor
+            ref="myQuillEditor"
+            v-model="createKnowledgeForm.content"
+            :options="editorOption"
+          />
+        </el-form-item>
+        <el-form-item label="知识画板">
+          <a href="https://bittechblog.com/excalidraw/index.html" target="_blank">跳转到画板</a>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="confirmUpdate()" style="float:right">确定</el-button>
@@ -59,10 +69,15 @@
 import Charts from '@/components/Echarts'
 import { mapState } from 'vuex'
 import knowledgeAPI from '@/api/knowledge/knowledge'
+import { quillEditor } from 'vue-quill-editor'
+
+import 'quill/dist/quill.core.css' // 引入样式
+import 'quill/dist/quill.snow.css' // snow theme
+import 'quill/dist/quill.bubble.css' // bubble theme
 
 export default {
   // eslint-disable-next-line vue/no-unused-components
-  components: { Charts },
+  components: { Charts, quillEditor },
   data () {
     return {
       showMenu: false,
