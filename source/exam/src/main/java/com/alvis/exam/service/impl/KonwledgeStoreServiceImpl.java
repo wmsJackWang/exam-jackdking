@@ -248,6 +248,7 @@ public class KonwledgeStoreServiceImpl implements IKonwledgeStoreService
                     childNode.setName(konwledgeStore.getShortText());
                     childNode.setDeepGrade(node.getDeepGrade()+1);
                     childNode.setContent(textContent.getContent());
+                    childNode.setInfotextcontentid(textContent.getId());
 
                     nodes.add(childNode);
 

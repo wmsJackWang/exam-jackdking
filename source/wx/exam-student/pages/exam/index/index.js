@@ -16,7 +16,10 @@ Page({
     total: 1
   },
   onLoad: function(options) {
+    let id = options.id
+    console.log('试卷paperType:'+id)
     this.setData({
+      paperType: id,
       spinShow: true
     });
     this.search(true)

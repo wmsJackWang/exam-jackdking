@@ -48,6 +48,12 @@
     <!-- 弹出的页面内容 -->
     <el-dialog :visible.sync="createDialogVisible">
       <el-form :model="createKnowledgeForm" :rules="rules" ref="createKnowledgeForm" label-width="100px">
+        <el-form-item label="科目：">
+          <!-- 下拉框 -->
+          <el-select v-model="createKnowledgeForm.subjectId" placeholder="请选择">
+            <el-option v-for="item in subjectList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="知识：">
           <!-- 下拉框 -->
           <el-select v-model="createKnowledgeForm.konwledgeType" placeholder="请选择">
@@ -61,11 +67,7 @@
 
           <quill-editor
             ref="myQuillEditor"
-            v-model="knowledgeForm.content"
-            :options="editorOption"
-            @blur="onEditorBlur($event)"
-            @focus="onEditorFocus($event)"
-            @ready="onEditorReady($event)"
+            v-model="createKnowledgeForm.content"
           />
         </el-form-item>
         <el-form-item label="知识画板">
@@ -94,7 +96,6 @@
           <quill-editor
             ref="myQuillEditor"
             v-model="knowledgeForm.content"
-            :options="editorOption"
           />
         </el-form-item>
         <el-form-item label="知识画板">
@@ -122,7 +123,6 @@
           <quill-editor
             ref="myQuillEditor"
             v-model="knowledgeForm.content"
-            :options="editorOption"
           />
         </el-form-item>
         <el-form-item label="知识画板">
@@ -180,6 +180,7 @@ export default {
         konwledgeType: undefined,
         shortText: undefined,
         content: undefined,
+        subjectId: undefined,
         parentKonwledgeId: undefined
       },
       knowledgeType: 'A',
@@ -270,6 +271,7 @@ export default {
       let _this = this
       subjectApi.list().then(re => {
         _this.subjectList = re.response
+        console.log('subjectList:'+JSON.stringify(_this.subjectList))
         let subjectId = _this.subjectList[0].id
         _this.queryParam.subjectId = subjectId
         _this.tabId = subjectId.toString()

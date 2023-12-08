@@ -1,0 +1,18 @@
+<!--轮播图组件-->
+<h-swiper swiperImg="{{swiperImg}}"/>
+<!--输入框 绝对定位-->
+	<view class="swiper-input">
+	    <input class="input-item" placeholder="你想学哪个科目?" type="text" ></input>
+	    <icon type="search" class="search-icon" size="50rpx"></icon>
+	</view>
+
+ 
+<!--房主直卖-->
+<view class='bow'>
+    <block wx:for="{{maifangImg}}" wx:key="index">
+        <view class="bow-item" bindtap="gotoSelf" hover-class="none" hover-stop-propagation="false" data-index="{{index}}">
+            <view><image class="bow-image" src="{{item.img}}"/></view> 
+            <view>{{item.title}}</view>
+        </view>
+    </block>
+</view>

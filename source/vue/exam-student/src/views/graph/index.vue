@@ -24,7 +24,6 @@
           <quill-editor
             ref="myQuillEditor"
             v-model="createKnowledgeForm.content"
-            :options="editorOption"
           />
         </el-form-item>
         <el-form-item label="知识画板">
@@ -37,21 +36,20 @@
     </el-dialog>
 
     <el-dialog :visible.sync="updateDialogVisible">
-      <el-form :model="createKnowledgeForm" :rules="rules" ref="updateKnowledgeForm" label-width="100px">
+      <el-form :model="updateKnowledgeForm" :rules="rules" ref="updateKnowledgeForm" label-width="100px">
         <el-form-item label="知识：">
           <!-- 下拉框 -->
-          <el-select v-model="createKnowledgeForm.konwledgeType" placeholder="请选择">
+          <el-select v-model="updateKnowledgeForm.konwledgeType" placeholder="请选择">
             <el-option v-for="item in knowledgeTypeEnum" :key="item.key" :label="item.value" :value="item.key"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="简略内容">
-          <el-input v-model="createKnowledgeForm.shortText" placeholder="简略内容" style="margin-top: 10px;"></el-input>
+          <el-input v-model="updateKnowledgeForm.shortText" @input="handleInput" placeholder="简略内容" style="margin-top: 10px;"></el-input>
         </el-form-item>
         <el-form-item label="全部内容">
           <quill-editor
             ref="myQuillEditor"
-            v-model="createKnowledgeForm.content"
-            :options="editorOption"
+            v-model="updateKnowledgeForm.content"
           />
         </el-form-item>
         <el-form-item label="知识画板">
@@ -80,11 +78,20 @@ export default {
   components: { Charts, quillEditor },
   data () {
     return {
+      dataMap: new Map(),
       showMenu: false,
       clientX: '',
       clientY: '',
       menuData: [{ id: 'rename', name: '重命名', key: '1' }, { id: 'remove', name: '移动', key: '2' }, { id: 'delete', name: '删除', key: '3' }], // 菜单数据
       createKnowledgeForm: {
+        id: undefined,
+        konwledgeType: undefined,
+        infotextcontentid: undefined,
+        shortText: undefined,
+        content: undefined,
+        parentKonwledgeId: undefined
+      },
+      updateKnowledgeForm: {
         id: undefined,
         konwledgeType: undefined,
         infotextcontentid: undefined,
@@ -241,6 +248,15 @@ export default {
         _this.searchList.seriesData = response.nodes
         _this.searchList.linksData = response.links
         _this.formLoading = false
+
+        console.log('length:' + response.nodes.length)
+
+        for (let i = 0; i < response.nodes.length; i++) {
+          console.log(i + 'index' + JSON.stringify(response.nodes[i]))
+          _this.dataMap.set(response.nodes[i].id, response.nodes[i])
+        }
+
+        console.log('map:' + JSON.stringify(this.dataMap))
       })
     }
   },
@@ -250,6 +266,9 @@ export default {
     })
   },
   methods: {
+    handleInput (e) {
+      this.updateKnowledgeForm = JSON.parse(JSON.stringify(this.updateKnowledgeForm))
+    },
     show (event) {
       console.log('父组件传过来的event', event)
       let x = event.offsetX // 鼠标点击的x坐标
@@ -289,14 +308,18 @@ export default {
       console.log('x: ' + event.offsetX + '  y:' + event.offsetY)
     },
     handleUpdate (row) {
+      console.log('row:' +  JSON.stringify(this.searchList.seriesData[0]))
+      // this.map.get(row.id).name = this.map.get(row.id).name + '测试'
+      console.log('row1:' + JSON.stringify(this.dataMap))
+
       this.updateDialogVisible = true
       console.log('row:' + JSON.stringify(row))
-      this.createKnowledgeForm = Object.assign({}, row)
+      this.updateKnowledgeForm = Object.assign({}, row)
       let data = Object.assign({}, row)
-      this.createKnowledgeForm.id = data.id
-      this.createKnowledgeForm.shortText = data.name
-      this.createKnowledgeForm.konwledgeType = data.knowledgeType
-      this.createKnowledgeForm.content = data.content
+      this.updateKnowledgeForm.id = data.id
+      this.updateKnowledgeForm.shortText = data.name
+      this.updateKnowledgeForm.konwledgeType = data.knowledgeType
+      this.updateKnowledgeForm.content = data.content
       console.log('knowledgeForm:' + JSON.stringify(this.knowledgeForm))
     },
     handleCreate () {
@@ -306,10 +329,10 @@ export default {
       })
     },
     confirmUpdate () {
-      console.log('createKnowledgeForm:' + JSON.stringify(this.createKnowledgeForm))
+      console.log('updateKnowledgeForm:' + JSON.stringify(this.updateKnowledgeForm))
       this.$refs['updateKnowledgeForm'].validate((valid) => {
         if (valid) {
-          knowledgeAPI.update(this.createKnowledgeForm).then(response => {
+          knowledgeAPI.update(this.updateKnowledgeForm).then(response => {
             this.updateDialogVisible = false
             this.$notify.success({
               title: '成功',

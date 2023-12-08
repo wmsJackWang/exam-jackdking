@@ -3,6 +3,7 @@ let app = getApp()
 let tmp = 2 //默认页面是错题页
 Page({
   data: {
+    viewType: 2,
     spinShow: false,
     loadMoreLoad: false,
     loadMoreTip: '暂无数据',
@@ -15,7 +16,11 @@ Page({
     total: 1
   },
   onLoad: function(options) {
+    let id = options.id
+    tmp = id
+    console.log('错题:'+id)
     this.setData({
+      viewType: id,
       spinShow: true
     });
     this.search(true)
