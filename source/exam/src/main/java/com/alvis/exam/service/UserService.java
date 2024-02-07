@@ -133,4 +133,8 @@ public interface UserService extends BaseService<User> {
     boolean checkLoginTokenIsExist(String key);
     
     String getOpenidByLoginTokenFromCache(String Token );
+
+    User getCodeCvUserInfoByToken(String token);
+
+    boolean pushTokenCodeCvUserInfo2Cache(String Token, String content);
 }

@@ -14,17 +14,17 @@ import java.io.IOException;
  * 未登录
  * @author alvis
  */
-@Component
-public final class LoginAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoint {
+    @Component
+    public final class LoginAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoint {
 
-    public LoginAuthenticationEntryPoint() {
-        super("/api/user/login");
-    }
+        public LoginAuthenticationEntryPoint() {
+            super("/api/user/login");
+        }
 
-    @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response,
-                         AuthenticationException authException) throws IOException, ServletException {
-        RestUtil.response(response, SystemCode.UNAUTHORIZED);
-    }
+        @Override
+        public void commence(HttpServletRequest request, HttpServletResponse response,
+                             AuthenticationException authException) throws IOException, ServletException {
+            RestUtil.response(response, SystemCode.UNAUTHORIZED);
+        }
 
 }

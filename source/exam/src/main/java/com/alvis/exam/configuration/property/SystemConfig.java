@@ -16,4 +16,5 @@ public class SystemConfig {
     private List<String> securityIgnoreUrls;
     private WxConfig wx;
     private QnConfig qn;
+    private ResumeConfig resumeConfig;
 }

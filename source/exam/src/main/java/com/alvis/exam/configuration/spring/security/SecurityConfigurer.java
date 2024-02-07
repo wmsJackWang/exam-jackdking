@@ -50,21 +50,20 @@ public class SecurityConfigurer {
 
             List<String> securityIgnoreUrls = systemConfig.getSecurityIgnoreUrls();
             String[] ignores = new String[securityIgnoreUrls.size()];
-            http
-                    .addFilterAt(authenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-                    .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint)
-                    .and().authenticationProvider(restAuthenticationProvider)
-                    .authorizeRequests()
-                    .antMatchers(securityIgnoreUrls.toArray(ignores)).permitAll()
-                    .antMatchers("/api/admin/**").hasRole(RoleEnum.ADMIN.getName())
-                    .antMatchers("/api/student/**").hasRole(RoleEnum.STUDENT.getName())
-                    .anyRequest().permitAll()
-                    .and().exceptionHandling().accessDeniedHandler(restAccessDeniedHandler)
-                    .and().formLogin().successHandler(restAuthenticationSuccessHandler).failureHandler(restAuthenticationFailureHandler)
-                    .and().logout().logoutUrl("/api/user/logout").logoutSuccessHandler(restLogoutSuccessHandler).invalidateHttpSession(true)
-                    .and().rememberMe().key(CookieConfig.getName()).tokenValiditySeconds(CookieConfig.getInterval()).userDetailsService(formDetailsService)
-                    .and().csrf().disable()
-                    .cors();
+            http.addFilterAt(authenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint)
+                .and().authenticationProvider(restAuthenticationProvider)
+                .authorizeRequests()
+                .antMatchers(securityIgnoreUrls.toArray(ignores)).permitAll()
+                .antMatchers("/api/admin/**").hasRole(RoleEnum.ADMIN.getName())
+                .antMatchers("/api/student/**").hasRole(RoleEnum.STUDENT.getName())
+                .anyRequest().permitAll()
+                .and().exceptionHandling().accessDeniedHandler(restAccessDeniedHandler)
+                .and().formLogin().successHandler(restAuthenticationSuccessHandler).failureHandler(restAuthenticationFailureHandler)
+                .and().logout().logoutUrl("/api/user/logout").logoutSuccessHandler(restLogoutSuccessHandler).invalidateHttpSession(true)
+                .and().rememberMe().key(CookieConfig.getName()).tokenValiditySeconds(CookieConfig.getInterval()).userDetailsService(formDetailsService)
+                .and().csrf().disable()
+                .cors();
         }
 
 

@@ -1,5 +1,6 @@
 package com.alvis.exam.configuration.spring.security;
 
+import com.alvis.exam.base.RestCvResponse;
 import com.alvis.exam.base.RestResponse;
 import com.alvis.exam.base.SystemCode;
 import com.alvis.exam.utility.JsonUtil;
@@ -30,6 +31,18 @@ public class RestUtil {
     public static void response(HttpServletResponse response, int systemCode, String msg, Object content) {
         try {
             RestResponse res = new RestResponse<>(systemCode, msg, content);
+            String resStr = JsonUtil.toJsonStr(res);
+            response.setContentType("application/json;charset=utf-8");
+            response.getWriter().write(resStr);
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
+
+
+    public static void data(HttpServletResponse response, int systemCode, String msg, Object data, String token) {
+        try {
+            RestCvResponse res = new RestCvResponse<>(systemCode, msg, data, token);
             String resStr = JsonUtil.toJsonStr(res);
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(resStr);

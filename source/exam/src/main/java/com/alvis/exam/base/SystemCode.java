@@ -9,6 +9,10 @@ public enum SystemCode {
      */
     OK(1, "成功"),
     /**
+     * OK
+     */
+    SUCCESS(200, "成功"),
+    /**
      * AccessTokenError
      */
     AccessTokenError(400, "用户登录令牌失效"),

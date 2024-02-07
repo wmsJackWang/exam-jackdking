@@ -52,6 +52,13 @@ system:
       - /api/wx/student/auth/checkBind
       - /api/wx/student/auth/checkBindV2
       - /api/wx/student/user/register
+  resumeConfig:
+    token-to-live: 12h   #token 过期时间
+    security-ignore-urls:
+      - /api/codecv/user/login
+      - /api/codecv/user/register
+      - /api/codecv/user/logout
+      - /api/codecv/user/verify
   qn:
     url: http://image.alvisu.com
     bucket: alvisu

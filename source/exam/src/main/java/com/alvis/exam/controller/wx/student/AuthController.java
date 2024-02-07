@@ -66,7 +66,6 @@ public class AuthController extends BaseWXApiController {
         return RestResponse.ok(userToken.getToken());
     }
 
-
     /*
      * 使用code获取得到openid，然后查看是否有用户信息数据
      * 这个方法只是验证用户信息是否绑定username和password。
@@ -112,8 +111,7 @@ public class AuthController extends BaseWXApiController {
 	        }
 			return RestResponse.fail(2, "系统繁忙，请稍后再试");
 		}
-    }    
-    
+    }
     
     /*
      * checkBindV2 接口，无论用户是否绑定，是否在pc端注册，都会使用这个方式去登入

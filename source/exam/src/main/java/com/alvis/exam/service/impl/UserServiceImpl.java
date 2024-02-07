@@ -1,5 +1,6 @@
 package com.alvis.exam.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alvis.exam.domain.other.KeyValue;
 import com.alvis.exam.exception.BusinessException;
 import com.alvis.exam.configuration.property.SystemConfig;
@@ -19,6 +20,7 @@ import org.springframework.data.redis.cache.RedisCache;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +34,7 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
 
     private final static String CACHE_NAME = "User";
     private final static String CACHE_OPENID = "OPENID";
+    private final static String CACHE_CODE_CV_TOKEN = "CODE_CV_TOKEN";
     private final UserMapper userMapper;
     private final ApplicationEventPublisher eventPublisher;
     private final RedisTemplate<String, Object> redisTemplate;
@@ -201,8 +204,28 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
 		return openid;
 	}
 
+    @Override
+    public User getCodeCvUserInfoByToken(String token) {
 
-	@Override
+        String key = cacheConfig.simpleKeyGenerator(CACHE_CODE_CV_TOKEN, token);
+        String userInfoJson = (String)redisTemplate.opsForValue().get(key);
+        if (!StringUtils.isEmpty(userInfoJson)) {
+            return JSON.parseObject(userInfoJson, User.class);
+        }
+
+        return null;
+    }
+
+    @Override
+    public boolean pushTokenCodeCvUserInfo2Cache(String Token, String content) {
+        // TODO Auto-generated method stub
+        String key = cacheConfig.simpleKeyGenerator(CACHE_CODE_CV_TOKEN, Token);
+        redisTemplate.opsForValue().set(key, content, systemConfig.getWx().getTokenToLive());
+        return true;
+    }
+
+
+    @Override
 	public boolean checkLoginTokenIsExist(String Token) {
 		// TODO Auto-generated method stub
 		

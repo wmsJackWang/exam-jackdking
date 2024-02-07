@@ -253,10 +253,10 @@ export default {
 
         for (let i = 0; i < response.nodes.length; i++) {
           console.log(i + 'index' + JSON.stringify(response.nodes[i]))
-          _this.dataMap.set(response.nodes[i].id, response.nodes[i])
+          _this.dataMap.set(response.nodes[i].id + '', response.nodes[i])
         }
 
-        console.log('map:' + JSON.stringify(this.dataMap))
+        console.log('map:' + JSON.stringify(_this.dataMap.size))
       })
     }
   },
@@ -308,7 +308,7 @@ export default {
       console.log('x: ' + event.offsetX + '  y:' + event.offsetY)
     },
     handleUpdate (row) {
-      console.log('row:' +  JSON.stringify(this.searchList.seriesData[0]))
+      console.log('row:' + JSON.stringify(this.searchList.seriesData[0]))
       // this.map.get(row.id).name = this.map.get(row.id).name + '测试'
       console.log('row1:' + JSON.stringify(this.dataMap))
 
@@ -338,7 +338,12 @@ export default {
               title: '成功',
               message: '更新成功'
             })
-            this.$router.go(0)
+            // this.$router.go(0)
+            let node = this.dataMap.get(this.updateKnowledgeForm.id + '')
+            node.content = this.updateKnowledgeForm.content
+            node.shortText = this.updateKnowledgeForm.shortText
+            node.konwledgeType = this.updateKnowledgeForm.konwledgeType
+            console.log('update node:' + JSON.stringify(node))
           }).catch(response => {
             this.$notify.error({
               title: '更新失败',
