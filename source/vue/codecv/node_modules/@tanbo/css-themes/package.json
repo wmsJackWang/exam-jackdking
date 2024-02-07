@@ -1,0 +1,20 @@
+{
+  "name": "@tanbo/css-themes",
+  "version": "0.0.1",
+  "description": "css themes",
+  "main": "./themes/scss/default.scss",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "publish:lib": "npm publish --access=public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tbhuabi/css-themes.git"
+  },
+  "author": "Tan Bo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tbhuabi/css-themes/issues"
+  },
+  "homepage": "https://github.com/tbhuabi/css-themes#readme"
+}
