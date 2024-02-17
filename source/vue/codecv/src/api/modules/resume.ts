@@ -1,5 +1,7 @@
 import { IResumeFile } from '@@types/type'
 import { post } from '@/api/config'
+import { getLocalStorage } from '@/common/localstorage'
+import useUserStore, { TOKEN } from '@/store/modules/user'
 
 export interface IResumeConfig {
   content: string
@@ -54,13 +56,52 @@ export async function setExportCount() {
   })
 }
 
-export async function getTemplateCondition() {
-  const res = await fetch(`${UPSTASH_BASE_URL}/get/templateData`, {
+export async function getAllTemplate() {
+  const res = await fetch(`${UPSTASH_BASE_URL}/api/codecv/resume/get/allTemplateData`, {
+    // headers: {
+    //   Authorization: import.meta.env.VITE_UPSTASH_GET_TOKEN as string
+    // }
+    method: 'POST',
+    body: JSON.stringify({ title: 'title' }),
     headers: {
-      Authorization: import.meta.env.VITE_UPSTASH_GET_TOKEN as string
+      'x-access-token': getLocalStorage(TOKEN) as string,
+      'Content-Type': 'application/json;charset=UTF-8'
     }
   })
   return await res.json()
+}
+
+export async function getTemplateCondition() {
+  const res = await fetch(`${UPSTASH_BASE_URL}/api/codecv/resume/get/templateData`, {
+    // headers: {
+    //   Authorization: import.meta.env.VITE_UPSTASH_GET_TOKEN as string
+    // }
+    method: 'POST',
+    body: JSON.stringify({ title: 'title' }),
+    headers: {
+      'x-access-token': getLocalStorage(TOKEN) as string,
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+  return await res.json()
+}
+// resumeFileList
+
+export async function getResumeFileList() {
+  // const { userInfo } = useUserStore()
+  const res = await fetch(`${UPSTASH_BASE_URL}/api/codecv/resume/resumeFileList`, {
+    // headers: {
+    //   Authorization: import.meta.env.VITE_UPSTASH_GET_TOKEN as string
+    // }
+    method: 'POST',
+    body: JSON.stringify({ token: getLocalStorage(TOKEN) as string }),
+    headers: {
+      'x-access-token': getLocalStorage(TOKEN) as string,
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+
+  return res.json()
 }
 
 export async function setTemplateCondition(params: { name: string }) {
@@ -68,6 +109,7 @@ export async function setTemplateCondition(params: { name: string }) {
     templateData: { [key: string]: string } = {}
   try {
     data = await getTemplateCondition()
+    console.log('data：' + JSON.stringify(data))
   } catch {
     return Promise.resolve({ msg: '获取模板数据失败...', result: null })
   }

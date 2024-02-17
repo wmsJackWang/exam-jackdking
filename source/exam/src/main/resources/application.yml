@@ -59,6 +59,8 @@ system:
       - /api/codecv/user/register
       - /api/codecv/user/logout
       - /api/codecv/user/verify
+      - /api/codecv/resume/get/templateData
+      - /api/codecv/resume/get/allTemplateData
   qn:
     url: http://image.alvisu.com
     bucket: alvisu

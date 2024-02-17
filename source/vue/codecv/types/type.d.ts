@@ -171,4 +171,5 @@ export interface IResumeFile {
   fileContent: string
   id: number
   userId: number
+  type: string
 }

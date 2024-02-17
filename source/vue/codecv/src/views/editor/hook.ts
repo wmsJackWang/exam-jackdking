@@ -21,6 +21,7 @@ import {
 import { IResumeFile } from '@@types/type'
 import { isLogin } from '@/common/global'
 import useUserStore from '@/store/modules/user'
+import { useFile } from '@/views/editor/components/header/hook'
 export const get = getLocalStorage,
   styleAttrs = [
     CUSTOM_MARKDOWN_PRIMARY_COLOR,
@@ -37,7 +38,10 @@ export function useRenderHTML(resumeType: Ref<string>) {
   const editorStore = useEditorStore()
 
   onActivated(() => {
-    importCSS(resumeType.value)
+    console.log('resumeType:' + JSON.stringify(resumeType))
+    // importCSS(resumeType.value)
+    importCSS('create')
+    console.log('editorStore:' + JSON.stringify(editorStore))
     renderDOM.value.innerHTML = convertDOM(editorStore.MDContent).innerHTML
     setTimeout(() => splitPage(renderDOM.value), 100)
   })
@@ -147,14 +151,17 @@ export function useDownLoad(type: Ref<string>) {
     successMessage('导出成功~')
   }
 
-  const { loginModelToggle } = useUserStore()
-  const saveMD = () => {
+  const { loginModelToggle, userInfo } = useUserStore()
+
+  const saveMD = (filename: string) => {
     console.log('editorStore.MDContent:' + editorStore.MDContent)
+    console.log('filename:' + filename)
     const data = {
-      title: '',
-      fileContent: '',
+      title: filename,
+      fileContent: editorStore.MDContent,
       id: null,
-      userId: null
+      userId: userInfo.uid,
+      type: editorStore.resumeType
     } as unknown as IResumeFile
     const res = saveMdFile(data).then((res: any) => {
       console.log(JSON.stringify(res))
@@ -212,6 +219,7 @@ export function useAvatar(resumeType: string) {
       return
     }
     const newContent = MDContent.replace(matchAvatarSlot, `![个人头像](${path})`)
+    console.log('useAvatar, newContent:' + newContent)
     setMDContent(newContent, resumeType)
     successMessage('头像上传成功，如果你想修改为网络图片，你可直接修改对应的链接！')
     // 可能还需要处理可编辑模式中的头像

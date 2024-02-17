@@ -11,11 +11,15 @@ export function useCategory() {
 
   function queryCategory(idx: number) {
     category.value = templateCategory[idx]
+    console.log('idx:' + idx)
+    console.log('category:' + JSON.stringify(category))
     if (category.value === '全部') {
       data.value = [...templates.value]
       return
     }
     data.value = templates.value.filter(template => template.name.includes(category.value))
+    console.log('data:' + JSON.stringify(data))
+    console.log('templates:' + JSON.stringify(templates))
   }
 
   return {
@@ -29,11 +33,12 @@ export function useTemplateData() {
   const ranks = ref<TemplateType[]>([])
   async function templateCondition() {
     const _templateData = await getTemplateCondition()
-    if (!_templateData.result) {
-      errorMessage(_templateData.msg)
+    console.log('useTemplateData _templateData：' + JSON.stringify(_templateData))
+    if (!_templateData.data) {
+      // errorMessage(_templateData.msg)
       return
     }
-    const templateData = JSON.parse(_templateData.result)
+    const templateData = JSON.parse(_templateData.data)
     templates.value.forEach(template => (template.hot = templateData[`t${template.type}`]))
     ranks.value = [...templates.value]
       .sort((a, b) => (b.hot as number) - (a.hot as number))

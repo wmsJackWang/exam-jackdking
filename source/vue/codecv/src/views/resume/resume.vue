@@ -1,56 +1,78 @@
 <script setup lang="ts">
-import NavBar from '@/components/navBar.vue'
-import resumeCard from './components/resumeCard.vue'
 import Empty from '@/components/empty.vue'
-import { templateCategory } from './constant'
-import { useCategory, useTemplateData, useNotification } from './hook'
-import { numFormat } from '@/utils/format'
+import { queryResumeFileList, useCategory, useNotification } from './hook'
 import ToastModal from '@/components/toast-modal/toastModal.vue'
+import useUserStore from '@/store/modules/user'
+import MyResumeCard from '@/views/resume/components/myResumeCard.vue'
 
-const { queryCategory, data } = useCategory()
-const { ranks } = useTemplateData()
+const { login } = useCategory()
+
+const { resumeFileList } = queryResumeFileList()
 const { flag, close } = useNotification()
+const { loginModelToggle, userInfo, loginState } = useUserStore()
+console.log('resumeFileList:' + JSON.stringify(resumeFileList))
 </script>
 
 <template>
   <div class="resume-container flex">
-    <div class="resume-left-container content-card" data-aos="fade-right">
-      <NavBar button="创作模板" :tabs="templateCategory" @tab-click="queryCategory" />
-      <div class="resume-card-container" v-if="data.length">
-        <resume-card v-for="theme in data" :key="theme.id" :theme="theme" />
+    <div class="resume-left-container content-card" style="width: 25%">
+      <div class="resume-hot-rank content-cardy mb-20">
+        <strong class="mb-20">扫码关注公众号</strong>
       </div>
-      <Empty v-else title="暂时没有这类模板 你可以点击右上角创作模板或联系作者添加～" />
+      <img src="../../assets/img/login.jpg" style="max-width: 100%; height: auto" />
+      <p style="color: orangered; font-weight: bold">关注公众号可以再多创建一份简历</p>
+      <p class="line-1">
+        1. ✨ 无需制作烦琐的Excel表格 <br />2. 😎 投递状态手机随查随改 <br />3. 🎈
+        不怕忘记投了哪些公司 <br />4.🔒 隐私保护保证信息不泄漏
+      </p>
     </div>
-    <div class="resume-right-container" data-aos="fade-left">
+    <div class="resume-right-container width:1000px" style="width: 75%" data-aos="fade-left">
       <div class="resume-hot-rank content-card mb-20">
-        <strong class="mb-20">简历模板热度排行</strong>
-        <ul v-if="ranks.length">
-          <li
-            v-for="(t, idx) in ranks"
-            :key="t.type"
-            class="flex hover pointer"
-            @click="$router.push({ path: `/editor`, query: { type: t.type } })"
-          >
-            <el-tooltip :content="t.name" placement="left">
-              <p class="line-1">
-                <span class="mr-10">{{ idx + 1 }}</span
-                >{{ t.name }}
-              </p>
-            </el-tooltip>
-            <sub> <i class="iconfont icon-hot"></i> {{ numFormat(+String(t.hot)) }}</sub>
-          </li>
-        </ul>
-        <Empty title="正在加载中" v-else />
-      </div>
-      <div class="resume-notification content-card">
-        <strong>公告</strong>
-        <p>
-          如果你觉得项目对你有所帮助，请考虑为
-          <a href="https://github.com/acmenlei/codecv" target="_blank">项目</a>
-          点一个 <i class="iconfont icon-star"></i>，若遇到 BUG 请通过底部微信/
-          <a href="https://github.com/acmenlei/codecv/issues" target="_blank">issues</a>
-          描述并复现你所遇到的问题，良好的用户体验需要大家一起来构建，感谢大家的支持～🙏
-        </p>
+        <strong class="mb-20">我的简历</strong>
+        <br />
+        <template v-if="loginState.logined">
+          <div v-if="resumeFileList.length">
+            <div class="resume-card-container">
+              <my-resume-card v-for="theme in resumeFileList" :key="theme.id" :theme="theme" />
+            </div>
+          </div>
+          <div v-else>
+            <Empty title="这里空空如也，您还没有创建过简历～" />
+            <div style="width: 100%; text-align: center">
+              <!--            <button @click="$router.push('/template')" class="main-color-picker" sty>登录</button>-->
+              <button
+                class="exporter local-export btn"
+                @click="$router.push('/template')"
+                style="text-align: center; background: #ff7449; color: white"
+              >
+                去创建
+              </button>
+            </div>
+          </div>
+          <br />
+          <br />
+          <hint>提示：您可以创建 无限份简历，如果您在编写简历过程中遇到任何使用上的问题</hint>
+          <br />
+          <br />
+          <div style="width: 100%; text-align: center">
+            <!--            <button @click="$router.push('/template')" class="main-color-picker" sty>登录</button>-->
+            <button
+              class="exporter local-export btn"
+              @click="$router.push('/template')"
+              style="text-align: center; background: #ff7449; color: white; width: 100%"
+            >
+              ✍🏻 去创建新模板
+            </button>
+          </div>
+        </template>
+        <template v-else>
+          <Empty title="您还没有登录请先登录再查看" />
+          <div style="width: 100%; text-align: center">
+            <button class="exporter local-export btn" @click="login()" style="text-align: center">
+              去登录
+            </button>
+          </div>
+        </template>
       </div>
     </div>
   </div>

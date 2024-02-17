@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { type TemplateType } from '@/templates/config'
 import { useRouter } from 'vue-router'
+import Empty from '@/components/empty.vue'
 
 defineProps<{ theme: TemplateType }>()
 const router = useRouter()
@@ -12,15 +13,32 @@ const edit = (type: string) => {
 
 <template>
   <div class="resume-card" data-aos="zoom-in">
-    <p class="template-hot" v-show="theme.hot">
-      <i class="iconfont icon-hot font-20"></i> {{ theme.hot }}
-    </p>
     <div @click="edit(theme.type)">
       <img :src="theme.img" loading="lazy" />
-      <div class="resume-card-mask">
-        <button class="btn center pointer">使用模板</button>
-      </div>
       {{ theme.name }}
+    </div>
+    <div class="resume-card-mask">
+      <button class="btn center pointer">编辑</button>
+    </div>
+  </div>
+  <div style="text-align: left">
+    <p>简历名称：{{ theme.name }}</p>
+    <div style="text-align: left">
+      <!--            <button @click="$router.push('/template')" class="main-color-picker" sty>登录</button>-->
+      <button
+        class="exporter local-export btn"
+        @click="$router.push('/template')"
+        style="text-align: center; background: #ff7449; color: white"
+      >
+        编辑
+      </button>
+      <button
+        class="exporter local-export btn"
+        @click="$router.push('/template')"
+        style="margin-left: 10px; text-align: center; background: #ff7449; color: white"
+      >
+        删除
+      </button>
     </div>
   </div>
 </template>

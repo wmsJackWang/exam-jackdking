@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.alvis.exam.repository.ResumeTemplateDao">
+
+    <resultMap type="com.alvis.exam.domain.ResumeTemplate" id="ResumeTemplateResult">
+        <result property="type"    column="type"    />
+        <result property="name"    column="name"    />
+        <result property="font"    column="font"    />
+        <result property="lineheight"    column="lineHeight"    />
+        <result property="primaryColor"    column="primary_color"    />
+        <result property="primaryBackground"    column="primary_background"    />
+        <result property="img"    column="img"    />
+        <result property="path"    column="path"    />
+        <result property="content"    column="content"    />
+        <result property="hot"    column="hot"    />
+        <result property="id"    column="id"    />
+    </resultMap>
+
+
+    <sql id="Conditions">
+        <where>
+                        <if test="type != null  and type != ''"> and type = #{type}</if>
+                                    <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+                                    <if test="font != null  and font != ''"> and font = #{font}</if>
+                                    <if test="lineheight != null "> and lineHeight = #{lineheight}</if>
+                                    <if test="primaryColor != null  and primaryColor != ''"> and primary_color = #{primaryColor}</if>
+                                    <if test="primaryBackground != null  and primaryBackground != ''"> and primary_background = #{primaryBackground}</if>
+                                    <if test="img != null  and img != ''"> and img = #{img}</if>
+                                    <if test="path != null  and path != ''"> and path = #{path}</if>
+                                    <if test="content != null  and content != ''"> and content = #{content}</if>
+                                    <if test="hot != null "> and hot = #{hot}</if>
+                        </where>
+    </sql>
+
+    <sql id="selectResumeTemplateVo">
+        select type, name, font, lineHeight, primary_color, primary_background, img, path, content, hot, id from resume_template
+    </sql>
+
+    <select id="selectResumeTemplateList" parameterType="com.alvis.exam.domain.ResumeTemplate" resultMap="ResumeTemplateResult">
+        <include refid="selectResumeTemplateVo"/>
+        <include refid="Conditions"/>
+    </select>
+
+    <select id="selectResumeTemplatePageList" parameterType="Long" resultMap="ResumeTemplateResult">
+        <include refid="selectResumeTemplateVo"/>
+        <include refid="Conditions"/>
+        order by gmt_create desc
+        <if test="limit != null and offset != null">
+            LIMIT #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="count" resultType="integer" parameterType="Long">
+        select count(*)
+        from resume_template
+        <include refid="Conditions"/>
+    </select>
+
+    <select id="selectResumeTemplateById" parameterType="Long" resultMap="ResumeTemplateResult">
+        <include refid="selectResumeTemplateVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertResumeTemplate" parameterType="com.alvis.exam.domain.ResumeTemplate" useGeneratedKeys="true" keyProperty="id">
+        insert into resume_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="type != null  and type != ''">type,</if>
+            <if test="name != null  and name != ''">name,</if>
+            <if test="font != null  and font != ''">font,</if>
+            <if test="lineheight != null ">lineHeight,</if>
+            <if test="primaryColor != null  and primaryColor != ''">primary_color,</if>
+            <if test="primaryBackground != null  and primaryBackground != ''">primary_background,</if>
+            <if test="img != null  and img != ''">img,</if>
+            <if test="path != null  and path != ''">path,</if>
+            <if test="content != null  and content != ''">content,</if>
+            <if test="hot != null ">hot,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="type != null  and type != ''">#{type},</if>
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="font != null  and font != ''">#{font},</if>
+            <if test="lineheight != null ">#{lineheight},</if>
+            <if test="primaryColor != null  and primaryColor != ''">#{primaryColor},</if>
+            <if test="primaryBackground != null  and primaryBackground != ''">#{primaryBackground},</if>
+            <if test="img != null  and img != ''">#{img},</if>
+            <if test="path != null  and path != ''">#{path},</if>
+            <if test="content != null  and content != ''">#{content},</if>
+            <if test="hot != null ">#{hot},</if>
+         </trim>
+    </insert>
+
+    <update id="updateResumeTemplate" parameterType="com.alvis.exam.domain.ResumeTemplate">
+        update resume_template
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="type != null  and type != ''">type = #{type},</if>
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="font != null  and font != ''">font = #{font},</if>
+            <if test="lineheight != null ">lineHeight = #{lineheight},</if>
+            <if test="primaryColor != null  and primaryColor != ''">primary_color = #{primaryColor},</if>
+            <if test="primaryBackground != null  and primaryBackground != ''">primary_background = #{primaryBackground},</if>
+            <if test="img != null  and img != ''">img = #{img},</if>
+            <if test="path != null  and path != ''">path = #{path},</if>
+            <if test="content != null  and content != ''">content = #{content},</if>
+            <if test="hot != null ">hot = #{hot},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteResumeTemplateById" parameterType="Long">
+        delete from resume_template where id = #{id}
+    </delete>
+
+    <delete id="deleteResumeTemplateByIds" parameterType="String">
+        delete from resume_template where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

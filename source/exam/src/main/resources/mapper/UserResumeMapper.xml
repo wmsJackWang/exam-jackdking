@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.alvis.exam.repository.UserResumeDao">
+
+    <resultMap type="com.alvis.exam.domain.UserResume" id="UserResumeResult">
+        <result property="type"    column="type"    />
+        <result property="name"    column="name"    />
+        <result property="font"    column="font"    />
+        <result property="lineheight"    column="lineHeight"    />
+        <result property="primaryColor"    column="primary_color"    />
+        <result property="primaryBackground"    column="primary_background"    />
+        <result property="img"    column="img"    />
+        <result property="content"    column="content"    />
+        <result property="userId"    column="user_id"    />
+        <result property="id"    column="id"    />
+    </resultMap>
+
+
+    <sql id="Conditions">
+        <where>
+                        <if test="type != null  and type != ''"> and type = #{type}</if>
+                                    <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+                                    <if test="font != null  and font != ''"> and font = #{font}</if>
+                                    <if test="lineheight != null "> and lineHeight = #{lineheight}</if>
+                                    <if test="primaryColor != null  and primaryColor != ''"> and primary_color = #{primaryColor}</if>
+                                    <if test="primaryBackground != null  and primaryBackground != ''"> and primary_background = #{primaryBackground}</if>
+                                    <if test="img != null  and img != ''"> and img = #{img}</if>
+                                    <if test="content != null  and content != ''"> and content = #{content}</if>
+                                    <if test="userId != null "> and user_id = #{userId}</if>
+                        </where>
+    </sql>
+
+    <sql id="selectUserResumeVo">
+        select type, name, font, lineHeight, primary_color, primary_background, img, content, user_id, id from user_resume
+    </sql>
+
+    <select id="selectUserResumeList" parameterType="com.alvis.exam.domain.UserResume" resultMap="UserResumeResult">
+        <include refid="selectUserResumeVo"/>
+        <include refid="Conditions"/>
+    </select>
+
+    <select id="selectUserResumePageList" parameterType="Long" resultMap="UserResumeResult">
+        <include refid="selectUserResumeVo"/>
+        <include refid="Conditions"/>
+        order by gmt_create desc
+        <if test="limit != null and offset != null">
+            LIMIT #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="count" resultType="integer" parameterType="Long">
+        select count(*)
+        from user_resume
+        <include refid="Conditions"/>
+    </select>
+
+    <select id="selectUserResumeById" parameterType="Long" resultMap="UserResumeResult">
+        <include refid="selectUserResumeVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertUserResume" parameterType="com.alvis.exam.domain.UserResume" useGeneratedKeys="true" keyProperty="id">
+        insert into user_resume
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="type != null  and type != ''">type,</if>
+            <if test="name != null  and name != ''">name,</if>
+            <if test="font != null  and font != ''">font,</if>
+            <if test="lineheight != null ">lineHeight,</if>
+            <if test="primaryColor != null  and primaryColor != ''">primary_color,</if>
+            <if test="primaryBackground != null  and primaryBackground != ''">primary_background,</if>
+            <if test="img != null  and img != ''">img,</if>
+            <if test="content != null  and content != ''">content,</if>
+            <if test="userId != null ">user_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="type != null  and type != ''">#{type},</if>
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="font != null  and font != ''">#{font},</if>
+            <if test="lineheight != null ">#{lineheight},</if>
+            <if test="primaryColor != null  and primaryColor != ''">#{primaryColor},</if>
+            <if test="primaryBackground != null  and primaryBackground != ''">#{primaryBackground},</if>
+            <if test="img != null  and img != ''">#{img},</if>
+            <if test="content != null  and content != ''">#{content},</if>
+            <if test="userId != null ">#{userId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUserResume" parameterType="com.alvis.exam.domain.UserResume">
+        update user_resume
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="type != null  and type != ''">type = #{type},</if>
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="font != null  and font != ''">font = #{font},</if>
+            <if test="lineheight != null ">lineHeight = #{lineheight},</if>
+            <if test="primaryColor != null  and primaryColor != ''">primary_color = #{primaryColor},</if>
+            <if test="primaryBackground != null  and primaryBackground != ''">primary_background = #{primaryBackground},</if>
+            <if test="img != null  and img != ''">img = #{img},</if>
+            <if test="content != null  and content != ''">content = #{content},</if>
+            <if test="userId != null ">user_id = #{userId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserResumeById" parameterType="Long">
+        delete from user_resume where id = #{id}
+    </delete>
+
+    <delete id="deleteUserResumeByIds" parameterType="String">
+        delete from user_resume where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

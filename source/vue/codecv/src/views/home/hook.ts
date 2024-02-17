@@ -121,6 +121,7 @@ export function useRecentTemplate() {
     // 处理数据
     ;(async () => {
       const _templateData = await getTemplateCondition()
+      console.log('useRecentTemplate _templateData：' + JSON.stringify(_templateData))
       if (!_templateData.result) {
         return
       }

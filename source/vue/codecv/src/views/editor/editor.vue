@@ -13,7 +13,6 @@ const { setAvatar } = useAvatar(resumeType.value)
 const { showExport } = useShowExport()
 startGuide()
 </script>
-
 <template>
   <Header
     @download-dynamic="(filename: string) => downloadDynamic(true, filename)"
@@ -21,7 +20,7 @@ startGuide()
     @download-native="downloadNative"
     @download-md="downloadMD"
     @import-md="importMD"
-    @download-save="saveMD"
+    @download-save="(filename: string) => saveMD(filename)"
   />
   <div id="editor">
     <Editor />

@@ -25,6 +25,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -56,44 +57,13 @@ public class CodeCVTokenHandlerInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String token = request.getHeader("x-access-token");//拿到session token数据
-        User userParam = getUserInfo(request);
-        String username = userParam.getUserName();
-        String password = userParam.getPassword();
-        log.info("resume tokenInterceptor, token:{}, username:{}, password", token, username, password);
+        String url = request.getRequestURI();
+        log.info("resume tokenInterceptor, token:{}", token);
         User user = userService.getCodeCvUserInfoByToken(token);
-        if (user == null && (StringUtils.isEmpty(username) || StringUtils.isEmpty(password))) {
+        if (user == null) {
             RestUtil.response(response, SystemCode.AccessTokenError);
             return false;
         }
-        if (user == null) {//缓存token不存在或失效
-            user = userService.getUserByUserName(username);
-            if (user == null) {
-                RestUtil.response(response, SystemCode.AuthError);
-                return false;
-            }
-
-            if (!StringUtils.equalsIgnoreCase(authenticationService.pwdDecode(user.getPassword()), password)) {
-                RestUtil.response(response, SystemCode.AuthError);
-                return false;
-            }
-            token = UUID.randomUUID().toString();
-            log.info("刷新token值,token:{}", token);
-            userService.pushTokenCodeCvUserInfo2Cache(token, JSON.toJSONString(user));// 推送到cache
-        }
-//
-//        JSONObject resData = new JSONObject();
-//        JSONObject userJson = new JSONObject();
-//        userJson.put("uid", user.getId());
-//        userJson.put("nickName", user.getRealName());
-//        userJson.put("username", user.getUserName());
-//        userJson.put("sex", genderConvert(user.getSex()));
-//        userJson.put("professional", "Java后端");
-//        userJson.put("graduation", "2015");
-//        userJson.put("school", "NUAA");
-//        userJson.put("avatar", "https://apic.douyucdn.cn/upload/avatar_v3/202004/eb347e4e49a5426496be1376cce6e203_big.jpg");
-//        userJson.put("origin", "北京");
-//        RestUtil.data(response, SystemCode.SUCCESS.getCode(), SystemCode.SUCCESS.getMessage(), userJson, token);
-
         log.info("token:{}, 用户信息：{}", token, JSON.toJSONString(user));
         return true;
     }
@@ -111,7 +81,7 @@ public class CodeCVTokenHandlerInterceptor implements HandlerInterceptor {
             while((line = reader.readLine()) != null) {
                 buffer.append(line);
             }
-            User user = JSON.parseObject(buffer.toString(), User.class);
+            User user = Optional.ofNullable(JSON.parseObject(buffer.toString(), User.class)).orElseGet(User::new);
             return user;
         } catch (IOException e) {
             throw new RuntimeException(e);

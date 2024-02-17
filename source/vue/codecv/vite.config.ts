@@ -64,7 +64,9 @@ export default ({ mode }) => {
     ],
     define: {
       // 'import.meta.env.VITE_BASE_URL': JSON.stringify('http://bittechblog.com')
-      'import.meta.env.VITE_BASE_URL': JSON.stringify('http://localhost:8083')
+      'import.meta.env.VITE_BASE_URL': JSON.stringify('http://localhost:8083'),
+      // VITE_UPSTASH_BASE_URL
+      'import.meta.env.VITE_UPSTASH_BASE_URL': JSON.stringify('http://localhost:8083')
     },
     resolve: {
       alias: {

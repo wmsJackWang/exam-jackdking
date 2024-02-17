@@ -15,6 +15,7 @@ export function useToggleEditorMode(resumeType: string) {
       whiteSpace: 0,
       parent: <Node>DOMTree.value?.parentElement
     })
+    console.log('ObserverContent,content:' + content)
     editorStore.setMDContent(content, resumeType)
   }
 
