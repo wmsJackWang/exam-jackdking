@@ -64,6 +64,18 @@ export function useRenderHTML(resumeType: Ref<string>) {
     renderDOM
   }
 }
+export function useResumeId() {
+  const route = useRoute()
+  //初始化也需要填上值 否则后续更新不一致会导致刷新死循环
+  const resumeId = ref(route.query.id ? Number(route.query.id) : (0 as number))
+  onActivated(() => {
+    resumeId.value = route.query.id ? Number(route.query.id) : 0
+  })
+  console.log('resumeId:' + resumeId.value)
+  return {
+    resumeId
+  }
+}
 
 export function useResumeType() {
   const route = useRoute()
@@ -159,9 +171,10 @@ export function useDownLoad(type: Ref<string>) {
     const data = {
       title: filename,
       fileContent: editorStore.MDContent,
-      id: null,
+      id: editorStore.id,
       userId: userInfo.uid,
-      type: editorStore.resumeType
+      type: editorStore.resumeType,
+      name: editorStore.name
     } as unknown as IResumeFile
     const res = saveMdFile(data).then((res: any) => {
       console.log(JSON.stringify(res))
@@ -177,6 +190,7 @@ export function useDownLoad(type: Ref<string>) {
       }
       if (res.code == 200) {
         successMessage('保存成功~')
+        router.push({ path: '/resume' })
       }
     })
   }

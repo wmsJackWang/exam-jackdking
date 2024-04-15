@@ -56,6 +56,29 @@ export async function setExportCount() {
   })
 }
 
+export function queryResumeInfo(data: any) {
+  return post('/api/codecv/resume/getResumeInfo', data)
+}
+
+export function deleteResumeInfo(data: any) {
+  return post('/api/codecv/resume/deleteResumeInfo', data)
+}
+// export function queryResumeInfo(id: number) {
+//   console.log('url:' + `${UPSTASH_BASE_URL}/api/codecv/resume/getResumeInfo`)
+//   const res = fetch(`${UPSTASH_BASE_URL}/api/codecv/resume/getResumeInfo`, {
+//     // headers: {
+//     //   Authorization: import.meta.env.VITE_UPSTASH_GET_TOKEN as string
+//     // }
+//     method: 'POST',
+//     body: JSON.stringify({ id: id }),
+//     headers: {
+//       'x-access-token': getLocalStorage(TOKEN) as string,
+//       'Content-Type': 'application/json;charset=UTF-8'
+//     }
+//   })
+//   return res
+// }
+
 export async function getAllTemplate() {
   const res = await fetch(`${UPSTASH_BASE_URL}/api/codecv/resume/get/allTemplateData`, {
     // headers: {
@@ -68,7 +91,7 @@ export async function getAllTemplate() {
       'Content-Type': 'application/json;charset=UTF-8'
     }
   })
-  return await res.json()
+  return res.json()
 }
 
 export async function getTemplateCondition() {
@@ -141,4 +164,25 @@ export function queryGiteeRepoStars() {
 
 export function saveMdFile(data: IResumeFile) {
   return post('/api/codecv/resume/save', data)
+}
+
+export function queryAllTemplate() {
+  return post('/api/codecv/resume/get/allTemplateData', {})
+}
+
+export async function queryAllTemplateV2() {
+  // const { userInfo } = useUserStore()
+  const res = await fetch(`${UPSTASH_BASE_URL}/api/codecv/resume/get/allTemplateData`, {
+    // headers: {
+    //   Authorization: import.meta.env.VITE_UPSTASH_GET_TOKEN as string
+    // }
+    method: 'POST',
+    body: JSON.stringify({ token: getLocalStorage(TOKEN) as string }),
+    headers: {
+      'x-access-token': getLocalStorage(TOKEN) as string,
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+
+  return res.json()
 }

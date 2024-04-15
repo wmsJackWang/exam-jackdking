@@ -5,20 +5,22 @@ import Empty from '@/components/empty.vue'
 import { templateCategory } from './constant'
 import { useCategory, useTemplateData, useNotification } from './hook'
 import { numFormat } from '@/utils/format'
-import ToastModal from '@/components/toast-modal/toastModal.vue'
+import { freshKey } from '@/templates/config'
 
 const { queryCategory, data } = useCategory()
 const { ranks } = useTemplateData()
 const { flag, close } = useNotification()
+const key = freshKey()
 </script>
-
 <template>
   <div class="resume-container flex">
     <div class="resume-left-container content-card" data-aos="fade-right">
       <NavBar button="创作模板" :tabs="templateCategory" @tab-click="queryCategory" />
-      <div class="resume-card-container" v-if="data.length">
-        <resume-card v-for="theme in data" :key="theme.id" :theme="theme" />
-      </div>
+      <template v-if="data">
+        <div class="resume-card-container">
+          <resume-card v-for="theme in data" :key="theme.id" :theme="theme" />
+        </div>
+      </template>
       <Empty v-else title="暂时没有这类模板 你可以点击右上角创作模板或联系作者添加～" />
     </div>
     <div class="resume-right-container" data-aos="fade-left">
@@ -46,41 +48,42 @@ const { flag, close } = useNotification()
         <strong>公告</strong>
         <p>
           如果你觉得项目对你有所帮助，请考虑为
-          <a href="https://github.com/acmenlei/codecv" target="_blank">项目</a>
-          点一个 <i class="iconfont icon-star"></i>，若遇到 BUG 请通过底部微信/
-          <a href="https://github.com/acmenlei/codecv/issues" target="_blank">issues</a>
+          <a href="https://github.com/wmsJackWang/jackdking-root" target="_blank">项目</a>
+          点一个 <i class="iconfont icon-star"></i>，一起加入到软件架构的知识学习进程中来。若遇到
+          BUG 请通过底部微信/
+          <a href="https://github.com/wmsJackWang/jackdking-root/issues" target="_blank">issues</a>
           描述并复现你所遇到的问题，良好的用户体验需要大家一起来构建，感谢大家的支持～🙏
         </p>
       </div>
     </div>
   </div>
-  <ToastModal :flag="flag" @close="close">
-    <h3 style="margin-bottom: 10px">通知</h3>
-    <p style="line-height: 27px">
-      近期反应同学较多，发个通知告知一下，此网址为备用网址，若需体验更多功能请前往主站<a
-        target="_blank"
-        href="https://codecv.top"
-        style="color: var(--theme); text-decoration: none"
-      >
-        https://codecv.top</a
-      >
-    </p>
-    <ol class="" style="margin: 10px 0; padding-left: 20px; line-height: 28px">
-      <li>🌈 主站导出文件更稳定</li>
-      <li>✍🏻 编写体验更好</li>
-      <li>✨ 工具更加完善</li>
-      <li>☁️ 数据云端实时保存</li>
-    </ol>
-    <p>若不需要请直接忽略，谢谢配合!</p>
-    <br />
-    <div class="flex group">
-      <img src="@/assets/img/wechat_group.png" style="width: 30%" />
-      <h4>加入群聊获取最新情报，兄弟萌速速来水群 ✌🏻</h4>
-    </div>
-    <p style="text-align: center; margin-top: 20px">
-      <button class="primary btn" @click="close">知道了</button>
-    </p>
-  </ToastModal>
+  <!--  <ToastModal :flag="flag" @close="close">-->
+  <!--    <h3 style="margin-bottom: 10px">通知</h3>-->
+  <!--    <p style="line-height: 27px">-->
+  <!--      近期反应同学较多，发个通知告知一下，此网址为备用网址，若需体验更多功能请前往主站<a-->
+  <!--        target="_blank"-->
+  <!--        href="https://codecv.top"-->
+  <!--        style="color: var(&#45;&#45;theme); text-decoration: none"-->
+  <!--      >-->
+  <!--        https://codecv.top</a-->
+  <!--      >-->
+  <!--    </p>-->
+  <!--    <ol class="" style="margin: 10px 0; padding-left: 20px; line-height: 28px">-->
+  <!--      <li>🌈 主站导出文件更稳定</li>-->
+  <!--      <li>✍🏻 编写体验更好</li>-->
+  <!--      <li>✨ 工具更加完善</li>-->
+  <!--      <li>☁️ 数据云端实时保存</li>-->
+  <!--    </ol>-->
+  <!--    <p>若不需要请直接忽略，谢谢配合!</p>-->
+  <!--    <br />-->
+  <!--    <div class="flex group">-->
+  <!--      <img src="@/assets/img/wechat_group.png" style="width: 30%" />-->
+  <!--      <h4>加入群聊获取最新情报，兄弟萌速速来水群 ✌🏻</h4>-->
+  <!--    </div>-->
+  <!--    <p style="text-align: center; margin-top: 20px">-->
+  <!--      <button class="primary btn" @click="close">知道了</button>-->
+  <!--    </p>-->
+  <!--  </ToastModal>-->
 </template>
 
 <style lang="scss" scoped>

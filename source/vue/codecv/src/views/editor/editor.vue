@@ -2,16 +2,26 @@
 import Header from './components/header/header.vue'
 import MarkdownRender from '@/views/editor/components/preview/render.vue'
 import Editor from '@/views/editor/components/editor/editorContainer.vue'
-import { useResumeType, useDownLoad, useImportMD, useAvatar, useShowExport } from './hook'
+import {
+  useResumeType,
+  useDownLoad,
+  useImportMD,
+  useAvatar,
+  useShowExport,
+  useResumeId
+} from './hook'
 import { startGuide } from './components/guide/guide'
 import User from '@/layout/header/components/user.vue'
+import { initTemplate } from '@/templates/config'
 
 const { resumeType } = useResumeType()
+const { resumeId } = useResumeId()
 const { downloadDynamic, downloadNative, downloadMD, saveMD } = useDownLoad(resumeType)
 const { importMD } = useImportMD(resumeType.value)
 const { setAvatar } = useAvatar(resumeType.value)
 const { showExport } = useShowExport()
 startGuide()
+initTemplate()
 </script>
 <template>
   <Header

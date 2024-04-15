@@ -63,10 +63,11 @@ export default ({ mode }) => {
       eslint({ lintOnStart: false, cache: false }) // 打包以及启动项目开启eslint检查
     ],
     define: {
-      // 'import.meta.env.VITE_BASE_URL': JSON.stringify('http://bittechblog.com')
-      'import.meta.env.VITE_BASE_URL': JSON.stringify('http://localhost:8083'),
+      'import.meta.env.VITE_BASE_URL': JSON.stringify('https://bittechblog.com'),
+      // 'import.meta.env.VITE_BASE_URL': JSON.stringify('http://localhost:8083'),
       // VITE_UPSTASH_BASE_URL
-      'import.meta.env.VITE_UPSTASH_BASE_URL': JSON.stringify('http://localhost:8083')
+      // 'import.meta.env.VITE_UPSTASH_BASE_URL': JSON.stringify('http://localhost:8083')
+      'import.meta.env.VITE_UPSTASH_BASE_URL': JSON.stringify('https://bittechblog.com')
     },
     resolve: {
       alias: {

@@ -22,6 +22,19 @@ const router = new Router({
       ]
     },
     {
+      path: '/workbenches',
+      component: Layout,
+      redirect: '/workbenches',
+      children: [
+        {
+          path: 'shareSpace',
+          component: () => import('@/views/workbenches/shareSpace'),
+          name: 'workbenches',
+          meta: { title: '工作台' }
+        }
+      ]
+    },
+    {
       path: '/paper',
       component: Layout,
       children: [
@@ -65,7 +78,7 @@ const router = new Router({
           path: 'list',
           component: () => import('@/views/knowledge/list/index'),
           name: 'QuestionErrorIndex',
-          meta: { title: '错题本' }
+          meta: { title: '进步本' }
         }
       ]
     },

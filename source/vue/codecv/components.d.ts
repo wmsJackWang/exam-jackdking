@@ -45,6 +45,7 @@ declare module '@vue/runtime-core' {
     ExportTotal: typeof import('./src/components/exportTotal.vue')['default']
     HotList: typeof import('./src/components/hot-rank/hotList.vue')['default']
     Logo: typeof import('./src/components/logo.vue')['default']
+    Logo1: typeof import('./src/components/logo1.vue')['default']
     MenuBar: typeof import('./src/components/menu-bar/menu-bar/MenuBar.vue')['default']
     MenuBarItem: typeof import('./src/components/menu-bar/menu-bar-item/menuBarItem.vue')['default']
     NavBar: typeof import('./src/components/navBar.vue')['default']

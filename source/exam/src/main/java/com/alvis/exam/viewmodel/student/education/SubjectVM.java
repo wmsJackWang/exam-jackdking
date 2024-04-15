@@ -9,4 +9,6 @@ public class SubjectVM {
     private String name;
 
     private Integer paperType;
+
+    private Boolean isPlatform = Boolean.FALSE;
 }

@@ -4,16 +4,16 @@ const homeNav = [
     path: '/template',
     tooltip: false
   },
-  {
-    name: '求职社区',
-    path: '/community',
-    tooltip: false
-  },
-  {
-    name: '招聘',
-    path: '/recruit',
-    tooltip: false
-  },
+  // {
+  //   name: '求职社区',
+  //   path: '/community',
+  //   tooltip: false
+  // },
+  // {
+  //   name: '招聘',
+  //   path: '/recruit',
+  //   tooltip: false
+  // },
   {
     name: '语法助手',
     path: '/syntax/helper',
@@ -29,12 +29,12 @@ const homeNav = [
 const homeOutNav = [
   {
     name: 'GitHub',
-    path: 'https://github.com/acmenlei/markdown-resume-to-pdf',
+    path: 'https://github.com/wmsJackWang',
     icon: 'iconfont icon-github'
   },
   {
     name: 'Gitee',
-    path: 'https://gitee.com/codeleilei/markdown2pdf',
+    path: 'https://gitee.com/wmsking1234',
     icon: 'iconfont icon-gitee',
     color: '#d90013'
   }

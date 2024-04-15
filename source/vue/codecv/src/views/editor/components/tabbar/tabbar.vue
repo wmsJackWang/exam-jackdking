@@ -19,9 +19,11 @@ import {
 import { oneDark } from '@codemirror/theme-one-dark'
 import { useThemeConfig } from '@/common/global'
 import { useResumeType } from '../../hook'
+import { initTemplate } from '@/templates/config'
 
 const emits = defineEmits(['upload-avatar', 'html-convert'])
 
+initTemplate()
 const { resumeType } = useResumeType()
 const { cssDialog, cssText, toggleDialog, setStyle, removeStyle } = useCustomCSS(resumeType.value)
 const { color, setColor } = usePrimaryColor(resumeType.value)

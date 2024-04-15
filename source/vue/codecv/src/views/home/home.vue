@@ -14,10 +14,10 @@ const { repoStars, createAnimateEffect } = useGiteeRepoStars()
 </script>
 
 <template>
-  <div class="tip">
-    您正在访问备用网址，请前往主站获取更加完善的功能及简历模板
-    <a class="pointer hover" href="https://wuxiancv.com">点击访问</a>
-  </div>
+  <!--  <div class="tip">-->
+  <!--    您正在访问备用网址，请前往主站获取更加完善的功能及简历模板-->
+  <!--    <a class="pointer hover" href="https://wuxiancv.com">点击访问</a>-->
+  <!--  </div>-->
   <div id="home">
     <Header />
     <div class="introduce flex flex-space-around flex-align-around flex-align-center noto-sans-sc">
@@ -39,7 +39,8 @@ const { repoStars, createAnimateEffect } = useGiteeRepoStars()
       <div class="intro">
         <h1 data-aos="zoom-in">😍 来自用户的声音</h1>
         <p class="sub-intro" data-aos="zoom-in">
-          CodeCV 简历上线后得到了许多用户的喜欢，同时也收获了一些用户的反馈，看看他们是怎么说的吧～
+          牛人简历
+          简历上线后得到了许多用户的喜欢，同时也收获了一些用户的反馈，看看他们是怎么说的吧～
         </p>
       </div>
       <ul class="flex presentation-module">
