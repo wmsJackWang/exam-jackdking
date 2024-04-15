@@ -70,6 +70,18 @@ const router = new Router({
       ]
     },
     {
+      path: '/splitor',
+      component: Layout,
+      children: [
+        {
+          path: 'index',
+          component: () => import('@/views/splitor/index'),
+          name: 'splitor',
+          meta: { title: '分割布局' }
+        }
+      ]
+    },
+    {
       path: '/question',
       component: Layout,
       children: [

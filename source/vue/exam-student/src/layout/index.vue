@@ -24,6 +24,7 @@
         <el-menu-item index="/record/index">考试记录</el-menu-item>
         <el-menu-item index="/question/index">错题本</el-menu-item>
         <el-menu-item index="/knowledge/list">进步本</el-menu-item>
+        <el-menu-item index="/splitor/index">分割</el-menu-item>
       </el-menu>
       <div>
         <a href="/"><img src="@/assets/logo2.png" height="56"/></a>
