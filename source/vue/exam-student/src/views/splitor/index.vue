@@ -9,7 +9,7 @@
       <div class="open_close">
         <i @click="change" v-if="!open_close" class="el-icon-s-unfold"></i>
         <div style="width: 100%">
-          <div class="app-container" style="margin-left: 30px; width: 100%">
+          <div ref = "panel" class="panel">
             <el-page-header class="pageHeader" :content="'当前所处：' + currentLocationName" @back="goBack">
             </el-page-header>
             <el-divider></el-divider>
@@ -176,10 +176,16 @@ export default {
       if (this.openStatus) {
         setTimeout(() => {
           this.open_close = true
+          console.log('top:' + this.$refs.panel.style.marginTop)
+          this.$refs.panel.style.marginTop = 5 + 'px'
+          console.log('top:' + this.$refs.panel.style.marginTop)
         }, 100)
       } else {
         setTimeout(() => {
           this.open_close = false
+          console.log('top:' + this.$refs.panel.style.marginTop)
+          this.$refs.panel.style.marginTop = -23 + 'px'
+          console.log('top:' + this.$refs.panel.style.marginTop)
         }, 100)
       }
     },
@@ -454,46 +460,47 @@ export default {
 </script>
 <!--<style lang="less" scoped>-->
 <style scoped>
-  .main {
-    display: flex;
-    width: 100%;
-    height: 100vh;
-  }
-  .left_main {
-    margin: 0;
-    width: 300px;
-    text-align: center;
-    background-color: whitesmoke;
-    transition: width 1s;
-  }
-  .right_main {
-    flex: 1;
-    background-color: white;
-    position: relative;
-  }
-  .open_close_v2 {
-    position: absolute;
-    left: 0;
-    color: #bbbbbb;
-    font-size: 24px;
-  }
-  .open_close {
-    position: absolute;
-    left: 0;
-    top: 0;
-    color: #bbbbbb;
-    font-size: 24px;
-  }
-  .panel {
-    position: absolute;
-    left: 30px;
-    top: 0;
-    color: #bbbbbb;
-    font-size: 24px;
-  }
-  .left_main_show {
-    width: 0px;
-  }
+.main {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+}
+.left_main {
+  margin: 0;
+  width: 300px;
+  text-align: center;
+  background-color: whitesmoke;
+  transition: width 1s;
+}
+.right_main {
+  flex: 1;
+  background-color: white;
+  position: relative;
+}
+.open_close_v2 {
+  position: absolute;
+  left: 0;
+  color: #bbbbbb;
+  font-size: 24px;
+}
+.open_close {
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #bbbbbb;
+  font-size: 24px;
+  width: 100%;
+}
+.panel {
+  margin-left: 30px;
+  margin-top: 5px;
+  width: 95%
+}
+.left_main_show {
+  width: 0px;
+}
+
+
 </style>
 
 <style lang="scss">
