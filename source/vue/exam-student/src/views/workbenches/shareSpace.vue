@@ -1,150 +1,107 @@
 // shareSpace.vue
 <template xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
     <div class="app-container">
-      <el-row>
-        <el-col :span="4">
-          <el-radio-group v-model="isCollapse" style="margin-bottom: 20px;">
-            <el-radio-button :label="false">展开</el-radio-button>
-            <el-radio-button :label="true">收起</el-radio-button>
-          </el-radio-group>
-          <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="isCollapse">
-            <el-submenu index="1">
-              <template slot="title">
-                <i class="el-icon-location"></i>
-                <span slot="title">导航一</span>
-              </template>
-              <el-menu-item-group>
-                <span slot="title">分组一</span>
-                <el-menu-item index="1-1">选项1</el-menu-item>
-                <el-menu-item index="1-2">选项2</el-menu-item>
-              </el-menu-item-group>
-              <el-menu-item-group title="分组2">
-                <el-menu-item index="1-3">选项3</el-menu-item>
-              </el-menu-item-group>
-              <el-submenu index="1-4">
-                <span slot="title">选项4</span>
-                <el-menu-item index="1-4-1">选项1</el-menu-item>
-              </el-submenu>
-            </el-submenu>
-            <el-menu-item index="2">
-              <i class="el-icon-menu"></i>
-              <span slot="title">导航二</span>
-            </el-menu-item>
-            <el-menu-item index="3" disabled>
-              <i class="el-icon-document"></i>
-              <span slot="title">导航三</span>
-            </el-menu-item>
-            <el-menu-item index="4">
-              <i class="el-icon-setting"></i>
-              <span slot="title">导航四</span>
-            </el-menu-item>
-          </el-menu>
+      <el-page-header class="pageHeader" :content="'当前所处：' + currentLocationName" @back="goBack">
+      </el-page-header>
+      <el-divider></el-divider>
+      <el-row :gutter="10" class="mb8">
+        <el-col :span="1.5" style="float: right;">
+          <el-button plain icon="el-icon-refresh" size="mini" @click="refreshGetList">刷新</el-button>
         </el-col>
-
-      <el-col :span="20">
-        <el-page-header class="pageHeader" :content="'当前所处：' + currentLocationName" @back="goBack">
-        </el-page-header>
-        <el-divider></el-divider>
-        <el-row :gutter="10" class="mb8">
-          <el-col :span="1.5" style="float: right;">
-            <el-button plain icon="el-icon-refresh" size="mini" @click="refreshGetList">刷新</el-button>
-          </el-col>
-          <el-col :span="1.5" style="float: right;">
-            <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="addFolder">新建文件夹</el-button>
-          </el-col>
-          <el-col :span="1.5" style="float: right;">
-            <el-button type="success" plain icon="el-icon-upload" size="mini" @click="addFile">上传文件</el-button>
-          </el-col>
-        </el-row>
-
-        <!-- 文件浏览区 -->
-        <div style="overflow: hidden;">
-          <el-card class="drawing_card" v-loading="cardLoading" style="height: 60vh">
-            <template v-if="folderList.length === 0 && filesList.length === 0">
-              <el-empty description="暂无文件，请创建一个文件夹吧" style="height:60vh"></el-empty>
-            </template>
-            <!-- 文件夹 -->
-            <div v-for="( item, index ) in  folderList ">
-              <div class="folderContainer">
-                <div class="folderWrapper" @dblclick="doubleClickFolder(index, item)"
-                     @contextmenu.prevent.stop="rightClickFolder(index, item, $event)">
-                  <img src="@/assets/folder/folder.png" style="width: 100px;height: 90px;margin-top: -13px"
-                       @contextmenu.prevent.stop="rightClickFolder(index, item, $event)" />
-                  <div class="folderName">
-                    <span>{{
-                        item.folderName.length > 10 ? item.folderName.substring(0, 6) + '...' : item.folderName
-                      }}</span>
-                  </div>
-
-                </div>
-
-              </div>
-            </div>
-            <!-- 文件 -->
-            <div v-for="( item, index ) in  filesList ">
-              <div class="folderContainer">
-                <div class="folderWrapper" @dblclick="down(item.fileUrl)">
-                  <img src="@/assets/folder/fileImg.png" style="width: 100px;height: 90px;margin-top: -13px"
-                       @contextmenu.prevent.stop="rightClickfile(index, item, $event)" />
-                  <div class="folderName">
-                    <span>{{
-                        item.fileName.length > 10 ? item.fileName.substring(0, 6) + '...' : item.fileName
-                      }}</span>
-                  </div>
-
-                </div>
-              </div>
-            </div>
-          </el-card>
-        </div>
-
-        <!-- 文件夹【右键菜单】 -->
-        <div class="add-folder-9" :style="folderStyle" v-show="folderShow">
-          <div class="add-folder-1">
-            <div class="add-folder-2" @click="openFolder">
-              打开文件夹
-            </div>
-            <div style="border: 2px solid rgba(18,17,42,.07)"></div>
-            <div class="add-folder-2" @click="moveFolder">
-              移动
-            </div>
-            <div style="border: 2px solid rgba(18,17,42,.07)"></div>
-            <div class="add-folder-2" @click="updateFloder">
-              重命名
-            </div>
-            <div style="border: 2px solid rgba(18,17,42,.07)"></div>
-            <div class="add-folder-6" @click="deleteFolder">
-              删 除
-            </div>
-          </div>
-        </div>
-        <!-- 文件【右键菜单】 -->
-        <div class="add-folder-9" :style="fileStyle" v-show="fileShow">
-          <div class="add-folder-1">
-
-            <div class="add-folder-2">
-              <a :href="clickFilePath" download="1">下载文件</a>
-
-            </div>
-            <div style="border: 2px solid rgba(18,17,42,.07)"></div>
-            <!-- <div class="add-folder-2" @click="updateFloder">
-              重命名
-            </div>
-             <div style="border: 2px solid rgba(18,17,42,.07)"></div> -->
-            <div class="add-folder-2" @click="moveFolder">
-              移动
-            </div>
-            <div style="border: 2px solid rgba(18,17,42,.07)"></div>
-            <div class="add-folder-6" @click="deleteFileFun">
-              删 除
-            </div>
-          </div>
-        </div>
-        <!-- 上传文件 弹窗 -->
-        <addFolder ref="addFolder1" :currentLocationId="currentLocationId" />
-        <moveFolder ref="moveFolder1" :moveData="moveData"></moveFolder>
-      </el-col>
+        <el-col :span="1.5" style="float: right;">
+          <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="addFolder">新建文件夹</el-button>
+        </el-col>
+        <el-col :span="1.5" style="float: right;">
+          <el-button type="success" plain icon="el-icon-upload" size="mini" @click="addFile">上传文件</el-button>
+        </el-col>
       </el-row>
+
+      <!-- 文件浏览区 -->
+      <div style="overflow: hidden;">
+        <el-card class="drawing_card" v-loading="cardLoading" style="height: 60vh">
+          <template v-if="folderList.length === 0 && filesList.length === 0">
+            <el-empty description="暂无文件，请创建一个文件夹吧" style="height:60vh"></el-empty>
+          </template>
+          <!-- 文件夹 -->
+          <div v-for="( item, index ) in  folderList ">
+            <div class="folderContainer">
+              <div class="folderWrapper" @dblclick="doubleClickFolder(index, item)"
+                   @contextmenu.prevent.stop="rightClickFolder(index, item, $event)">
+                <img src="@/assets/folder/folder.png" style="width: 100px;height: 90px;margin-top: -13px"
+                     @contextmenu.prevent.stop="rightClickFolder(index, item, $event)" />
+                <div class="folderName">
+                  <span>{{
+                      item.folderName.length > 10 ? item.folderName.substring(0, 6) + '...' : item.folderName
+                    }}</span>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+          <!-- 文件 -->
+          <div v-for="( item, index ) in  filesList ">
+            <div class="folderContainer">
+              <div class="folderWrapper" @dblclick="down(item.fileUrl)">
+                <img src="@/assets/folder/fileImg.png" style="width: 100px;height: 90px;margin-top: -13px"
+                     @contextmenu.prevent.stop="rightClickfile(index, item, $event)" />
+                <div class="folderName">
+                  <span>{{
+                      item.fileName.length > 10 ? item.fileName.substring(0, 6) + '...' : item.fileName
+                    }}</span>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </el-card>
+      </div>
+
+      <!-- 文件夹【右键菜单】 -->
+      <div class="add-folder-9" :style="folderStyle" v-show="folderShow">
+        <div class="add-folder-1">
+          <div class="add-folder-2" @click="openFolder">
+            打开文件夹
+          </div>
+          <div style="border: 2px solid rgba(18,17,42,.07)"></div>
+          <div class="add-folder-2" @click="moveFolder">
+            移动
+          </div>
+          <div style="border: 2px solid rgba(18,17,42,.07)"></div>
+          <div class="add-folder-2" @click="updateFloder">
+            重命名
+          </div>
+          <div style="border: 2px solid rgba(18,17,42,.07)"></div>
+          <div class="add-folder-6" @click="deleteFolder">
+            删 除
+          </div>
+        </div>
+      </div>
+      <!-- 文件【右键菜单】 -->
+      <div class="add-folder-9" :style="fileStyle" v-show="fileShow">
+        <div class="add-folder-1">
+
+          <div class="add-folder-2">
+            <a :href="clickFilePath" download="1">下载文件</a>
+
+          </div>
+          <div style="border: 2px solid rgba(18,17,42,.07)"></div>
+          <!-- <div class="add-folder-2" @click="updateFloder">
+            重命名
+          </div>
+           <div style="border: 2px solid rgba(18,17,42,.07)"></div> -->
+          <div class="add-folder-2" @click="moveFolder">
+            移动
+          </div>
+          <div style="border: 2px solid rgba(18,17,42,.07)"></div>
+          <div class="add-folder-6" @click="deleteFileFun">
+            删 除
+          </div>
+        </div>
+      </div>
+      <!-- 上传文件 弹窗 -->
+      <addFolder ref="addFolder1" :currentLocationId="currentLocationId" />
+      <moveFolder ref="moveFolder1" :moveData="moveData"></moveFolder>
     </div>
 </template>
 
@@ -200,11 +157,11 @@ export default {
     }
   },
   methods: {
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath);
+    handleOpen (key, keyPath) {
+      console.log(key, keyPath)
     },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath);
+    handleClose (key, keyPath) {
+      console.log(key, keyPath)
     },
     a () {
       window.open(`这里填服务器储存文件的地址啦~` + this.clickFileName)
