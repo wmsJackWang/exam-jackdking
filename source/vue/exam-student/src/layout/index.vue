@@ -26,6 +26,7 @@
         <el-menu-item index="/question/index">错题本</el-menu-item>
         <el-menu-item index="/workbenches/shareSpace">工作台</el-menu-item>
         <el-menu-item index="/splitor/index">分割</el-menu-item>
+        <el-menu-item index="/progressNote/index">进步本</el-menu-item>
       </el-menu>
       <div>
         <a href="/"><img src="@/assets/logo2.png" height="56"/></a>
@@ -33,7 +34,7 @@
     </el-header>
     <el-main class="student-main">
       <router-view v-if="defaultUrl == '/knowledge/index'" style="height:600px;width: 100%"/>
-      <router-view v-if="defaultUrl != '/knowledge/index'"/>
+      <router-view v-if="defaultUrl != '/knowledge/index'" style="height: 800px"/>
     </el-main>
 <!--    <el-footer height="340" class="student-footer">-->
 <!--      <div class="container">-->
