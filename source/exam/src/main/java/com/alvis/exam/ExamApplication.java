@@ -18,6 +18,8 @@ import com.alvis.exam.configuration.property.SystemConfig;
 @EnableTransactionManagement
 @EnableConfigurationProperties(value = { SystemConfig.class})
 @EnableRetry//启用重试功能
+
+
 @EnableCaching
 @EnableScheduling // 开启定时任务功能
 public class ExamApplication {
@@ -25,5 +27,5 @@ public class ExamApplication {
     public static void main(String[] args) {
         SpringApplication.run(ExamApplication.class, args);
     }
-    
+
 }
