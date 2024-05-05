@@ -1,3 +1,4 @@
+
 import Vue from 'vue'
 import Router from 'vue-router'
 import Layout from '@/layout'
@@ -18,6 +19,31 @@ const router = new Router({
           component: () => import('@/views/dashboard/index'),
           name: 'Dashboard',
           meta: { title: '首页' }
+        }
+      ]
+    },
+    {
+      path: '/splitor',
+      component: Layout,
+      children: [
+        {
+          path: 'index',
+          component: () => import('@/views/splitor/index'),
+          name: 'splitor',
+          meta: { title: '分割布局' }
+        }
+      ]
+    },
+    {
+      path: '/workbenches',
+      component: Layout,
+      redirect: '/workbenches',
+      children: [
+        {
+          path: 'shareSpace',
+          component: () => import('@/views/workbenches/shareSpace'),
+          name: 'workbenches',
+          meta: { title: '工作台' }
         }
       ]
     },
@@ -65,7 +91,7 @@ const router = new Router({
           path: 'list',
           component: () => import('@/views/knowledge/list/index'),
           name: 'QuestionErrorIndex',
-          meta: { title: '错题本' }
+          meta: { title: '进步本' }
         }
       ]
     },

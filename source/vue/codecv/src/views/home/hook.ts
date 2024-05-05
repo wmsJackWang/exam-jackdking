@@ -15,7 +15,7 @@ export function useTypeNet() {
     new TypeNet('.typenet-text', { speed: 10, style: 'font-weight: 500; line-height: 28px' })
       // .type('5分钟', { style: 'font-size: 40px; line-height: 60px; color: #ff7449' })
       .type(' 使用', { style: 'font-size: 40px;line-height: 60px' })
-      .type(' CodeCV ', {
+      .type(' 牛人简历 ', {
         style: 'color: #ff7449; font-size: 40px;line-height: 60px'
       })
       .type('快速生成你的优质简历', {
@@ -23,7 +23,7 @@ export function useTypeNet() {
       })
       .line()
       .line()
-      .type('CodeCV 支持你使用 Markdown 语法来编写你的简历，可扩展性极高。且支持双编辑模式，')
+      .type('牛人简历 支持你使用 Markdown 语法来编写你的简历，可扩展性极高。且支持双编辑模式，')
       .type('Markdown模式 ', { style: 'color: #ff7449' })
       .type('以及')
       .type(' 富文本模式 ', { style: 'color: #ff7449' })

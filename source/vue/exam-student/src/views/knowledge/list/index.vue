@@ -7,8 +7,8 @@
           <el-radio v-for="item in knowledgeClassList" size="mini" :key="item.id" :label="item.id">{{item.value}}</el-radio>
         </el-radio-group>
         <el-row  style="float: right">
-          <el-button size="small" v-if="total == 0" @click="searchUpLevel()">返回</el-button>
-          <el-button  type="primary" style="margin-right: 20px" size="small" @click="handleCreate()" :disabled="requestLock">创建知识</el-button>
+          <el-button size="small" v-if="total == 0" @click="searchUpLevel()" class="el-icon-back" round> 返回上一层</el-button>
+          <el-button style="margin-right: 20px" size="small" @click="handleCreate()" :disabled="requestLock" class="el-icon-circle-plus" round> 创建知识</el-button>
           <el-radio-group v-model="knowledgeType" size="mini" @change="knowledgeTypeChange" >
             <el-radio v-for="item in knowledgeTypeEnum" size="mini" :key="item.key" :label="item.key">{{item.value}}</el-radio>
           </el-radio-group>
@@ -44,21 +44,77 @@
                     @pagination="search" style="margin-top: 20px"/>
       </el-tab-pane>
     </el-tabs>
+    <el-dialog
+      title="QIRC知识模型"
+      :visible.sync="dialogVisible"
+      :width="width"
+      >
+      <img src="@/assets/qirc.png" @load="onLoadImg">
+    </el-dialog>
 
+    <el-dialog
+      title="知识类目(科目)"
+      :visible.sync="dialogSubjectVisible"
+    >
+      <div style="padding: 10px;">
+        <el-table :data="tableSubjectData" border style="width: 100%">
+<!--          <el-table-column prop="date" label="id" width="180">-->
+<!--            <template slot-scope="scope">-->
+<!--              <el-input type="text" v-model="scope.row.date" v-show="scope.row.iseditor" />-->
+<!--              <span v-show="!scope.row.iseditor" @dblclick="tableDoubleClick(scope.row, scope)">{{scope.row.date}}</span>-->
+<!--            </template>-->
+<!--          </el-table-column>-->
+          <el-table-column prop="isPlatform" label="类目类型" width="80">
+            <template slot-scope="scope">
+              <el-tag type="danger" v-show = "scope.row.isPlatform">平台</el-tag>
+              <el-tag type="success" v-show = "!scope.row.isPlatform">个人</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="id" label="id" width="80">
+            <template slot-scope="scope">
+              <span>{{scope.row.id}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="name" label="类目名称" width="180">
+            <template slot-scope="scope">
+              <el-input type="text" v-model="scope.row.name" v-show="scope.row.iseditor" />
+              <span v-show="!scope.row.iseditor" @dblclick="tableDoubleClick(scope.row, scope)">{{scope.row.name}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="270">
+            <template slot-scope="scope">
+              <el-button v-show="!scope.row.iseditor && !scope.row.isPlatform" type="warning" @click="edit(scope.row, scope)">编辑</el-button>
+              <el-button v-show="scope.row.iseditor" type="success" @click="save(scope.row)">保存</el-button>
+              <template>
+                <el-popconfirm style="margin-left: 10px" v-show="!scope.row.isPlatform" type="danger" title="这是一段内容确定删除吗？" @onConfirm="deleteRow(scope.$index, scope.row)">
+                  <el-button slot="reference" type="danger">删除</el-button>
+                </el-popconfirm>
+              </template>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
+      <el-button class="mt-4" style="width: 100%" @click="onAddItem">添加类目</el-button>
+    </el-dialog>
     <!-- 弹出的页面内容 -->
     <el-dialog :visible.sync="createDialogVisible">
       <el-form :model="createKnowledgeForm" :rules="rules" ref="createKnowledgeForm" label-width="100px">
-        <el-form-item label="科目：">
+        <el-form-item label="知识类目：">
           <!-- 下拉框 -->
-          <el-select v-model="createKnowledgeForm.subjectId" placeholder="请选择">
+          <el-select v-model="createKnowledgeForm.subjectId" placeholder="请选择知识类目">
             <el-option v-for="item in subjectList" :key="item.id" :label="item.name" :value="item.id"></el-option>
           </el-select>
+          <el-tooltip content="创建新的知识类目" placement="top">
+            <el-button style="margin-right: 20px; margin-left: 10px" size="small" @click="dialogSubjectVisible = true"  class="el-icon-plus" circle></el-button>
+          </el-tooltip>
         </el-form-item>
-        <el-form-item label="知识：">
+        <el-form-item label="知识类型：">
           <!-- 下拉框 -->
-          <el-select v-model="createKnowledgeForm.konwledgeType" placeholder="请选择">
+          <el-select v-model="createKnowledgeForm.konwledgeType" placeholder="请选择知识类型">
             <el-option v-for="item in knowledgeTypeEnum" :key="item.key" :label="item.value" :value="item.key"></el-option>
           </el-select>
+          <a @click="dialogVisible = true"  style="margin-right: 20px; margin-left: 10px">详情<i class="el-icon-question"></i></a>
         </el-form-item>
         <el-form-item label="简略内容">
           <el-input v-model="createKnowledgeForm.shortText" placeholder="简略内容" style="margin-top: 10px;"></el-input>
@@ -83,7 +139,7 @@
     <!-- 弹出的页面内容 -->
     <el-dialog :visible.sync="editDialogVisible">
       <el-form :model="knowledgeForm" :rules="rules" ref="knowledgeForm" label-width="100px">
-        <el-form-item label="知识：">
+        <el-form-item label="知识类目：">
           <!-- 下拉框 -->
           <el-select v-model="knowledgeForm.konwledgeType" placeholder="请选择">
             <el-option v-for="item in knowledgeTypeEnum" :key="item.key" :label="item.value" :value="item.key"></el-option>
@@ -110,7 +166,7 @@
     <!-- 弹出的页面内容 -->
     <el-dialog :visible.sync="readDialogVisible">
       <el-form :model="knowledgeForm" :rules="rules" ref="knowledgeForm" label-width="100px">
-        <el-form-item label="知识：">
+        <el-form-item label="知识类目：">
           <!-- 下拉框 -->
           <el-select v-model="knowledgeForm.konwledgeType" placeholder="请选择" :disabled="true">
             <el-option v-for="item in knowledgeTypeEnum" :key="item.key" :label="item.value" :value="item.key"></el-option>
@@ -142,12 +198,16 @@ import { quillEditor } from 'vue-quill-editor'
 
 import 'quill/dist/quill.core.css' // 引入样式
 import 'quill/dist/quill.snow.css' // snow theme
-import 'quill/dist/quill.bubble.css' // bubble theme
+import 'quill/dist/quill.bubble.css'
 
 export default {
   components: { Pagination, quillEditor },
   data () {
     return {
+      width: '',
+      dialogVisible: false,
+      dialogSubjectVisible: false,
+      tableSubjectData: undefined,
       pageKnowledgeStack: [],
       knowledgeClassList: [
         {
@@ -172,6 +232,7 @@ export default {
         isChecked: undefined,
         reviewScore: undefined
       },
+      qirc: '@/assets/qirc.png',
       editDialogVisible: false,
       readDialogVisible: false,
       createDialogVisible: false,
@@ -210,6 +271,122 @@ export default {
     this.initSubject()
   },
   methods: {
+    edit (row, index) {
+      row.iseditor = true
+    },
+    tableDoubleClick (row, index) {
+      console.log('tableDoubleClick')
+      if (!row.isPlatform) { // 个人类目才能编辑
+        row.iseditor = true
+      }
+    },
+    save (row, index) {
+      if (row.id !== undefined) {
+        console.log(row.id)
+        subjectApi.update(row.id, row.name).then(res => {
+          if (res.code === 1) {
+            this.$message({
+              message: '知识类目更新成功',
+              type: 'success'
+            })
+          }
+
+          // 刷新列表数据
+          subjectApi.list().then(re => {
+            this.subjectList = re.response
+            console.log('subjectList:' + JSON.stringify(this.subjectList))
+
+            this.tableSubjectData = []
+            this.subjectList.forEach(subject => {
+              this.tableSubjectData.push({
+                id: subject.id,
+                name: subject.name,
+                iseditor: false,
+                isPlatform: subject.isPlatform
+              })
+            })
+          })
+        })
+        row.iseditor = false
+      } else {
+        subjectApi.add(row.name).then(res => {
+          if (res.code === 1) {
+            this.$message({
+              message: '知识类目创建成功',
+              type: 'success'
+            })
+
+            // 刷新列表数据
+            subjectApi.list().then(re => {
+              this.subjectList = re.response
+              console.log('subjectList:' + JSON.stringify(this.subjectList))
+
+              this.tableSubjectData = []
+              this.subjectList.forEach(subject => {
+                this.tableSubjectData.push({
+                  id: subject.id,
+                  name: subject.name,
+                  iseditor: false,
+                  isPlatform: subject.isPlatform
+                })
+              })
+            })
+          }
+        })
+      }
+    },
+    deleteRow (index, row) {
+      console.log('index:' + JSON.stringify(index))
+      console.log('id:' + JSON.stringify(row.id))
+
+      this.tableSubjectData.splice(index, 1)
+      if (row.id === undefined) {
+
+      } else {
+        subjectApi.remove(row.id).then(res => {
+          if (res.code === 1) {
+            this.$message({
+              message: '知识类目创建成功',
+              type: 'success'
+            })
+
+            // 刷新列表数据
+            subjectApi.list().then(re => {
+              this.subjectList = re.response
+              console.log('subjectList:' + JSON.stringify(this.subjectList))
+
+              this.tableSubjectData = []
+              this.subjectList.forEach(subject => {
+                this.tableSubjectData.push({
+                  id: subject.id,
+                  name: subject.name,
+                  iseditor: false,
+                  isPlatform: subject.isPlatform
+                })
+              })
+            })
+          } else {
+            this.$message.error('创建失败')
+          }
+        })
+      }
+    },
+    onAddItem () {
+      this.tableSubjectData.push({
+        name: '新知识类目',
+        iseditor: true,
+        isPlatform: false
+      })
+    },
+    onLoadImg (e) {
+      const img = e.target
+      let width = 0
+      console.log('width:' + img.width + ' height:' + img.height)
+      if (img.fileSize > 0 || (img.width > 1 && img.height > 1)) {
+        width = img.width + 40
+      }
+      this.width = width + 'px'
+    },
     handleRead (row) {
       this.readDialogVisible = true
       console.log('row:' + JSON.stringify(row))
@@ -220,6 +397,13 @@ export default {
       this.$nextTick(() => {
         this.$refs['knowledgeForm'].clearValidate()
       })
+    },
+    handleClose (done) {
+      this.$confirm('确认关闭？')
+        .then(_ => {
+          done()
+        })
+        .catch(_ => {})
     },
     handleEdit (row) {
       this.editDialogVisible = true
@@ -269,13 +453,24 @@ export default {
     },
     initSubject () {
       let _this = this
+      this.tableSubjectData = [
+      ]
       subjectApi.list().then(re => {
         _this.subjectList = re.response
-        console.log('subjectList:'+JSON.stringify(_this.subjectList))
+        console.log('subjectList:' + JSON.stringify(_this.subjectList))
         let subjectId = _this.subjectList[0].id
         _this.queryParam.subjectId = subjectId
         _this.tabId = subjectId.toString()
         _this.search()
+
+        _this.subjectList.forEach(subject => {
+          this.tableSubjectData.push({
+            id: subject.id,
+            name: subject.name,
+            iseditor: false,
+            isPlatform: subject.isPlatform
+          })
+        })
       })
     },
     search () {

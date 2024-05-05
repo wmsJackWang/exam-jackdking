@@ -3,27 +3,29 @@
     <ul class="flex" data-aos="fade-right">
       <strong class="title">关于项目</strong>
       <li>
-        <a href="https://github.com/acmenlei/codecv" target="_blank">开源代码</a>
+        <a href="https://github.com/wmsJackWang/jackdking-root" target="_blank">架构宝典</a>
       </li>
       <li>
-        <a href="https://github.com/acmenlei/typenet" target="_blank">typenet</a>
+        <a href="https://gitee.com/gongtu-society/JackDKing-ACE" target="_blank">归因分类</a>
       </li>
       <li>
-        <a href="https://github.com/acmenlei/a4view" target="_blank">a4view</a>
+        <a href="https://gitee.com/gongtu-society/jack-dking-delay-mq" target="_blank"
+          >消息中间件</a
+        >
       </li>
     </ul>
     <ul class="flex" data-aos="fade-right">
       <strong class="title">作者</strong>
       <li>
-        <a href="https://coderlei.netlify.app" target="_blank">个人博客</a>
+        <a href="https://bittechblog.com" target="_blank">个人博客</a>
       </li>
       <li>
-        <a href="https://github.com/acmenlei" target="_blank"
+        <a href="https://github.com/wmsJackWang" target="_blank"
           ><i class="iconfont icon-github"></i> GitHub</a
         >
       </li>
       <li>
-        <a href="https://gitee.com/codeleilei" target="_blank"
+        <a href="https://gitee.com/wmsking1234" target="_blank"
           ><i class="iconfont icon-gitee"></i> Gitee</a
         >
       </li>
@@ -54,8 +56,8 @@
           <strong>作者微信</strong>
         </li>
         <li>
-          <img src="@/assets/img/qqgroup.jpeg" alt="QQ群问题咨询" />
-          <strong>QQ群交流</strong>
+          <img src="@/assets/img/qqgroup.jpeg" alt="QQ问题咨询" />
+          <strong>QQ交流</strong>
         </li>
       </ul>
     </ul>

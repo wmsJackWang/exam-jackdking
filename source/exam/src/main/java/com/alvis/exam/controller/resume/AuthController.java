@@ -90,6 +90,9 @@ public class AuthController extends BaseWXApiController {
     }
 
     private String genderConvert(Integer sex) {
+        if (sex == null) {
+            return "男";
+        }
         return sex == 1 ? "男":"女";
     }
 

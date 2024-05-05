@@ -7,11 +7,13 @@ import { Tip } from '@/common/tip'
 import { login, logout, registerUser, verify } from '@/api/modules/user'
 import { userForm } from '@/layout/header/hook'
 import { IUser, IUserInfo } from '@@types/type'
+import { refresh } from '@/api/config'
 
 const codeInstance = new VerificationCode()
 export const TOKEN = 'TOKEN',
   CODE_SERVICE_TOKEN = 'CODE_SERVICE_TOKEN',
   USERNAME = 'USERNAME',
+  CURRENT_RESUME = 'CURRENT_RESUME',
   SET_TOKEN = 'SET_TOKEN',
   SET_USERNAME = 'SET_USERNAME'
 
@@ -79,6 +81,8 @@ const useUserStore = defineStore('userStore', {
           setLocalStorage(USERNAME, res.data.username)
           setSessionStorage(CODE_SERVICE_TOKEN, res.token) // 保存会话
           successMessage(res.msg)
+
+          refresh()
         } else {
           errorMessage(res.msg)
         }

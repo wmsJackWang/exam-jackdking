@@ -6,9 +6,9 @@ import { setClickedLinkText, setClickedLinkURL } from './toolbar/components/link
 import { getPickerFile } from '@/utils/uploader'
 import { queryDOM } from '@/utils'
 
-export function reactiveWritable(resumeType: string) {
+export function reactiveWritable(resumeType: string, resumeId: number) {
   const editorStore = useEditorStore()
-  editorStore.initMDContent(resumeType)
+  editorStore.initMDContent(resumeType, resumeId)
   const writable = computed(() => editorStore.writable)
   return {
     writable

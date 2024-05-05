@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import RichEditor from './rich-editor/editor.vue'
 import MDEditor from './md-editor/editor.vue'
-import { useResumeType, useAvatar } from '../../hook'
+import { useResumeType, useAvatar, useResumeId } from '../../hook'
 import { reactiveWritable, useMoveLayout, injectWritableModeAvatarEvent } from './hook'
 
 const { resumeType } = useResumeType()
+const { resumeId } = useResumeId()
 const { left, down } = useMoveLayout()
 
 const { setAvatar } = useAvatar(resumeType.value)
-const { writable } = reactiveWritable(resumeType.value)
+const { writable } = reactiveWritable(resumeType.value, resumeId.value)
 
 injectWritableModeAvatarEvent(writable, setAvatar)
 </script>

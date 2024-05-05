@@ -85,3 +85,10 @@ export function post(url: string, data: any = {}, type?: ResponseType) {
       })
   })
 }
+
+// post method
+export function refresh(this: any) {
+  location.reload()
+}
+
+//

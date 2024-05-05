@@ -2,43 +2,54 @@
 import { type TemplateType } from '@/templates/config'
 import { useRouter } from 'vue-router'
 import Empty from '@/components/empty.vue'
+import { deleteResumeInfo } from '@/api/modules/resume'
+import { refresh } from '@/api/config'
+import { successMessage } from '@/common/message'
 
 defineProps<{ theme: TemplateType }>()
 const router = useRouter()
 
-const edit = (type: string) => {
-  router.push({ path: '/editor', query: { type } })
+const edit = (type: string, id: number) => {
+  router.push({ path: '/editor', query: { type, id } })
+}
+const deleteResume = (type: string, id: number) => {
+  deleteResumeInfo({ id: id }).then((res: any) => {
+    if (res.code === 200) {
+      refresh()
+      successMessage('删除成功!')
+    }
+  })
 }
 </script>
 
 <template>
-  <div class="resume-card" data-aos="zoom-in">
-    <div @click="edit(theme.type)">
+  <div class="resume-card" data-aos="zoom-in" style="height: 80%">
+    <div @click="edit(theme.type, theme.id)">
       <img :src="theme.img" loading="lazy" />
       {{ theme.name }}
     </div>
-    <div class="resume-card-mask">
-      <button class="btn center pointer">编辑</button>
-    </div>
-  </div>
-  <div style="text-align: left">
-    <p>简历名称：{{ theme.name }}</p>
-    <div style="text-align: left">
-      <!--            <button @click="$router.push('/template')" class="main-color-picker" sty>登录</button>-->
-      <button
-        class="exporter local-export btn"
-        @click="$router.push('/template')"
-        style="text-align: center; background: #ff7449; color: white"
-      >
-        编辑
-      </button>
-      <button
-        class="exporter local-export btn"
-        @click="$router.push('/template')"
-        style="margin-left: 10px; text-align: center; background: #ff7449; color: white"
-      >
-        删除
-      </button>
+    <!--    <div class="resume-card-mask">-->
+    <!--      <button class="btn center pointer">编辑</button>-->
+    <!--    </div>-->
+    <div style="text-align: right">
+      <p>简历名称：{{ theme.name }}</p>
+      <div style="text-align: left">
+        <!--            <button @click="$router.push('/template')" class="main-color-picker" sty>登录</button>-->
+        <button
+          class="exporter local-export btn"
+          @click="edit(theme.type, theme.id)"
+          style="text-align: center; background: #ff7449; color: white"
+        >
+          编辑
+        </button>
+        <button
+          class="exporter local-export btn"
+          @click="deleteResume(theme.type, theme.id)"
+          style="margin-left: 10px; text-align: center; background: #ff7449; color: white"
+        >
+          删除
+        </button>
+      </div>
     </div>
   </div>
 </template>

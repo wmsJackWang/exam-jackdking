@@ -1,4 +1,4 @@
-import { templates, type TemplateType } from '@/templates/config'
+import { initTemplate, templates, type TemplateType } from '@/templates/config'
 import { onMounted, Ref, ref } from 'vue'
 import { templateCategory } from './constant'
 import { getTemplateCondition } from '@/api/modules/resume'

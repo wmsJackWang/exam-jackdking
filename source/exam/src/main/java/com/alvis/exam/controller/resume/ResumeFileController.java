@@ -63,29 +63,64 @@ public class ResumeFileController  extends BaseWXApiController {
         return RestCvResponse.ok(queryResultList);
     }
 
+    @RequestMapping(value = "/getResumeInfo", method = RequestMethod.POST)
+    public RestCvResponse getResumeInfo(@RequestBody ResumeFileRequestVO requestVO) {
+
+        log.info("getResumeInfo, requestVO:{}", JSON.toJSONString(requestVO));
+        UserResume queryResult = userResumeDao.selectUserResumeById(Long.valueOf(requestVO.getId()));
+
+        return RestCvResponse.ok(queryResult);
+    }
+
+    @RequestMapping(value = "/deleteResumeInfo", method = RequestMethod.POST)
+    public RestCvResponse deleteResumeInfo(@RequestBody ResumeFileRequestVO requestVO) {
+
+        log.info("getResumeInfo, requestVO:{}", JSON.toJSONString(requestVO));
+        userResumeDao.deleteUserResumeById(Long.valueOf(requestVO.getId()));
+
+        return RestCvResponse.ok();
+    }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public RestCvResponse saveResumeFile(@RequestBody ResumeFileRequestVO requestVO) {
 
         log.info("saveResumeFile, requestVO:{}", JSON.toJSONString(requestVO));
 
-        ResumeTemplate req = new ResumeTemplate();
-        req.setType(requestVO.getType());
-        List<ResumeTemplate> queryResultList = resumeTemplateDao.selectResumeTemplateList(req);
-        ResumeTemplate data = queryResultList.get(0);
+        if (requestVO.getId() == null) {
 
-        UserResume userResume = new UserResume();
-        userResume.setName(requestVO.getTitle());
-        userResume.setUserId(requestVO.getUserId());
-        userResume.setFont(data.getFont());
-        userResume.setContent(requestVO.getFileContent());
-        userResume.setLineheight(data.getLineheight());
-        userResume.setImg(data.getImg());
-        userResume.setPrimaryBackground(data.getPrimaryBackground());
-        userResume.setPrimaryColor(data.getPrimaryColor());
-        userResume.setType(data.getType());
+            ResumeTemplate req = new ResumeTemplate();
+            req.setType(requestVO.getType());
+            List<ResumeTemplate> queryResultList = resumeTemplateDao.selectResumeTemplateList(req);
+            ResumeTemplate data = queryResultList.get(0);
 
-        userResumeDao.insertUserResume(userResume);
+            UserResume userResume = new UserResume();
+            userResume.setName(requestVO.getTitle());
+            userResume.setUserId(requestVO.getUserId());
+            userResume.setFont(data.getFont());
+            userResume.setContent(requestVO.getFileContent());
+            userResume.setLineheight(data.getLineheight());
+            userResume.setImg(data.getImg());
+            userResume.setPrimaryBackground(data.getPrimaryBackground());
+            userResume.setPrimaryColor(data.getPrimaryColor());
+            userResume.setType(data.getType());
+
+            userResumeDao.insertUserResume(userResume);
+        } else {
+
+            UserResume userResume = new UserResume();
+            userResume.setId(requestVO.getId());
+            userResume.setName(requestVO.getName());
+            userResume.setUserId(requestVO.getUserId());
+//            userResume.setFont(data.getFont());
+            userResume.setContent(requestVO.getFileContent());
+//            userResume.setLineheight(data.getLineheight());
+//            userResume.setImg(data.getImg());
+//            userResume.setPrimaryBackground(data.getPrimaryBackground());
+//            userResume.setPrimaryColor(data.getPrimaryColor());
+//            userResume.setType(data.getType());
+
+            userResumeDao.updateUserResume(userResume);
+        }
 
         return RestCvResponse.ok();
     }

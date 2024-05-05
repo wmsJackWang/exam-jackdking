@@ -9,9 +9,10 @@
     <result column="item_order" jdbcType="INTEGER" property="itemOrder" />
     <result column="deleted" jdbcType="BIT" property="deleted" />
     <result column="paper_type" jdbcType="INTEGER" property="paperType" />
+    <result column="userid" jdbcType="INTEGER" property="userid" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, name, level, level_name, item_order, deleted, paper_type
+    id, name, level, level_name, item_order, deleted, paper_type, userid
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
@@ -25,10 +26,10 @@
   </delete>
   <insert id="insert" parameterType="com.alvis.exam.domain.Subject"  useGeneratedKeys="true" keyProperty="id">
     insert into t_subject (id, name, level,
-      level_name, item_order, deleted
+      level_name, item_order, deleted, userid
       )
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER},
-      #{levelName,jdbcType=VARCHAR}, #{itemOrder,jdbcType=INTEGER}, #{deleted,jdbcType=BIT}
+      #{levelName,jdbcType=VARCHAR}, #{itemOrder,jdbcType=INTEGER}, #{deleted,jdbcType=BIT}, #{userid,jdbcType=INTEGER}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.alvis.exam.domain.Subject" useGeneratedKeys="true" keyProperty="id">
@@ -52,6 +53,9 @@
       <if test="deleted != null">
         deleted,
       </if>
+      <if test="userid != null">
+        userid,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -71,6 +75,9 @@
       </if>
       <if test="deleted != null">
         #{deleted,jdbcType=BIT},
+      </if>
+      <if test="userid != null">
+        #{userid,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -92,6 +99,9 @@
       <if test="deleted != null">
         deleted = #{deleted,jdbcType=BIT},
       </if>
+      <if test="userid != null">
+        userid = #{userid,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -101,7 +111,8 @@
       level = #{level,jdbcType=INTEGER},
       level_name = #{levelName,jdbcType=VARCHAR},
       item_order = #{itemOrder,jdbcType=INTEGER},
-      deleted = #{deleted,jdbcType=BIT}
+      deleted = #{deleted,jdbcType=BIT},
+      userid = #{userid,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 

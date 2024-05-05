@@ -18,5 +18,7 @@ public class ResumeFileRequestVO {
 
     String token;
 
+    String name;
+
     TemplateType template;
 }
