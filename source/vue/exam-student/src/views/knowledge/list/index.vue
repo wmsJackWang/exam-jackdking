@@ -22,7 +22,13 @@
               <div @click="handleRead(scope.row)">{{ scope.row.shortText }}</div>
             </template>
           </el-table-column>
-          <el-table-column prop="content" label="名称"  />
+          <el-table-column prop="content" label="名称">
+
+            <template slot-scope="scope">
+              <!-- 注意：这个地方要传参数进去才能进行操作  函数名称(scope.row) -->
+              <div v-html='scope.row.content'></div>
+            </template>
+          </el-table-column>
           <el-table-column align="right">
             <template slot-scope="scope">
               <el-tooltip class="item" effect="dark" content="复习完一次该知识，增加复习分" placement="top">

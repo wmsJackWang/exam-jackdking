@@ -35,6 +35,19 @@ const router = new Router({
       ]
     },
     {
+      path: '/progressNote',
+      component: Layout,
+      redirect: '/progressNote',
+      children: [
+        {
+          path: 'index',
+          component: () => import('@/views/progress-note/index'),
+          name: 'progressNote',
+          meta: { title: '进步本' }
+        }
+      ]
+    },
+    {
       path: '/workbenches',
       component: Layout,
       redirect: '/workbenches',
@@ -91,7 +104,7 @@ const router = new Router({
           path: 'list',
           component: () => import('@/views/knowledge/list/index'),
           name: 'QuestionErrorIndex',
-          meta: { title: '进步本' }
+          meta: { title: '知识空间' }
         }
       ]
     },
