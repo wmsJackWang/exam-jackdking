@@ -1,17 +1,23 @@
 <template>
   <div style="margin-top: 10px" class="app-contain">
-    <el-tabs tab-position="left"  v-model="tabId"  @tab-click="subjectChange" >
+    <el-tabs tab-position="top"  v-model="tabId"  @tab-click="subjectChange" >
       <el-tab-pane :label="item.name"  :key="item.id" :name="item.id" v-for="item in subjectList" style="margin-left: 20px;" >
 
-        <el-radio-group v-model="queryParam.queryRoot" size="mini" @change="knowledgeClassChange" >
-          <el-radio v-for="item in knowledgeClassList" size="mini" :key="item.id" :label="item.id">{{item.value}}</el-radio>
-        </el-radio-group>
-        <el-row  style="float: right">
+        <el-row style="height: 40px">
+          <span style="font-size: 14px; color: rgb(96, 98, 102);"> 知识类型：</span>
+          <el-radio-group v-model="queryParam.queryRoot" size="mini" @change="knowledgeClassChange" >
+            <el-radio-button v-for="item in knowledgeClassList" size="mini" :key="item.id" :label="item.id">{{item.value}}</el-radio-button>
+          </el-radio-group>
+        </el-row>
+        <el-row style="height: 40px">
+          <span style="font-size: 14px; color: rgb(96, 98, 102);"> QIRC类型：</span>
+          <el-radio-group v-model="knowledgeType" size="mini" @change="knowledgeTypeChange" >
+            <el-radio-button v-for="item in knowledgeTypeEnum" size="mini" :key="item.key" :label="item.key">{{item.value}}</el-radio-button>
+          </el-radio-group>
+        </el-row>
+        <el-row style="height: 40px; float: right">
           <el-button size="small" v-if="total == 0" @click="searchUpLevel()" class="el-icon-back" round> 返回上一层</el-button>
           <el-button style="margin-right: 20px" size="small" @click="handleCreate()" :disabled="requestLock" class="el-icon-circle-plus" round> 创建知识</el-button>
-          <el-radio-group v-model="knowledgeType" size="mini" @change="knowledgeTypeChange" >
-            <el-radio v-for="item in knowledgeTypeEnum" size="mini" :key="item.key" :label="item.key">{{item.value}}</el-radio>
-          </el-radio-group>
         </el-row>
         <el-table v-loading="listLoading" :data="tableData" fit highlight-current-row style="width: 100%">
           <el-table-column prop="id" label="序号" width="90px"/>
@@ -26,20 +32,20 @@
 
             <template slot-scope="scope">
               <!-- 注意：这个地方要传参数进去才能进行操作  函数名称(scope.row) -->
-              <div v-html='scope.row.content'></div>
+              <div @dblclick="handleRead(scope.row)" v-html='scope.row.content'></div>
             </template>
           </el-table-column>
           <el-table-column align="right">
             <template slot-scope="scope">
+              <router-link target="_blank" style="margin-left: 10px" :to="{path:'/graph', query:{id:scope.row.id}}">
+                <el-button  type="text" size="small">知识图谱</el-button>
+              </router-link>
+              <el-button  type="text" size="small" style="margin-left: 10px" @click="handleEdit(scope.row)">编辑</el-button>
+              <el-button  type="text" size="small" style="margin-left: 10px" @click="searchUpLevel()">上一层</el-button>
+              <el-button  type="text" size="small" style="margin-left: 10px" @click="searchDownLevel(scope.row.id)">下一层</el-button>
               <el-tooltip class="item" effect="dark" content="复习完一次该知识，增加复习分" placement="top">
                 <el-button  type="text" size="small" style="margin-left: 10px" @click="addReviewScore(scope.row)">复习分({{ scope.row.reviewScore }})</el-button>
               </el-tooltip>
-              <el-button  type="text" size="small" style="margin-left: 10px" @click="searchUpLevel()">上层</el-button>
-              <el-button  type="text" size="small" style="margin-left: 10px" @click="searchDownLevel(scope.row.id)">下层</el-button>
-              <router-link target="_blank" style="margin-left: 10px" :to="{path:'/graph', query:{id:scope.row.id}}">
-                <el-button  type="text" size="small">查看图谱</el-button>
-              </router-link>
-              <el-button  type="text" size="small" style="margin-left: 10px" @click="handleEdit(scope.row)">编辑</el-button>
               <el-tooltip class="item" effect="dark" content="知识设置为已检测，已经做过这知识的题型" placement="top">
                 <el-button  type="text" size="small" style="margin-left: 10px" @click="searchUpLevel(scope.row)">检测状态({{ scope.row.isChecked==1? "已检测" : "未检测" }})</el-button>
               </el-tooltip>

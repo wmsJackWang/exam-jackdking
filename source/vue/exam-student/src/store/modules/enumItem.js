@@ -10,7 +10,7 @@ const state = {
     }
   },
   knowledge: {
-    knowledgeTypeEnum: [{ key: 'Q', value: '主要问题—Q' }, { key: 'I', value: '核心概念—I' }, { key: 'R', value: '重要关系—R' }, { key: 'C', value: '应用场景—C' }, { key: 'A', value: '所有—A' }]
+    knowledgeTypeEnum: [{ key: 'Q', value: '主要问题(Q)' }, { key: 'I', value: '核心概念(I)' }, { key: 'R', value: '重要关系(R)' }, { key: 'C', value: '应用场景(C)' }, { key: 'A', value: '所有(ALL)' }]
   },
   exam: {
     examPaper: {

@@ -1,5 +1,5 @@
 <template >
-  <div id="boxTimeline" v-infinite-scroll="fnLoadMore" :infinite-scroll-distance="ovISD">
+  <div id="boxTimeline" v-infinite-scroll="fnLoadMore" :infinite-scroll-distance="ovISD" style="height: 90%">
     <el-timeline id="timeline1">
       <el-timeline-item v-for="(items,index) in tableData" :key="index" :timestamp="items.createTime" placement="top">
         <el-card class="card" :style="{background:'url('+img.url+')'}">

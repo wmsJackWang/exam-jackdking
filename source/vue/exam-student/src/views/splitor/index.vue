@@ -119,8 +119,8 @@
 </template>
 <script>
 
-import addFolder from '@/components/addFolder'
-import moveFolder from '@/components/moveFolder'
+import addFolder from '@/components/AddFolder'
+import moveFolder from '@/components/MoveFolder'
 import { qeryFolderList, createPublicFolder, renameFolder, deleteFolder, deleteFile } from '@/api/folder'
 
 export default {

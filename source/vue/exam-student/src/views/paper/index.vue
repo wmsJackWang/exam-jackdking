@@ -1,10 +1,11 @@
 <template>
   <div style="margin-top: 10px" class="app-contain">
-    <el-tabs tab-position="left"  v-model="tabId"  @tab-click="subjectChange" >
+    <el-tabs tab-position="top"  v-model="tabId"  @tab-click="subjectChange" >
       <el-tab-pane :label="item.name"  :key="item.id" :name="item.id" v-for="item in subjectList" style="margin-left: 20px;" >
-        <el-row  style="float: right">
+        <el-row style="height: 40px">
+          <span style="font-size: 14px; color: rgb(96, 98, 102);"> 试卷类型：</span>
           <el-radio-group v-model="queryParam.paperType" size="mini" @change="paperTypeChange" >
-            <el-radio v-for="item in paperTypeEnum" size="mini" :key="item.key" :label="item.key">{{item.value}}</el-radio>
+            <el-radio-button v-for="item in paperTypeEnum" size="mini" :key="item.key" :label="item.key">{{item.value}}</el-radio-button>
           </el-radio-group>
         </el-row>
         <el-table v-loading="listLoading" :data="tableData" fit highlight-current-row style="width: 100%">
