@@ -61,7 +61,7 @@
 
         </div>
       </div>
-      <el-divider style="height: 100%" direction="vertical" class="el-divider--vertical"></el-divider>
+      <el-divider style="height: auto" direction="vertical"></el-divider>
       <div class="right_main">
         <div class="open_close">
           <i @click="change" v-if="!open_close" class="el-icon-s-unfold"></i>

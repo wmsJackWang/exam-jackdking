@@ -72,7 +72,7 @@ export default {
           data.rows[i].load = false
         }
         this.tableData = this.tableData.concat(data.rows)
-        if (this.pagination.current === 1) this.moveUp()
+        // if (this.pagination.current === 1) this.moveUp()
         this.pagination = pagination
       }).finally(() => {
         this.loadPage = false
