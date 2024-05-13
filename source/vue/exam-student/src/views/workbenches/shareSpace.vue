@@ -5,14 +5,25 @@
       </el-page-header>
       <el-divider></el-divider>
       <el-row :gutter="10" class="mb8">
-        <el-col :span="1.5" style="float: right;">
-          <el-button plain icon="el-icon-refresh" size="mini" @click="refreshGetList">刷新</el-button>
+        <el-col :span="1.5" style="float: left;">
+          <el-dropdown size="mini" split-button type="primary" @command="handCommand" @click="handClick">
+            新建白板文件
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="a">白板文件</el-dropdown-item>
+              <el-dropdown-item command="b">思维导图</el-dropdown-item>
+              <el-dropdown-item command="c">流程图</el-dropdown-item>
+              <el-dropdown-item command="d">MarkDown</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </el-col>
-        <el-col :span="1.5" style="float: right;">
+        <el-col :span="1.5" style="float: left;">
           <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="addFolder">新建文件夹</el-button>
         </el-col>
-        <el-col :span="1.5" style="float: right;">
+        <el-col :span="1.5" style="float: left;">
           <el-button type="success" plain icon="el-icon-upload" size="mini" @click="addFile">上传文件</el-button>
+        </el-col>
+        <el-col :span="1.5" style="float: left;">
+          <el-button plain icon="el-icon-refresh" size="mini" @click="refreshGetList">刷新</el-button>
         </el-col>
       </el-row>
 
@@ -157,6 +168,27 @@ export default {
     }
   },
   methods: {
+    handClick () {
+      console.log('.....')
+      const routeData = this.$router.resolve({
+        path: '/excalidraw/index.html',
+        query: {
+          id: ''
+        }
+      })
+      window.open(routeData.href, '_blank')
+    },
+    handCommand (command) {
+      console.log('.....' + command)
+      this.$message('click on item ' + command)
+      const routeData = this.$router.resolve({
+        path: '/pdf/download',
+        query: {
+          id: command
+        }
+      })
+      window.open(routeData.href, '_blank')
+    },
     handleOpen (key, keyPath) {
       console.log(key, keyPath)
     },

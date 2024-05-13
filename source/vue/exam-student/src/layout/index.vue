@@ -28,6 +28,10 @@
 <!--              <i class="el-icon-collection"></i>-->
 <!--              <span slot="title">我的收藏</span>-->
 <!--            </el-menu-item>-->
+            <el-menu-item index="/workbenches/shareSpace">
+              <i class="el-icon-ice-drink"></i>
+              <span slot="title">工作台</span>
+            </el-menu-item>
             <el-menu-item index="/progressNote/index">
               <i class="el-icon-document"></i>
               <span slot="title">进步本</span>
@@ -39,6 +43,14 @@
             <el-menu-item index="/paper/index">
               <i class="el-icon-document"></i>
               <span slot="title">考试中心</span>
+            </el-menu-item>
+            <el-menu-item index="/record/index">
+              <i class="el-icon-document"></i>
+              <span slot="title">考试记录</span>
+            </el-menu-item>
+            <el-menu-item index="/question/index">
+              <i class="el-icon-document"></i>
+              <span slot="title">错题本</span>
             </el-menu-item>
             <el-submenu index="6">
               <template slot="title" class="bg_color">
