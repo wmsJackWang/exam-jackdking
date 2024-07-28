@@ -28,7 +28,7 @@
       </el-row>
 
       <!-- 文件浏览区 -->
-      <div style="overflow: hidden;">
+      <div >
         <el-card class="drawing_card" v-loading="cardLoading" style="height: 60vh">
           <template v-if="folderList.length === 0 && filesList.length === 0">
             <el-empty description="暂无文件，请创建一个文件夹吧" style="height:60vh"></el-empty>
@@ -120,14 +120,16 @@
 
 import addFolder from '@/components/AddFolder'
 import moveFolder from '@/components/MoveFolder'
-import { qeryFolderList, createPublicFolder, renameFolder, deleteFolder, deleteFile } from '@/api/folder'
+import systemFileApi from '@/api/folder'
+import localforage from 'localforage'
+
 
 export default {
   name: 'shareSpace',
   components: { addFolder, moveFolder },
   data () {
     return {
-
+      excalidrawDB: {},
       isCollapse: true,
       historyFolderId: 0, // 历史文件夹id，用于【返回上一级】
       historyFolderName: '', // 历史文件夹name，用于【返回上一级】
@@ -170,13 +172,21 @@ export default {
   methods: {
     handClick () {
       console.log('.....')
-      const routeData = this.$router.resolve({
-        path: '/excalidraw/index.html',
-        query: {
-          id: ''
-        }
-      })
-      window.open(routeData.href, '_blank')
+      let _this = this
+      _this.excalidrawDB.setItem("createFileName2", "今天是个好日子").then(function (value) {
+          // 当值被存储后，可执行其他操作
+          console.log(value);
+
+          _this.excalidrawDB.getItem('createFileName2').then(value=> {
+            console.log("createFileName",value);
+            window.open("http://localhost:8083/excalidraw/index.html", '_blank')
+          }).catch(err => {
+            console.log('错误信息', err)
+          });
+      }).catch(function(err) {
+          // 当出错时，此处代码运行
+          console.log(err);
+      });
     },
     handCommand (command) {
       console.log('.....' + command)
@@ -218,14 +228,17 @@ export default {
     // 获取列表数据
     getList () {
       this.loading = true
-      qeryFolderList(this.queryParams).then(response => {
-        console.log(response)
-        this.folderList = response.data.folders
-        this.filesList = response.data.sysFiles
+      console.log('this.queryParams:' + JSON.stringify(this.queryParams))
+      systemFileApi.queryFolderList(this.queryParams).then(res => {
+        console.log('response:' + JSON.stringify(res))
+        this.folderList = res.response.folders
+        this.filesList = res.response.sysFiles
 
-        this.historyFolderId = response.data.sysFolder == null ? 0 : response.data.sysFolder.parentId
-        this.historyFolderName = response.data.sysFolder == null ? '文件管理空间' : response.data.sysFolder.parentName
+        this.historyFolderId = res.response.sysFolder == null ? 0 : res.response.sysFolder.parentId
+        this.historyFolderName = res.response.sysFolder == null ? '文件管理空间' : res.response.sysFolder.parentName
       })
+
+      console.log('++++++++++')
     },
     // 刷新当前列表
     refreshGetList () {
@@ -429,6 +442,7 @@ export default {
     }
 
   },
+
   mounted () {
     // 监听鼠标点击事件
     document.addEventListener('click', (e) => {
@@ -448,7 +462,41 @@ export default {
   },
 
   created () {
+    console.log('......................')
+
+    //对象
+    const info = { name: 'hou', age: 24, id: '001' };
+    //字符串
+    const str="haha";
+
+    localStorage.setItem('hou', JSON.stringify(info));
+    localStorage.setItem('zheng', str);
+
+    var data1 = JSON.parse(localStorage.getItem('hou'));
+
+    var data2 = localStorage.getItem('zheng');
+    console.log('data1:' + data1)
+    console.log('data2:' + data2)
+
+
+    const excalidrawDB = localforage.createInstance({
+      name: 'myFirstIndexedDB',
+      // 支持config所有配置
+      // storeName: 'excalidrawDB', // 仅接受字母，数字和下划线
+    })
+    this.excalidrawDB = excalidrawDB;
+
+    excalidrawDB.setItem("data1", "今天是个好日子");
+    //第一种方法
+    excalidrawDB.getItem('data1').then(value=> {
+     console.log("数据data1",value);
+    }).catch(err => {
+      console.log('错误信息', err)
+    });
+
+
     this.getList()
+
   }
 }
 </script>

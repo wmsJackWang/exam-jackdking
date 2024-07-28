@@ -79,6 +79,7 @@ export function usePresentation() {
 }
 
 export function useUserComments() {
+  console.log(localStorage.getItem('zheng'))
   const comments = [
     {
       avatar: avatar1,

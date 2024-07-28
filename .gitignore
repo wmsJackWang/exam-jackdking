@@ -1,5 +1,6 @@
 # maven ignore
 target/
+source/vue/codecv/node_modules/
 *.jar
 *.war
 *.zip
