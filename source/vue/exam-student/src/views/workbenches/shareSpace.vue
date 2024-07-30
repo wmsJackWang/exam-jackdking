@@ -173,20 +173,12 @@ export default {
     handClick () {
       console.log('.....')
       let _this = this
-      _this.excalidrawDB.setItem("createFileName2", "今天是个好日子").then(function (value) {
-          // 当值被存储后，可执行其他操作
-          console.log(value);
-
-          _this.excalidrawDB.getItem('createFileName2').then(value=> {
-            console.log("createFileName",value);
-            window.open("http://localhost:8083/excalidraw/index.html", '_blank')
-          }).catch(err => {
-            console.log('错误信息', err)
-          });
-      }).catch(function(err) {
-          // 当出错时，此处代码运行
-          console.log(err);
-      });
+      storeItem("examStudentCommand", "createNewFile")
+      storeItem("createFileName", "createNewFile")
+      window.open("http://localhost:8083/excalidraw/index.html", '_blank')
+    },
+    async storeItem(key, val) {
+      await this.excalidrawDB.setItem(key, val)
     },
     handCommand (command) {
       console.log('.....' + command)
@@ -480,20 +472,11 @@ export default {
 
 
     const excalidrawDB = localforage.createInstance({
-      name: 'myFirstIndexedDB',
+      name: 'exam-student',
       // 支持config所有配置
       // storeName: 'excalidrawDB', // 仅接受字母，数字和下划线
     })
     this.excalidrawDB = excalidrawDB;
-
-    excalidrawDB.setItem("data1", "今天是个好日子");
-    //第一种方法
-    excalidrawDB.getItem('data1').then(value=> {
-     console.log("数据data1",value);
-    }).catch(err => {
-      console.log('错误信息', err)
-    });
-
 
     this.getList()
 
