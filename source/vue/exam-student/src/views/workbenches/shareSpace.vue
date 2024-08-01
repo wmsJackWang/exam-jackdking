@@ -173,8 +173,8 @@ export default {
     handClick () {
       console.log('.....')
       let _this = this
-      storeItem("examStudentCommand", "createNewFile")
-      storeItem("createFileName", "createNewFile")
+      this.storeItem("examStudentCommand", "createNewFile")
+      this.storeItem("createFileName", "createNewFile")
       window.open("http://localhost:8083/excalidraw/index.html", '_blank')
     },
     async storeItem(key, val) {
