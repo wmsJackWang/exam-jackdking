@@ -9,10 +9,10 @@
           <el-dropdown size="mini" split-button type="primary" @command="handCommand" @click="handClick">
             新建白板文件
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="a">白板文件</el-dropdown-item>
-              <el-dropdown-item command="b">思维导图</el-dropdown-item>
-              <el-dropdown-item command="c">流程图</el-dropdown-item>
-              <el-dropdown-item command="d">MarkDown</el-dropdown-item>
+              <el-dropdown-item command="excalidraw">白板文件</el-dropdown-item>
+              <el-dropdown-item command="brainMind">思维导图</el-dropdown-item>
+              <el-dropdown-item command="process">流程图</el-dropdown-item>
+              <el-dropdown-item command="markDown">MarkDown</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-col>
@@ -110,6 +110,26 @@
           </div>
         </div>
       </div>
+
+      <el-dialog title="新建文件" :visible.sync="createFileDialogFormVisible">
+        <el-form :model="createFileForm">
+          <el-form-item label="文件名称" :label-width="formLabelWidth">
+            <el-input v-model="createFileForm.name" autocomplete="off"></el-input>
+          </el-form-item>
+
+          <el-form-item label="文件类型" :label-width="formLabelWidth">
+            <el-input v-model="createFileForm.desc" autocomplete="off" readonly></el-input>
+          </el-form-item>
+
+          <el-form-item label="文件类型key" :label-width="formLabelWidth" v-if = "false">
+            <el-input v-model="createFileForm.type" autocomplete="off" readonly></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="createFileDialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="handExcalidraw">确 定</el-button>
+        </div>
+      </el-dialog>
       <!-- 上传文件 弹窗 -->
       <addFolder ref="addFolder1" :currentLocationId="currentLocationId" />
       <moveFolder ref="moveFolder1" :moveData="moveData"></moveFolder>
@@ -129,7 +149,16 @@ export default {
   components: { addFolder, moveFolder },
   data () {
     return {
+      createFileDialogFormVisible: false,
+      createFileForm:{
+        name:'',
+        type:'',
+        desc:''
+      },
+      command: '',
+      commandDesc: '',
       excalidrawDB: {},
+      formLabelWidth: '120px',
       isCollapse: true,
       historyFolderId: 0, // 历史文件夹id，用于【返回上一级】
       historyFolderName: '', // 历史文件夹name，用于【返回上一级】
@@ -170,26 +199,67 @@ export default {
     }
   },
   methods: {
+    handExcalidraw () {
+      this.createFileDialogFormVisible = false
+
+      if(this.command == 'excalidraw') {
+        this.storeItem("examStudentCommand", "createNewFile")
+        this.storeItem("createFileName", this.createFileForm.name)
+        console.log("url:" + process.env.EXCALIDRAW_URL)
+        window.open("http://bittechblog.com/study/excalidraw/index.html", '_blank')
+        // window.open("http://localhost:8083/excalidraw/index.html", '_blank')
+      }
+      this.$message({
+        message: this.commandDesc + '类型文件近期将推出，敬请期待！',
+        type: 'success'
+      });
+
+    },
     handClick () {
-      console.log('.....')
-      let _this = this
-      this.storeItem("examStudentCommand", "createNewFile")
-      this.storeItem("createFileName", "createNewFile")
-      window.open("http://localhost:8083/excalidraw/index.html", '_blank')
+      this.createFileDialogFormVisible = true
+      this.createFileForm.type = 'excalidraw'
+      this.createFileForm.desc = 'excalidraw'
+      this.command = 'excalidraw'
+      this.commandDesc = 'excalidraw白板文件'
     },
     async storeItem(key, val) {
       await this.excalidrawDB.setItem(key, val)
     },
     handCommand (command) {
-      console.log('.....' + command)
-      this.$message('click on item ' + command)
-      const routeData = this.$router.resolve({
-        path: '/pdf/download',
-        query: {
-          id: command
-        }
-      })
-      window.open(routeData.href, '_blank')
+      this.createFileDialogFormVisible = true
+      this.createFileForm.type = command
+      this.command = command
+      // excalidraw 白板文件
+      if(command == 'excalidraw') {
+        this.createFileForm.desc = '白板文件'
+        this.commandDesc = 'excalidraw白板文件'
+      }
+
+      // brainMind  思维导图
+      if(command == 'brainMind') {
+        this.createFileForm.desc = '思维导图'
+        this.commandDesc = '思维导图文件'
+      }
+
+      // process 流程图
+      if(command == 'process') {
+        this.createFileForm.desc = '流程图'
+        this.commandDesc = '流程图文件'
+      }
+
+      // markDown
+      if(command == 'markDown') {
+        this.createFileForm.desc = 'MarkDown'
+        this.commandDesc = 'MarkDown文件'
+      }
+
+//      const routeData = this.$router.resolve({
+//        path: '/pdf/download',
+//        query: {
+//          id: command
+//       }
+//      })
+//      window.open(routeData.href, '_blank')
     },
     handleOpen (key, keyPath) {
       console.log(key, keyPath)

@@ -32,10 +32,10 @@
               <i class="el-icon-ice-drink"></i>
               <span slot="title">工作台</span>
             </el-menu-item>
-            <el-menu-item index="/progressNote/index">
-              <i class="el-icon-document"></i>
-              <span slot="title">进步本</span>
-            </el-menu-item>
+<!--            <el-menu-item index="/progressNote/index">-->
+<!--              <i class="el-icon-document"></i>-->
+<!--              <span slot="title">进步本</span>-->
+<!--            </el-menu-item>-->
             <el-menu-item index="/knowledge/list">
               <i class="el-icon-school"></i>
               <span slot="title">进步空间</span>
