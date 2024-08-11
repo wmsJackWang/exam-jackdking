@@ -2,11 +2,14 @@ package com.alvis.exam.controller.student;
 
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alvis.exam.base.BaseApiController;
 import com.alvis.exam.base.RestResponse;
 import com.alvis.exam.domain.ExcalidrawFileInfo;
+import com.alvis.exam.domain.JdkFolderFile;
 import com.alvis.exam.domain.Subject;
 import com.alvis.exam.domain.User;
+import com.alvis.exam.service.JdkFolderFileService;
 import com.alvis.exam.service.SubjectService;
 import com.alvis.exam.viewmodel.student.education.SubjectEditRequestVM;
 import com.alvis.exam.viewmodel.student.education.SubjectVM;
@@ -27,6 +30,8 @@ import java.util.stream.Collectors;
 public class ExcalidrawController extends BaseApiController {
 
     private final SubjectService subjectService;
+
+    private final JdkFolderFileService jdkFolderFileService;
 
     @RequestMapping(value = "/subject/list", method = RequestMethod.POST)
     public RestResponse<List<SubjectVM>> list() {
@@ -55,6 +60,16 @@ public class ExcalidrawController extends BaseApiController {
 
         log.info("[ExcalidrawController]addOrUpdate, params:{}", JSON.toJSONString(param));
 //        User user = getCurrentUser();
+
+        JSONObject fileData = new JSONObject();
+        fileData.put("containerName", param.getContainerName());
+        fileData.put("elementsJson", param.getElementsJson());
+        fileData.put("appStateJson", param.getAppStateJson());
+
+        JdkFolderFile jdkFolderFile = new JdkFolderFile();
+        jdkFolderFile.setFileName(param.getContainerName());
+        jdkFolderFile.setFileData(fileData.toJSONString());
+        jdkFolderFileService.saveOrUpdateJdkFolderFile(jdkFolderFile);
 
         return RestResponse.ok();
     }
