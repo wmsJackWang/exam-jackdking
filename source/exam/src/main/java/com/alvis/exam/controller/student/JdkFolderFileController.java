@@ -33,14 +33,17 @@ public class JdkFolderFileController extends BaseApiController {
      * 新增保存画图文件
      */
     @PostMapping("/saveOrUpdateJdkFolderFile")
-    public RestResponse saveOrUpdateJdkFolderFile(JdkFolderFile jdkFolderFile){
+    public RestResponse saveOrUpdateJdkFolderFile(@RequestBody JdkFolderFile jdkFolderFile){
         return jdkFolderFileService.saveOrUpdateJdkFolderFile(jdkFolderFile) == 1?RestResponse.ok():RestResponse.fail("创建失败");
     }
-
 
     @RequestMapping(value = "/folder/listFolderAndFile/{id}", method = RequestMethod.POST)
     public RestResponse<JSONObject> list(@PathVariable Long id) {
 
+        // id为-1：表示根目录
+        if (id == -1) {
+            id = null;
+        }
         JdkFolderFile req = new JdkFolderFile();
         req.setParentId(id);
         List<JdkFolderFile> queryFiles = jdkFolderFileService.selectJdkFolderFileList(req);

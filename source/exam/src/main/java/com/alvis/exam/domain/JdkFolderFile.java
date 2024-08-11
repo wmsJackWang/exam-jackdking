@@ -35,7 +35,7 @@ public class JdkFolderFile
     private String fileName;
 
     /** 文件类型：数据文件或文件夹 */
-    private Long reocrdType;
+    private String recordType;
 
     /** 父文件夹id */
     private Long parentId;

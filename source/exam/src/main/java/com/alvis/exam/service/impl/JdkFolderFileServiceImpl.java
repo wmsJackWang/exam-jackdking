@@ -9,6 +9,7 @@ import com.alvis.exam.service.JdkFolderFileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * 画图文件Repository业务层处理
@@ -39,7 +40,7 @@ public class JdkFolderFileServiceImpl implements JdkFolderFileService
 
     @Override
     public int saveOrUpdateJdkFolderFile(JdkFolderFile jdkFolderFile) {
-        if (Objects.nonNull(jdkFolderFile.getId())) {
+        if (Objects.isNull(jdkFolderFile.getId())) {
             return jdkFolderFileMapper.insertJdkFolderFile(jdkFolderFile);
         }else {
             return jdkFolderFileMapper.updateJdkFolderFile(jdkFolderFile);
