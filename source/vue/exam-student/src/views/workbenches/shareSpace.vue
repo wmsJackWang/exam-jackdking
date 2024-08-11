@@ -41,7 +41,7 @@
                      @contextmenu.prevent.stop="rightClickFolder(index, item, $event)" />
                 <div class="folderName">
                   <span>{{
-                      item.folderName.length > 10 ? item.folderName.substring(0, 6) + '...' : item.folderName
+                      item.fileName.length > 10 ? item.fileName.substring(0, 6) + '...' : item.fileName
                     }}</span>
                 </div>
 
@@ -63,7 +63,7 @@
                 </div>
 
               </div>
-            </div> ..
+            </div>
 
           </div>
         </el-card>
@@ -323,16 +323,17 @@ export default {
         console.log('response:' + JSON.stringify(res))
         this.folderList = res.response.folders
         this.filesList = res.response.sysFiles
+        console.log('--------------')
 
-        this.historyFolderId = res.response.sysFolder == null ? 0 : res.response.sysFolder.parentId
-        this.historyFolderName = res.response.sysFolder == null ? '文件管理空间' : res.response.sysFolder.parentName
+        // this.historyFolderId = res.response.sysFolder == null ? 0 : res.response.sysFolder.parentId
+        // this.historyFolderName = res.response.sysFolder == null ? '文件管理空间' : res.response.sysFolder.parentName
       })
 
       console.log('++++++++++')
     },
     // 刷新当前列表
     refreshGetList () {
-      this.queryParams.folderId = this.currentLocationId
+      //this.queryParams.folderId = this.currentLocationId
       this.getList()
       this.$message({
         message: '已经成功获取最新数据啦！',
@@ -353,10 +354,14 @@ export default {
         cancelButtonText: '取消'
       }).then(({ value }) => {
         let sysFolder = {
-          folderName: value,
-          parentId: this.currentLocationId
+          parentId: this.currentLocationId,
+          desc:value,
+          isFolder: 0,
+          fileName:value,
+          recordType:'folder'
         }
-        createPublicFolder(sysFolder).then(res => {
+        console.log('folder:' + JSON.stringify(sysFolder))
+        systemFileApi.saveOrUpdateJdkFolderFile(sysFolder).then(res => {
           if (res.code === 200) {
             this.$message({
               type: 'success',
@@ -372,6 +377,7 @@ export default {
               message: '创建失败 '
             })
           }
+          this.getList()
         })
       }).catch(() => {
       })
@@ -574,7 +580,7 @@ export default {
       // 支持config所有配置
       // storeName: 'excalidrawDB', // 仅接受字母，数字和下划线
     })
-    this.excalidrawDB = excalidrawDB;
+    this.excalidrawDB = excalidrawDB
 
     this.getList()
 

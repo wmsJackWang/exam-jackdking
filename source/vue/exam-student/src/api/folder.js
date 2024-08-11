@@ -12,7 +12,8 @@ export default {
 //  getTreeDirectory: () => get('/api/admin/fileSystem/folder/listFolderids'),
 
   // 新建公共文件夹
-  saveOrUpdateJdkFolderFile: data => post('/api/student/fileSystem/saveOrUpdateJdkFolderFile', data)
+  saveOrUpdateJdkFolderFile: data => post('/api/student/fileSystem/saveOrUpdateJdkFolderFile', data),
+
 }
 
 //= ==================文件夹=====================
