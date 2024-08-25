@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "./static/css/main.9c5a5214.css",
-    "main.js": "./static/js/main.531e421d.js",
+    "main.js": "./static/js/main.e5c49639.js",
     "locales/ar-SA-json.js": "./static/js/locales/ar-SA-json.96694a3e.chunk.js",
     "locales/bg-BG-json.js": "./static/js/locales/bg-BG-json.8b0f2ca0.chunk.js",
     "locales/bn-BD-json.js": "./static/js/locales/bn-BD-json.dba0b0bc.chunk.js",
@@ -62,15 +62,15 @@
     "bug-issue-template.js": "./static/js/bug-issue-template.fa3d50f5.chunk.js",
     "socketIoClient.js": "./static/js/socketIoClient.5ff26b8b.chunk.js",
     "firebase.js": "./static/js/firebase.fd8a2857.chunk.js",
-    "firestore.js": "./static/js/firestore.3a4336f0.chunk.js",
+    "firestore.js": "./static/js/firestore.1b22ef0f.chunk.js",
     "storage.js": "./static/js/storage.fe2cef89.chunk.js",
     "pwacompat.js": "./static/js/pwacompat.4c701050.chunk.js",
     "static/js/5637.30a82341.chunk.js": "./static/js/5637.30a82341.chunk.js",
-    "static/js/242.dea7f325.chunk.js": "./static/js/242.dea7f325.chunk.js",
+    "static/js/242.5d96cacd.chunk.js": "./static/js/242.5d96cacd.chunk.js",
     "service-worker.js": "./service-worker.js",
     "index.html": "./index.html",
     "main.9c5a5214.css.map": "./static/css/main.9c5a5214.css.map",
-    "main.531e421d.js.map": "./static/js/main.531e421d.js.map",
+    "main.e5c49639.js.map": "./static/js/main.e5c49639.js.map",
     "5877.b19083bb.chunk.js.map": "./static/js/5877.b19083bb.chunk.js.map",
     "9954.55c64da1.chunk.js.map": "./static/js/9954.55c64da1.chunk.js.map",
     "9511.93fd450c.chunk.js.map": "./static/js/9511.93fd450c.chunk.js.map",
@@ -81,14 +81,14 @@
     "6039.e42294a9.chunk.js.map": "./static/js/6039.e42294a9.chunk.js.map",
     "bug-issue-template.fa3d50f5.chunk.js.map": "./static/js/bug-issue-template.fa3d50f5.chunk.js.map",
     "firebase.fd8a2857.chunk.js.map": "./static/js/firebase.fd8a2857.chunk.js.map",
-    "firestore.3a4336f0.chunk.js.map": "./static/js/firestore.3a4336f0.chunk.js.map",
+    "firestore.1b22ef0f.chunk.js.map": "./static/js/firestore.1b22ef0f.chunk.js.map",
     "storage.fe2cef89.chunk.js.map": "./static/js/storage.fe2cef89.chunk.js.map",
     "pwacompat.4c701050.chunk.js.map": "./static/js/pwacompat.4c701050.chunk.js.map",
     "5637.30a82341.chunk.js.map": "./static/js/5637.30a82341.chunk.js.map",
-    "242.dea7f325.chunk.js.map": "./static/js/242.dea7f325.chunk.js.map"
+    "242.5d96cacd.chunk.js.map": "./static/js/242.5d96cacd.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.9c5a5214.css",
-    "static/js/main.531e421d.js"
+    "static/js/main.e5c49639.js"
   ]
 }

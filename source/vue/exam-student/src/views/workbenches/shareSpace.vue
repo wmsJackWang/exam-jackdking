@@ -144,21 +144,20 @@ import moveFolder from '@/components/MoveFolder'
 import systemFileApi from '@/api/folder'
 import localforage from 'localforage'
 
-
 export default {
   name: 'shareSpace',
   components: { addFolder, moveFolder },
   data () {
     return {
       createFileDialogFormVisible: false,
-      parentId:null,
-      createFileForm:{
-        type:'',
-        desc:'',
+      parentId: null,
+      createFileForm: {
+        type: '',
+        desc: '',
         isFolder: 1,
-        fileName:'',
-        recordType:'',
-        parentId:null
+        fileName: '',
+        recordType: '',
+        parentId: null
       },
       command: '',
       commandDesc: '',
@@ -204,44 +203,41 @@ export default {
     }
   },
   methods: {
-    down(item) {
-      console.log('item:'+JSON.stringify(item))
-      if(item.recordType == 'excalidraw') {
-        this.storeItem("examStudentCommand", "createNewFile")
-        this.storeItem("createFileName", item.fileName)
-        console.log("url:" + process.env.EXCALIDRAW_URL)
+    down (item) {
+      console.log('item:' + JSON.stringify(item)
+      if (item.recordType === 'excalidraw') {
+        this.storeItem('examStudentCommand', 'openExcalidrawFile')
+        this.storeItem('openFileName', item.fileName)
+        console.log('url:' + process.env.EXCALIDRAW_URL)
         // window.open("http://bittechblog.com/study/excalidraw/index.html", '_blank')
-        window.open("http://localhost:8083/excalidraw/index.html", '_blank')
-
-      }else {
+        window.open('http://localhost:8083/excalidraw/index.html', '_blank')
+      } else {
         this.$message({
           message: this.commandDesc + '类型文件近期将推出，敬请期待！',
           type: 'success'
-        });
+        })
       }
     },
     createNewFile () {
       this.createFileDialogFormVisible = false
       this.createFileForm.parentId = this.parentId
 
-      if(this.command == 'excalidraw') {
-        this.storeItem("examStudentCommand", "createNewFile")
-        this.storeItem("createFileName", this.createFileForm.fileName)
-        console.log("url:" + process.env.EXCALIDRAW_URL)
+      if (this.command === 'excalidraw') {
+        this.storeItem('examStudentCommand', 'createNewFile')
+        this.storeItem('createFileName', this.createFileForm.fileName)
+        console.log('url:' + process.env.EXCALIDRAW_URL)
         // window.open("http://bittechblog.com/study/excalidraw/index.html", '_blank')
-        window.open("http://localhost:8083/excalidraw/index.html", '_blank')
+        window.open('http://localhost:8083/excalidraw/index.html', '_blank')
 
         systemFileApi.saveOrUpdateJdkFolderFile(this.createFileForm).then(res => {
           console.log('saveOrUpdateJdkFolderFile:' + JSON.stringify(res))
         })
-
-      }else {
+      } else {
         this.$message({
           message: this.commandDesc + '类型文件近期将推出，敬请期待！',
           type: 'success'
-        });
+        })
       }
-
     },
     handClick () {
       this.createFileDialogFormVisible = true
@@ -250,7 +246,7 @@ export default {
       this.command = 'excalidraw'
       this.commandDesc = 'excalidraw白板文件'
     },
-    async storeItem(key, val) {
+    async storeItem (key, val) {
       await this.excalidrawDB.setItem(key, val)
     },
     handCommand (command) {
@@ -258,36 +254,36 @@ export default {
       this.createFileForm.recordType = command
       this.command = command
       // excalidraw 白板文件
-      if(command == 'excalidraw') {
+      if (command === 'excalidraw') {
         this.createFileForm.desc = '白板文件'
         this.commandDesc = 'excalidraw白板文件'
       }
 
       // brainMind  思维导图
-      if(command == 'brainMind') {
+      if (command === 'brainMind') {
         this.createFileForm.desc = '思维导图'
         this.commandDesc = '思维导图文件'
       }
 
       // process 流程图
-      if(command == 'process') {
+      if (command === 'process') {
         this.createFileForm.desc = '流程图'
         this.commandDesc = '流程图文件'
       }
 
       // markDown
-      if(command == 'markDown') {
+      if (command === 'markDown') {
         this.createFileForm.desc = 'MarkDown'
         this.commandDesc = 'MarkDown文件'
       }
 
-//      const routeData = this.$router.resolve({
-//        path: '/pdf/download',
-//        query: {
-//          id: command
-//       }
-//      })
-//      window.open(routeData.href, '_blank')
+      //      const routeData = this.$router.resolve({
+      //        path: '/pdf/download',
+      //        query: {
+      //          id: command
+      //       }
+      //      })
+      //      window.open(routeData.href, '_blank')
     },
     handleOpen (key, keyPath) {
       console.log(key, keyPath)
@@ -333,7 +329,7 @@ export default {
     },
     // 刷新当前列表
     refreshGetList () {
-      //this.queryParams.folderId = this.currentLocationId
+      // this.queryParams.folderId = this.currentLocationId
       this.getList()
       this.$message({
         message: '已经成功获取最新数据啦！',
@@ -355,10 +351,10 @@ export default {
       }).then(({ value }) => {
         let sysFolder = {
           parentId: this.currentLocationId,
-          desc:value,
+          desc: value,
           isFolder: 0,
-          fileName:value,
-          recordType:'folder'
+          fileName: value,
+          recordType: 'folder'
         }
         console.log('folder:' + JSON.stringify(sysFolder))
         systemFileApi.saveOrUpdateJdkFolderFile(sysFolder).then(res => {
@@ -560,30 +556,28 @@ export default {
   created () {
     console.log('......................')
 
-    //对象
-    const info = { name: 'hou', age: 24, id: '001' };
-    //字符串
-    const str="haha";
+    // 对象
+    const info = { name: 'hou', age: 24, id: '001' }
+    // 字符串
+    const str = 'haha'
 
-    localStorage.setItem('hou', JSON.stringify(info));
-    localStorage.setItem('zheng', str);
+    localStorage.setItem('hou', JSON.stringify(info))
+    localStorage.setItem('zheng', str)
 
-    var data1 = JSON.parse(localStorage.getItem('hou'));
+    var data1 = JSON.parse(localStorage.getItem('hou'))
 
-    var data2 = localStorage.getItem('zheng');
+    var data2 = localStorage.getItem('zheng')
     console.log('data1:' + data1)
     console.log('data2:' + data2)
 
-
     const excalidrawDB = localforage.createInstance({
-      name: 'exam-student',
+      name: 'exam-student'
       // 支持config所有配置
       // storeName: 'excalidrawDB', // 仅接受字母，数字和下划线
     })
     this.excalidrawDB = excalidrawDB
 
     this.getList()
-
   }
 }
 </script>

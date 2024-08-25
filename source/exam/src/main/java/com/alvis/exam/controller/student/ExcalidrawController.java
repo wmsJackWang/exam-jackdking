@@ -16,6 +16,8 @@ import com.alvis.exam.viewmodel.student.education.SubjectVM;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.reflection.Jdk;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
@@ -29,30 +31,20 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ExcalidrawController extends BaseApiController {
 
-    private final SubjectService subjectService;
-
     private final JdkFolderFileService jdkFolderFileService;
 
-    @RequestMapping(value = "/subject/list", method = RequestMethod.POST)
-    public RestResponse<List<SubjectVM>> list() {
-        User user = getCurrentUser();
-        List<Subject> subjects = subjectService.getSubjectByLevel(user.getUserLevel());
-        List<SubjectVM> subjectVMS = subjects.stream().sorted(Comparator.comparing(Subject::getUserid)).map(d -> {
-            SubjectVM subjectVM = modelMapper.map(d, SubjectVM.class);
-            subjectVM.setId(String.valueOf(d.getId()));
-            if (d.getUserid() == 2) {//2 为系统管理员id
-                subjectVM.setIsPlatform(true);
-            }
-            return subjectVM;
-        }).collect(Collectors.toList());
-        return RestResponse.ok(subjectVMS);
-    }
-
-    @RequestMapping(value = "/subject/select/{id}", method = RequestMethod.POST)
-    public RestResponse<SubjectEditRequestVM> select(@PathVariable Integer id) {
-        Subject subject = subjectService.selectById(id);
-        SubjectEditRequestVM vm = modelMapper.map(subject, SubjectEditRequestVM.class);
-        return RestResponse.ok(vm);
+    @RequestMapping(value = "/file/query", method = RequestMethod.POST)
+    public RestResponse<JdkFolderFile> fileQuery(@RequestBody ExcalidrawFileInfo param) {
+        log.info("[ExcalidrawController]fileQuery, params:{}", JSON.toJSONString(param));
+        JdkFolderFile req = new JdkFolderFile();
+        req.setFileName(param.getContainerName());
+        req.setIsFolder(0L);
+        List<JdkFolderFile> resList = jdkFolderFileService.selectJdkFolderFileList(req);
+        if (CollectionUtils.isEmpty(resList)) {
+            return RestResponse.fail("文件不存在");
+        }
+        log.info("[ExcalidrawController]fileQuery, resList:{}", JSON.toJSONString(resList));
+        return RestResponse.ok(resList.get(0));
     }
 
     @RequestMapping(value = "/file/addOrUpdate", method = RequestMethod.POST)
@@ -66,31 +58,24 @@ public class ExcalidrawController extends BaseApiController {
         fileData.put("elementsJson", param.getElementsJson());
         fileData.put("appStateJson", param.getAppStateJson());
 
+
+        JdkFolderFile req = new JdkFolderFile();
+        req.setIsFolder(0L);
+        req.setFileName(param.getContainerName());
+        List<JdkFolderFile> queryList = jdkFolderFileService.selectJdkFolderFileList(req);
+
         JdkFolderFile jdkFolderFile = new JdkFolderFile();
+        //数据库存在文件，则更新
+        if (!CollectionUtils.isEmpty(queryList)) {
+            jdkFolderFile.setId(queryList.get(0).getId());
+        }
+
         jdkFolderFile.setFileName(param.getContainerName());
         jdkFolderFile.setFileData(fileData.toJSONString());
+        jdkFolderFile.setIsFolder(0L);
+        jdkFolderFile.setRecordType("excalidraw");
+        jdkFolderFile.setParentId(5L);
         jdkFolderFileService.saveOrUpdateJdkFolderFile(jdkFolderFile);
-
-        return RestResponse.ok();
-    }
-
-    @RequestMapping(value = "/subject/update/{id}/{name}", method = RequestMethod.POST)
-    public RestResponse<SubjectEditRequestVM> update(@PathVariable Integer id, @PathVariable String name) {
-
-        User user = getCurrentUser();
-        Subject subject = subjectService.selectById(id);
-        if (subject == null) {
-            return RestResponse.fail("类目不存在");
-        }
-        subject.setName(name);
-        subjectService.updateById(subject);
-        return RestResponse.ok();
-    }
-
-    @RequestMapping(value = "/subject/remove/{id}", method = RequestMethod.POST)
-    public RestResponse<SubjectEditRequestVM> remove(@PathVariable Integer id) {
-
-        subjectService.deleteById(id);
         return RestResponse.ok();
     }
 
