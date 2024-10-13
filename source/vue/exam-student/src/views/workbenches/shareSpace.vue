@@ -18,9 +18,11 @@
         <el-col :span="1.5" style="float: left;">
           <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="addFolder">新建文件夹</el-button>
         </el-col>
-        <el-col :span="1.5" style="float: left;">
-          <el-button type="success" plain icon="el-icon-upload" size="mini" @click="addFile">上传文件</el-button>
-        </el-col>
+        <!--
+          <el-col :span="1.5" style="float: left;">
+            <el-button type="success" plain icon="el-icon-upload" size="mini" @click="addFile">上传文件</el-button>
+          </el-col>
+        -->
         <el-col :span="1.5" style="float: left;">
           <el-button plain icon="el-icon-refresh" size="mini" @click="refreshGetList">刷新</el-button>
         </el-col>
@@ -143,6 +145,7 @@ import addFolder from '@/components/AddFolder'
 import moveFolder from '@/components/MoveFolder'
 import systemFileApi from '@/api/folder'
 import localforage from 'localforage'
+import loginInfo from '@/views/login'
 
 export default {
   name: 'shareSpace',
@@ -166,9 +169,10 @@ export default {
       isCollapse: true,
       historyFolderId: 0, // 历史文件夹id，用于【返回上一级】
       historyFolderName: '', // 历史文件夹name，用于【返回上一级】
-
+      historyFolderIds: [0], //历史文件夹id列表
+      historyFolderNames: ['工作台'], //历史文件夹name列表
       currentLocationId: 0, // 当前所处位置（文件夹）id，0为根目录
-      currentLocationName: '共享空间', // 当前所处位置（文件夹）名
+      currentLocationName: '工作台', // 当前所处位置（文件夹）名
 
       // 移动文件（夹）时需要的参数
       moveData: {
@@ -198,19 +202,18 @@ export default {
       clickFilePath: '', // 被右键的文件路径-已加上下载的路径网站前端
 
       queryParams: { // 查询参数
-        folderId: -1 // 目标文件（夹）id，值为-1则查询根目录文件（夹）
+        folderId: 0 // 目标文件（夹）id，值为-1则查询根目录文件（夹）
       }
     }
   },
   methods: {
     down (item) {
-      console.log('item:' + JSON.stringify(item)
-      if (item.recordType === 'excalidraw') {
+      if(item.recordType === 'excalidraw') {
         this.storeItem('examStudentCommand', 'openExcalidrawFile')
         this.storeItem('openFileName', item.fileName)
         console.log('url:' + process.env.EXCALIDRAW_URL)
-        // window.open("http://bittechblog.com/study/excalidraw/index.html", '_blank')
-        window.open('http://localhost:8083/excalidraw/index.html', '_blank')
+        window.open("http://bittechblog.com/study/excalidraw/index.html", '_blank')
+        // window.open('http://localhost:8083/excalidraw/index.html', '_blank')
       } else {
         this.$message({
           message: this.commandDesc + '类型文件近期将推出，敬请期待！',
@@ -220,18 +223,21 @@ export default {
     },
     createNewFile () {
       this.createFileDialogFormVisible = false
+      this.parentId = this.currentLocationId
       this.createFileForm.parentId = this.parentId
+      this.createFileForm.isFolder = 0
 
       if (this.command === 'excalidraw') {
         this.storeItem('examStudentCommand', 'createNewFile')
         this.storeItem('createFileName', this.createFileForm.fileName)
         console.log('url:' + process.env.EXCALIDRAW_URL)
-        // window.open("http://bittechblog.com/study/excalidraw/index.html", '_blank')
-        window.open('http://localhost:8083/excalidraw/index.html', '_blank')
+        window.open("http://bittechblog.com/study/excalidraw/index.html", '_blank')
+        // window.open('http://localhost:8083/excalidraw/index.html', '_blank')
 
         systemFileApi.saveOrUpdateJdkFolderFile(this.createFileForm).then(res => {
           console.log('saveOrUpdateJdkFolderFile:' + JSON.stringify(res))
         })
+        this.getList()
       } else {
         this.$message({
           message: this.commandDesc + '类型文件近期将推出，敬请期待！',
@@ -250,13 +256,14 @@ export default {
       await this.excalidrawDB.setItem(key, val)
     },
     handCommand (command) {
-      this.createFileDialogFormVisible = true
-      this.createFileForm.recordType = command
-      this.command = command
       // excalidraw 白板文件
       if (command === 'excalidraw') {
+        this.createFileDialogFormVisible = true
+        this.createFileForm.recordType = command
+        this.command = command
         this.createFileForm.desc = '白板文件'
         this.commandDesc = 'excalidraw白板文件'
+        return
       }
 
       // brainMind  思维导图
@@ -276,6 +283,11 @@ export default {
         this.createFileForm.desc = 'MarkDown'
         this.commandDesc = 'MarkDown文件'
       }
+
+      this.$message({
+        message: this.commandDesc + '类型文件近期将推出，敬请期待！',
+        type: 'success'
+      })
 
       //      const routeData = this.$router.resolve({
       //        path: '/pdf/download',
@@ -297,19 +309,36 @@ export default {
 
     // 返回上一级
     goBack () {
-      if (this.currentLocationId === 0) {
+
+      if (this.historyFolderIds.length === 1) {
         this.$message({
           message: '已经不能再往后退啦！',
           type: 'warning'
         })
-      } else {
-        this.queryParams.folderId = this.historyFolderId
-        this.currentLocationId = this.historyFolderId
-        this.currentLocationName = this.historyFolderName == null ? '文件管理空间' : this.historyFolderName
-        this.historyFolderId = this.currentLocationId
-        this.historyFolderName = this.currentLocationName
-        this.getList()
+        return
+      } else{
+        this.historyFolderIds.pop()
+        this.historyFolderNames.pop()
+
+        console.log("this.historyFolderIds: " + JSON.stringify(this.historyFolderIds))
+        console.log("this.historyFolderNames: " + JSON.stringify(this.historyFolderNames))
       }
+
+      let path=""
+      for (let i = 0; i < this.historyFolderNames.length; i++) {
+        path += this.historyFolderNames[i]
+        if (i < this.historyFolderNames.length-1) {
+          path += "/"
+        }
+      }
+      this.currentLocationName = path
+
+      this.currentLocationId = this.historyFolderIds[this.historyFolderIds.length-1]
+      this.queryParams.folderId = this.currentLocationId
+      this.currentLocationId = this.historyFolderId
+      this.historyFolderId = this.currentLocationId
+      this.historyFolderName = this.currentLocationName
+      this.getList()
     },
     // 获取列表数据
     getList () {
@@ -358,15 +387,14 @@ export default {
         }
         console.log('folder:' + JSON.stringify(sysFolder))
         systemFileApi.saveOrUpdateJdkFolderFile(sysFolder).then(res => {
-          if (res.code === 200) {
+          console.log("res:" + JSON.stringify(res))
+          if (res.code === 1) {
             this.$message({
               type: 'success',
               message: '创建成功 '
             })
             const that = this
-            setTimeout(function () {
-              that.refreshGetList() // 刷新当前页面
-            }, 500)
+            this.getList()
           } else {
             this.$message({
               type: 'error',
@@ -448,13 +476,28 @@ export default {
       this.queryParams.folderId = this.clickFolderId
 
       this.currentLocationId = this.clickFolderId
-      this.currentLocationName = this.clickFolderName
+
+      let path=""
+      for (let i = 0; i < this.historyFolderNames.length; i++) {
+        path += this.historyFolderNames[i]
+        if (i < this.historyFolderNames.length-1) {
+          path += "/"
+        }
+      }
+      this.currentLocationName = path
       this.getList()
     },
     // 鼠标双击文件夹
     doubleClickFolder (index, item) {
-      this.clickFolderId = item.folderId
-      this.clickFolderName = item.folderName
+      this.historyFolderIds.push(item.id)
+      this.historyFolderNames.push(item.fileName)
+
+      console.log("item: " + JSON.stringify(item))
+      console.log("this.historyFolderIds: " + JSON.stringify(this.historyFolderIds))
+      console.log("this.historyFolderNames: " + JSON.stringify(this.historyFolderNames))
+      this.queryParams.folderId = item.id
+      this.clickFolderId = item.id
+      this.clickFolderName = item.fileName
       this.openFolder()
     },
 

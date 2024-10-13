@@ -60,7 +60,7 @@ public class SecurityConfigurer {
                 .anyRequest().permitAll()
                 .and().exceptionHandling().accessDeniedHandler(restAccessDeniedHandler)
                 .and().formLogin().successHandler(restAuthenticationSuccessHandler).failureHandler(restAuthenticationFailureHandler)
-                .and().logout().logoutUrl("/api/user/logout").logoutSuccessHandler(restLogoutSuccessHandler).invalidateHttpSession(true)
+                .and().logout().logoutUrl("/api/student/user/logout").logoutSuccessHandler(restLogoutSuccessHandler).invalidateHttpSession(true)
                 .and().rememberMe().key(CookieConfig.getName()).tokenValiditySeconds(CookieConfig.getInterval()).userDetailsService(formDetailsService)
                 .and().csrf().disable()
                 .cors();

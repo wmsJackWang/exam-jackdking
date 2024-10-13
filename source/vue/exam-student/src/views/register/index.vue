@@ -19,7 +19,7 @@
                         placeholder="密码" name="password" tabindex="2" auto-complete="on"
                         @keyup.enter.native="handleLogin"/>
             </div>
-            <div class="lowin-group">
+            <div class="lowin-group" hidden>
               <label>年级 </label>
               <el-select class="lowin-input" v-model="loginForm.userLevel" placeholder="年级">
                 <el-option v-for="item in levelEnum" :key="item.key" :value="item.key" :label="item.value"></el-option>

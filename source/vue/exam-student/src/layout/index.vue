@@ -1,16 +1,45 @@
 <template>
   <el-container>
+    <el-header height="61" class="student-header">
+      <div class="head-user">
+        <el-dropdown trigger="click" placement="bottom">
+          <el-badge :is-dot="messageCount!==0" >
+            <el-avatar  class="el-dropdown-avatar" size="medium"  :src="userInfo.imagePath === null ? require('@/assets/avatar.png') : userInfo.imagePath"></el-avatar>
+          </el-badge>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item @click.native="$router.push({path:'/user/index'})">个人中心</el-dropdown-item>
+            <el-dropdown-item @click.native="$router.push({path:'/user/message'})">
+              <el-badge :value="messageCount" v-if="messageCount!==0">
+                <span>消息中心</span>
+              </el-badge>
+              <span  v-if="messageCount===0">消息中心</span>
+            </el-dropdown-item>
+            <el-dropdown-item @click.native="logout" divided>退出</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </div>
+      <div>
+        <a href="/"><img src="@/assets/logo2.png" height="56"/></a>
 
+        <div style="margin-top: -50px; margin-left: 45%">
+          <el-radio-group v-model="radio2" size="medium">
+            <el-radio-button @click.native.prevent="benchClick('工作台')" label="工作台" ></el-radio-button>
+            <el-radio-button @click.native.prevent="benchClick('知识图谱')" label="知识图谱"></el-radio-button>
+            <el-radio-button @click.native.prevent="benchClick('考试中心')" label="考试中心"></el-radio-button>
+          </el-radio-group>
+        </div>
+      </div>
+    </el-header>
     <div class="main">
       <div ref = "leftMain" class="left_main" :class="{ left_main_show: !openStatus }">
         <div class="open_close_v2" ref = "leftOpenClose" style="margin-left: 0px;">
-          <div style="margin-left: 270px; width: 34px">
+          <div style="margin-left: 170px; width: 34px">
             <i @click="change" v-if="open_close" class="el-icon-s-fold"></i>
           </div>
-          <!--        <Tree />-->
+          <!--   display: none;     <Tree />-->
           <!--        <ProgressMenu/>-->
 
-          <el-menu
+          <el-menu id = "workbench"
             :default-active="defaultUrl"
             :router="true"
             class="el-menu-vertical-demo bg_color"
@@ -20,25 +49,35 @@
               <i class="el-icon-s-home"></i>
               <span slot="title">首页</span>
             </el-menu-item>
-<!--            <el-menu-item index="2">-->
-<!--              <i class="el-icon-time"></i>-->
-<!--              <span slot="title">最近查看</span>-->
-<!--            </el-menu-item>-->
-<!--            <el-menu-item index="3">-->
-<!--              <i class="el-icon-collection"></i>-->
-<!--              <span slot="title">我的收藏</span>-->
-<!--            </el-menu-item>-->
             <el-menu-item index="/workbenches/shareSpace">
               <i class="el-icon-ice-drink"></i>
               <span slot="title">工作台</span>
             </el-menu-item>
-<!--            <el-menu-item index="/progressNote/index">-->
-<!--              <i class="el-icon-document"></i>-->
-<!--              <span slot="title">进步本</span>-->
-<!--            </el-menu-item>-->
+          </el-menu>
+
+          <el-menu id = "knowledge"
+            :default-active="knowledgeUrl"
+            :router="true"
+            class="el-menu-vertical-demo bg_color"
+            style="float: right;width: 300px;text-align: left;">
+
+            <el-menu-item index="/index" >
+              <i class="el-icon-s-home"></i>
+              <span slot="title">首页</span>
+            </el-menu-item>
             <el-menu-item index="/knowledge/list">
               <i class="el-icon-school"></i>
               <span slot="title">进步空间</span>
+            </el-menu-item>
+          </el-menu>
+          <el-menu id = "exam"
+            :default-active="examUrl"
+            :router="true"
+            class="el-menu-vertical-demo bg_color"
+            style="float: right;width: 300px;text-align: left;">
+            <el-menu-item index="/index" >
+              <i class="el-icon-s-home"></i>
+              <span slot="title">首页</span>
             </el-menu-item>
             <el-menu-item index="/paper/index">
               <i class="el-icon-document"></i>
@@ -66,6 +105,17 @@
         </div>
       </div>
     </div>
+
+    <div>
+        <floating-button>
+          <!-- 这里是按钮内容，例如一个图标 -->
+          <font-awesome-icon icon="plus" />
+          <!-- 弹窗内容 -->
+          <div slot="modal">
+            <!-- 这里是你的弹窗内容 -->
+          </div>
+        </floating-button>
+      </div>
   </el-container>
 </template>
 
@@ -77,9 +127,12 @@ export default {
   name: 'Layout',
   data () {
     return {
+      radio2: '工作台',
       openStatus: true,
       open_close: true,
       defaultUrl: '/index',
+      knowledgeUrl: '/knowledge/list',
+      examUrl: '/paper/index',
       userInfo: {
         imagePath: null
       }
@@ -115,6 +168,11 @@ export default {
       this.clickFolderId = -1
       this.clickFileId = -1
     })
+
+    document.getElementById('workbench').style.display = '' // 显示
+    document.getElementById('knowledge').style.display = 'none' // 隐藏
+    document.getElementById('exam').style.display = 'none' // 隐藏
+    this.$router.push({ path: '/workbenches/shareSpace' })
   },
   watch: {
     $route (to, from) {
@@ -122,6 +180,28 @@ export default {
     }
   },
   methods: {
+    benchClick (e) {
+      console.log(e)
+      e === this.radio2 ? this.radio2 = '' : this.radio2 = e
+      if (e === '工作台') {
+        document.getElementById('workbench').style.display = '' // 显示
+        document.getElementById('knowledge').style.display = 'none' // 隐藏
+        document.getElementById('exam').style.display = 'none' // 隐藏
+        this.$router.push({ path: '/workbenches/shareSpace' })
+      }
+      if (e === '知识图谱') {
+        document.getElementById('knowledge').style.display = '' // 显示
+        document.getElementById('workbench').style.display = 'none' // 隐藏
+        document.getElementById('exam').style.display = 'none' // 隐藏
+        this.$router.push({ path: '/knowledge/list' })
+      }
+      if (e === '考试中心') {
+        document.getElementById('exam').style.display = '' // 显示
+        document.getElementById('knowledge').style.display = 'none' // 隐藏
+        document.getElementById('workbench').style.display = 'none' // 隐藏
+        this.$router.push({ path: '/paper/index' })
+      }
+    },
     change () {
       this.openStatus = !this.openStatus
       if (this.openStatus) {
@@ -179,7 +259,7 @@ export default {
 }
 .left_main {
   margin: 0;
-  width: 300px;
+  width: 200px;
   text-align: center;
   background-color: #fbfbfb;
   transition: width 1s;

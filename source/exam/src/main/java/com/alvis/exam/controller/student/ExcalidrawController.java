@@ -36,9 +36,11 @@ public class ExcalidrawController extends BaseApiController {
     @RequestMapping(value = "/file/query", method = RequestMethod.POST)
     public RestResponse<JdkFolderFile> fileQuery(@RequestBody ExcalidrawFileInfo param) {
         log.info("[ExcalidrawController]fileQuery, params:{}", JSON.toJSONString(param));
+        User user = getCurrentUser();
         JdkFolderFile req = new JdkFolderFile();
         req.setFileName(param.getContainerName());
         req.setIsFolder(0L);
+        req.setUserId(Long.valueOf(user.getId()));
         List<JdkFolderFile> resList = jdkFolderFileService.selectJdkFolderFileList(req);
         if (CollectionUtils.isEmpty(resList)) {
             return RestResponse.fail("文件不存在");
@@ -53,6 +55,7 @@ public class ExcalidrawController extends BaseApiController {
         log.info("[ExcalidrawController]addOrUpdate, params:{}", JSON.toJSONString(param));
 //        User user = getCurrentUser();
 
+        User user = getCurrentUser();
         JSONObject fileData = new JSONObject();
         fileData.put("containerName", param.getContainerName());
         fileData.put("elementsJson", param.getElementsJson());
@@ -62,6 +65,8 @@ public class ExcalidrawController extends BaseApiController {
         JdkFolderFile req = new JdkFolderFile();
         req.setIsFolder(0L);
         req.setFileName(param.getContainerName());
+        req.setUserId(Long.valueOf(user.getId()));
+
         List<JdkFolderFile> queryList = jdkFolderFileService.selectJdkFolderFileList(req);
 
         JdkFolderFile jdkFolderFile = new JdkFolderFile();
@@ -70,6 +75,7 @@ public class ExcalidrawController extends BaseApiController {
             jdkFolderFile.setId(queryList.get(0).getId());
         }
 
+        jdkFolderFile.setUserId(Long.valueOf(user.getId()));
         jdkFolderFile.setFileName(param.getContainerName());
         jdkFolderFile.setFileData(fileData.toJSONString());
         jdkFolderFile.setIsFolder(0L);

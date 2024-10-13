@@ -12,6 +12,9 @@ import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 //  引入Echarts
 import * as echarts from 'echarts'
+import FloatingButton from './components/FloatingButton'
+
+Vue.component('floating-button', FloatingButton)
 Vue.prototype.$echarts = echarts
 Vue.use(Element, {
   size: 'medium' // set element-ui default size

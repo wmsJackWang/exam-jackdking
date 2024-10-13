@@ -40,6 +40,8 @@
 import { mapMutations } from 'vuex'
 import loginApi from '@/api/login'
 
+const userName = '';
+
 export default {
   name: 'Login',
   data () {
@@ -118,7 +120,7 @@ export default {
           loginApi.login(this.loginForm).then(function (result) {
             if (result && result.code === 1) {
               _this.setUserName(_this.loginForm.userName)
-              _this.$router.push({ path: '/' })
+              _this.$router.push({ path: '/workbenches/shareSpace' })
             } else {
               _this.loading = false
               _this.$message.error(result.message)
