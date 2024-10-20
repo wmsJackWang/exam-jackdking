@@ -27,9 +27,9 @@
             <h3>{{ item.name }}</h3>
           </div>
           <div class="add-task">
-            <el-button type="primary" circle size="mini" @click="addTask"
-              ><i class="el-icon-plus"></i
-            ></el-button>
+            <el-button type="primary" circle size="mini" @click="addTask">
+              <i class="el-icon-plus"></i>
+            </el-button>
           </div>
         </div>
 
@@ -41,6 +41,7 @@
             @end="onEnd"
             @add="onadd"
           >
+            <el-scrollbar style="height: 400px;" :native="false" wrapStyle="" wrapClass="" viewClass="" viewStyle="" :noresize="true" tag="section">
             <transition-group tag="ul" class="task-item-ul">
               <li
                 @dragend="ondragend(item, index)"
@@ -74,9 +75,10 @@
                 </div>
               </li>
             </transition-group>
+            </el-scrollbar>
           </draggable>
           <div class="placeholder" v-if="item.content.length == 0">
-            <h1>添加元素</h1>
+            <h1>任务为空</h1>
           </div>
         </div>
 
@@ -133,7 +135,7 @@
               </transition-group>
             </draggable>
             <div class="placeholder" v-if="data.todo.content.length == 0">
-              <h1>添加元素</h1>
+              <h1>元素为空</h1>
             </div>
           </div>
         </div>
@@ -477,7 +479,7 @@ export default {
     },
     optionsRight() {
       return {
-        animation: 150,
+        animation: 50,
         group: {
           name: "items",
         },

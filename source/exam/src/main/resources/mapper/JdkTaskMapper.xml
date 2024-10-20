@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.alvis.exam.repository.JdkTaskMapper">
+
+    <resultMap type="com.alvis.exam.domain.JdkTask" id="JdkTaskResult">
+        <result property="version"    column="version"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="deleteFlag"    column="delete_flag"    />
+        <result property="content"    column="content"    />
+        <result property="userId"    column="user_id"    />
+        <result property="taskType"    column="task_type"    />
+        <result property="taskDesc"    column="task_desc"    />
+        <result property="ext"    column="ext"    />
+        <result property="id"    column="id"    />
+        <result property="taskStatus"    column="task_status"    />
+    </resultMap>
+
+
+    <sql id="Conditions">
+        <where>
+            <if test="version != null "> and version = #{version}</if>
+            <if test="deleteFlag != null "> and delete_flag = #{deleteFlag}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="taskType != null  and taskType != ''"> and task_type = #{taskType}</if>
+            <if test="taskStatus != null  and taskStatus != ''"> and task_status = #{taskStatus}</if>
+            <if test="taskDesc != null  and taskDesc != ''"> and task_desc = #{taskDesc}</if>
+            <if test="ext != null  and ext != ''"> and ext = #{ext}</if>
+        </where>
+    </sql>
+
+    <sql id="selectJdkTaskVo">
+        select version, update_time, update_by, create_time, create_by, delete_flag, content, user_id, task_type, task_desc, ext, id, task_status from jdk_task
+    </sql>
+
+    <select id="selectJdkTaskList" parameterType="com.alvis.exam.domain.JdkTask" resultMap="JdkTaskResult">
+        <include refid="selectJdkTaskVo"/>
+        <include refid="Conditions"/>
+    </select>
+
+    <select id="selectJdkTaskPageList" parameterType="Long" resultMap="JdkTaskResult">
+        <include refid="selectJdkTaskVo"/>
+        <include refid="Conditions"/>
+        order by gmt_create desc
+        <if test="limit != null and offset != null">
+            LIMIT #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="count" resultType="integer" parameterType="Long">
+        select count(*)
+        from jdk_task
+        <include refid="Conditions"/>
+    </select>
+
+    <select id="selectJdkTaskById" parameterType="Long" resultMap="JdkTaskResult">
+        <include refid="selectJdkTaskVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertJdkTask" parameterType="com.alvis.exam.domain.JdkTask" useGeneratedKeys="true" keyProperty="id">
+        insert into jdk_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="version != null ">version,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="deleteFlag != null ">delete_flag,</if>
+            <if test="content != null  and content != ''">content,</if>
+            <if test="userId != null ">user_id,</if>
+            <if test="taskType != null  and taskType != ''">task_type,</if>
+            <if test="taskStatus != null  and taskStatus != ''"> task_status,</if>
+            <if test="taskDesc != null  and taskDesc != ''">task_desc,</if>
+            <if test="ext != null  and ext != ''">ext,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="version != null ">#{version},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="deleteFlag != null ">#{deleteFlag},</if>
+            <if test="content != null  and content != ''">#{content},</if>
+            <if test="userId != null ">#{userId},</if>
+            <if test="taskType != null  and taskType != ''">#{taskType},</if>
+            <if test="taskStatus != null  and taskStatus != ''">#{taskStatus}</if>
+            <if test="taskDesc != null  and taskDesc != ''">#{taskDesc},</if>
+            <if test="ext != null  and ext != ''">#{ext},</if>
+         </trim>
+    </insert>
+
+    <update id="updateJdkTask" parameterType="com.alvis.exam.domain.JdkTask">
+        update jdk_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="version != null ">version = #{version},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="deleteFlag != null ">delete_flag = #{deleteFlag},</if>
+            <if test="content != null  and content != ''">content = #{content},</if>
+            <if test="userId != null ">user_id = #{userId},</if>
+            <if test="taskType != null  and taskType != ''">task_type = #{taskType},</if>
+            <if test="taskStatus != null  and taskStatus != ''">task_status = #{taskStatus}</if>
+            <if test="taskDesc != null  and taskDesc != ''">task_desc = #{taskDesc},</if>
+            <if test="ext != null  and ext != ''">ext = #{ext},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteJdkTaskById" parameterType="Long">
+        delete from jdk_task where id = #{id}
+    </delete>
+
+    <delete id="deleteJdkTaskByIds" parameterType="String">
+        delete from jdk_task where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
