@@ -7,6 +7,10 @@ Page({
 
   onLoad: function(options) {
     this.loadUserInfo()
+    wx.onAccelerometerChange(function(res) {
+      console.log(res.x+' '+res.y+' '+res.z)
+    })
+
   },
   loadUserInfo() {
     let _this = this
