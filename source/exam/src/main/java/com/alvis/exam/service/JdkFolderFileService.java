@@ -1,6 +1,7 @@
 package com.alvis.exam.service;
 
 import com.alvis.exam.domain.JdkFolderFile;
+import com.alvis.exam.domain.WorkbenchFileInfo;
 
 import java.util.List;
 
@@ -29,6 +30,40 @@ public interface JdkFolderFileService
     public List<JdkFolderFile> selectJdkFolderFileList(JdkFolderFile jdkFolderFile);
 
     /**
+     * 查询画图文件列表
+     *
+     * @param jdkFolderFile 画图文件
+     * @return 画图文件集合
+     */
+    public JdkFolderFile selectJdkFolderFileOne(JdkFolderFile jdkFolderFile);
+
+
+    /**
+     * 查询画图文件列表
+     *
+     * @param jdkFolderFile 画图文件
+     * @return 画图文件集合
+     */
+    public List<JdkFolderFile> selectJdkFolderFileListSimple(JdkFolderFile jdkFolderFile);
+
+    /**
+     * 我的收藏
+     *
+     * @param jdkFolderFile 画图文件
+     * @return 画图文件集合
+     */
+    public List<JdkFolderFile> selectCollectFileList(JdkFolderFile jdkFolderFile);
+
+
+    /**
+     *  最近文件
+     *
+     * @param jdkFolderFile 画图文件
+     * @return 画图文件集合
+     */
+    public List<JdkFolderFile> selectRecentFileList(JdkFolderFile jdkFolderFile);
+
+    /**
      * 分页查询画图文件列表
      *
      * @param jdkFolderFile 画图文件
@@ -42,7 +77,7 @@ public interface JdkFolderFileService
      * @param jdkFolderFile 画图文件
      * @return 结果
      */
-    public int saveOrUpdateJdkFolderFile(JdkFolderFile jdkFolderFile);
+    public JdkFolderFile saveOrUpdateJdkFolderFile(JdkFolderFile jdkFolderFile);
 
     /**
      * 删除画图文件信息
@@ -51,4 +86,6 @@ public interface JdkFolderFileService
      * @return 结果
      */
     public int deleteJdkFolderFileById(Long id);
+
+    void saveFilePic(WorkbenchFileInfo param, JdkFolderFile jdkFolderFile);
 }

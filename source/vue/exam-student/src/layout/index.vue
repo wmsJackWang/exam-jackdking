@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-header height="61" class="student-header">
+    <el-header class="student-header">
       <div class="head-user">
         <el-dropdown trigger="click" placement="bottom">
           <el-badge :is-dot="messageCount!==0" >
@@ -19,7 +19,7 @@
         </el-dropdown>
       </div>
       <div>
-        <a href="/"><img src="@/assets/logo2.png" height="56"/></a>
+        <a href="http://bittechblog.com/study/student/index.html#/workbenches/shareSpace"><img src="@/assets/logo2.png" height="56"/></a>
 
         <div style="margin-top: -50px; margin-left: 45%">
           <el-radio-group v-model="radio2" size="medium">
@@ -43,15 +43,32 @@
             :default-active="defaultUrl"
             :router="true"
             class="el-menu-vertical-demo bg_color"
-            style="float: right;width: 300px;text-align: left;">
+            style="float: right;width: 200px;text-align: left; list-style: none">
 
+            <!--
             <el-menu-item index="/index" >
               <i class="el-icon-s-home"></i>
               <span slot="title">首页</span>
             </el-menu-item>
+            -->
+            <el-menu-item index="/recentFiles/index" >
+              <i class="el-icon-watch"></i>
+              <span slot="title">最近文件</span>
+            </el-menu-item>
+            <el-menu-item index="/collect/index" >
+              <i class="el-icon-star-on"></i>
+              <span slot="title">我的收藏</span>
+            </el-menu-item>
+            <!--
+            <el-menu-item index="/workbenches/collect" >
+              <i class="el-icon-edit"></i>
+              <span slot="title">素材库</span>
+            </el-menu-item>
+            -->
+            <hr style="width:90%">
             <el-menu-item index="/workbenches/shareSpace">
               <i class="el-icon-ice-drink"></i>
-              <span slot="title">工作台</span>
+              <span slot="title">个人中心</span>
             </el-menu-item>
           </el-menu>
 
@@ -59,7 +76,7 @@
             :default-active="knowledgeUrl"
             :router="true"
             class="el-menu-vertical-demo bg_color"
-            style="float: right;width: 300px;text-align: left;">
+            style="float: right;width: 200px;text-align: left;">
 
             <el-menu-item index="/index" >
               <i class="el-icon-s-home"></i>
@@ -74,7 +91,7 @@
             :default-active="examUrl"
             :router="true"
             class="el-menu-vertical-demo bg_color"
-            style="float: right;width: 300px;text-align: left;">
+            style="float: right;width: 200px;text-align: left;">
             <el-menu-item index="/index" >
               <i class="el-icon-s-home"></i>
               <span slot="title">首页</span>
@@ -95,7 +112,7 @@
 
         </div>
       </div>
-      <el-divider style="height: auto" direction="vertical"></el-divider>
+      <el-divider style="height: 100%" direction="vertical"></el-divider>
       <div class="right_main">
         <div class="open_close">
           <i @click="change" v-if="!open_close" class="el-icon-s-unfold"></i>
@@ -402,6 +419,12 @@ export default {
   width: 100%;
   height: 36px;
   // margin-top: 5px;
+}
+hr {
+  border: none; /* 移除默认边框 */
+  height: 1px; /* 分隔线的高度 */
+  background-color:#DCDFE6; /* 分隔线的颜色 */
+  margin: 10px 0; /* 上下外边距 */
 }
 
 .add-folder-6:hover {

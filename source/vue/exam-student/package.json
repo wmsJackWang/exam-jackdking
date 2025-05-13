@@ -2,18 +2,18 @@
   "name": "exam-student",
   "version": "3.0.4",
   "author": "alvis",
-  "description": "比特课堂管理系统",
+  "description": "墨汁",
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {
     "serve:mac": "export NODE_OPTIONS=--openssl-legacy-provider && set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service serve --mode dev",
-    "serve:win": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service serve --mode dev",
+    "serve:win": "SET NODE_OPTIONS=%NODE_OPTIONS:--openssl-legacy-provider=% && vue-cli-service serve --mode dev",
     "build": "export NODE_OPTIONS=--openssl-legacy-provider && set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build --mode prod",
     "build:dev": "export NODE_OPTIONS=--openssl-legacy-provider && set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build --mode dev",
     "build:test": "export NODE_OPTIONS=--openssl-legacy-provider && set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build --mode test",
     "build:pre": "export NODE_OPTIONS=--openssl-legacy-provider && set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build --mode pre",
     "build:prod:mac": "export NODE_OPTIONS=--openssl-legacy-provider && set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build --mode prod",
-    "build:prod:win": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build --mode prod",
+    "build:prod:win": "SET NODE_OPTIONS=%NODE_OPTIONS:--openssl-legacy-provider=% && vue-cli-service build --mode prod",
     "lint": "export NODE_OPTIONS=--openssl-legacy-provider && set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service lint"
   },
   "dependencies": {

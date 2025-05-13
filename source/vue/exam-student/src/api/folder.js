@@ -7,6 +7,14 @@ export default {
     console.log('/api/student/fileSystem/folder/listFolderAndFile/' + query.folderId);
     return post('/api/student/fileSystem/folder/listFolderAndFile/' + query.folderId)
   },
+  listCollect: query => {
+    console.log('/api/student/fileSystem/file/collect');
+    return post('/api/student/fileSystem/file/collect')
+  },
+  listRecent: query => {
+    console.log('/api/student/fileSystem/file/recent');
+    return post('/api/student/fileSystem/file/recent')
+  },
 
 //  // 移动 前置请求-获取所有目录结构
 //  getTreeDirectory: () => get('/api/admin/fileSystem/folder/listFolderids'),

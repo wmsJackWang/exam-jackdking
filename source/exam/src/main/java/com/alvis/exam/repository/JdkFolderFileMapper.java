@@ -36,6 +36,14 @@ public interface JdkFolderFileMapper
      * @param jdkFolderFile 画图文件
      * @return 画图文件集合
      */
+    public List<JdkFolderFile> selectJdkFolderFileListSimple(JdkFolderFile jdkFolderFile);
+
+    /**
+     * 查询画图文件列表
+     *
+     * @param jdkFolderFile 画图文件
+     * @return 画图文件集合
+     */
     public List<JdkFolderFile> selectJdkFolderFilePageList(JdkFolderFile jdkFolderFile);
 
     /**
@@ -73,8 +81,32 @@ public interface JdkFolderFileMapper
     /**
      * 统计画图文件总数
      *
-     * @param jdkFolderFileDto 画图文件
+     * @param jdkFolderFile 画图文件
      * @return 结果
      */
     int count(JdkFolderFile jdkFolderFile);
+
+    /**
+     * 收藏
+     *
+     * @param jdkFolderFile 画图文件
+     * @return 结果
+     */
+    List<JdkFolderFile> selectCollectFileList(JdkFolderFile jdkFolderFile);
+
+    /**
+     * 最近文件
+     *
+     * @param jdkFolderFile 画图文件
+     * @return 结果
+     */
+    List<JdkFolderFile> selectRecentFileList(JdkFolderFile jdkFolderFile);
+
+    /**
+     * 最近文件
+     *
+     * @param jdkFolderFile 画图文件
+     * @return 结果
+     */
+    JdkFolderFile selectJdkFolderFileOne(JdkFolderFile jdkFolderFile);
 }

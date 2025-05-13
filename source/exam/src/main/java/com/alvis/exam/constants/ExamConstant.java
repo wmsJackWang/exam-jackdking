@@ -14,6 +14,6 @@ public interface ExamConstant {
      * UTF-8 字符集
      */
     public static final String UTF8 = "UTF-8";
-    String blogArticleDetailUrl = "http://bittechblog.com/article/detail";
-    String blogArticleListUrl = "http://bittechblog.com/page/json";
+    String blogArticleDetailUrl = "http://47.120.77.159/article/detail";
+    String blogArticleListUrl = "http://47.120.77.159/page/json";
 }

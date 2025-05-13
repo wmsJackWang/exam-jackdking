@@ -1,0 +1,1 @@
+import{_ as t}from"./index-B-HP0MFg.js";import{r as a,o as n,l,f as o,F as c}from"./index-HvyrSzgq.js";const _={__name:"index",setup(m){const r=a("http://exam.47.120.77.159:81/gotool/swagger/index.html");return(f,e)=>(n(),l(o(t),{src:o(r),"onUpdate:src":e[0]||(e[0]=s=>c(r)?r.value=s:null)},null,8,["src"]))}};export{_ as default};

@@ -1,17 +1,45 @@
 <template xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
     <div class="app-container">
-      <el-page-header class="pageHeader" :content="'当前所处：' + currentLocationName" @back="goBack">
-      </el-page-header>
-      <el-divider></el-divider>
+      <el-row> <div class ="moduleClass">快速开始</div></el-row>
+      <el-row style="margin:20px;width:100%">
+        <el-col>
+          <div class="folderContainerNew" @click="handCommand('excalidraw')">
+            <div class="folderWrapperNew" >
+              <img src="@/assets/folder/baiban.png" style="width: 100%;height: 100%;border-radius: 10%;"/>
+              <div class="folderNameNew">
+                <span>新建空白白板</span>
+              </div>
+            </div>
+          </div>
+          <div class="folderContainerNew" @click="handCommand('process')">
+           <div class="folderWrapperNew" >
+             <img src="@/assets/folder/flow.png" style="width: 100%;height: 100%;border-radius: 10%;"/>
+             <div class="folderNameNew">
+               <span>流程图</span>
+             </div>
+           </div>
+          </div>
+          <div class="folderContainerNew" @click="handCommand('excalidraw')">
+           <div class="folderWrapperNew" >
+             <img src="@/assets/folder/excalidraw.png" style="width: 100%;height: 100%;border-radius: 10%;"/>
+             <div class="folderNameNew">
+               <span>excalidraw</span>
+             </div>
+           </div>
+          </div>
+        </el-col>
+      </el-row>
+
+      <div class ="moduleClass">我的文件</div>
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5" style="float: left;">
           <el-dropdown size="mini" split-button type="primary" @command="handCommand" @click="handClick">
             新建白板文件
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="excalidraw">白板文件</el-dropdown-item>
-              <el-dropdown-item command="brainMind">思维导图</el-dropdown-item>
-              <el-dropdown-item command="process">流程图</el-dropdown-item>
-              <el-dropdown-item command="markDown">MarkDown</el-dropdown-item>
+            <el-dropdown-menu slot="dropdown"  style="width:150px" >
+              <el-dropdown-item command="excalidraw">白板文件(excalidraw)</el-dropdown-item>
+              <el-dropdown-item command="process">流程图(process)</el-dropdown-item>
+              <!--<el-dropdown-item command="brainMind">思维导图</el-dropdown-item>-->
+              <!--<el-dropdown-item command="markDown">MarkDown</el-dropdown-item>-->
             </el-dropdown-menu>
           </el-dropdown>
         </el-col>
@@ -27,19 +55,20 @@
           <el-button plain icon="el-icon-refresh" size="mini" @click="refreshGetList">刷新</el-button>
         </el-col>
       </el-row>
-
+      <el-page-header class="pageHeader" :content="currentLocationName" @back="goBack">
+      </el-page-header>
       <!-- 文件浏览区 -->
       <div >
-        <el-card class="drawing_card" v-loading="cardLoading" style="height: 60vh">
+        <el-card class="drawing_card" v-loading="cardLoading" style="height: 70vh">
           <template v-if="folderList.length === 0 && filesList.length === 0">
             <el-empty description="暂无文件，请创建一个文件夹吧" style="height:60vh"></el-empty>
           </template>
           <!-- 文件夹 -->
-          <div v-for="( item, index ) in  folderList ">
+          <div v-for="( item, index ) in  folderList " style="width:100%">
             <div class="folderContainer">
               <div class="folderWrapper" @dblclick="doubleClickFolder(index, item)"
                    @contextmenu.prevent.stop="rightClickFolder(index, item, $event)">
-                <img src="@/assets/folder/folder.png" style="width: 100px;height: 90px;margin-top: -13px"
+                <img src="@/assets/folder/folder.png" style="width: 100%;height: 100%"
                      @contextmenu.prevent.stop="rightClickFolder(index, item, $event)" />
                 <div class="folderName">
                   <span>{{
@@ -55,18 +84,16 @@
           <div v-for="( item, index ) in  filesList ">
             <div class="folderContainer">
               <div class="folderWrapper" @dblclick="down(item)">
-                <img src="@/assets/folder/fileImg.png" style="width: 100px;height: 90px;margin-top: -13px"
+                <img  v-bind:src="item.imgData" style="width: 100%;height: 100%;"
                      @contextmenu.prevent.stop="rightClickfile(index, item, $event)" />
                 <div class="folderName">
                   <span>{{
-                      item.fileName.length > 10 ? item.fileName.substring(0, 6) + '...' : item.fileName
+                      item.fileName.length > 6 ? item.fileName.substring(0, 6) + '...' : item.fileName
                     }}</span>
                     <span><br/> ({{item.recordType}})</span>
                 </div>
-
               </div>
             </div>
-
           </div>
         </el-card>
       </div>
@@ -202,7 +229,7 @@ export default {
       clickFilePath: '', // 被右键的文件路径-已加上下载的路径网站前端
 
       queryParams: { // 查询参数
-        folderId: 0 // 目标文件（夹）id，值为-1则查询根目录文件（夹）
+        folderId: -1 // 目标文件（夹）id，值为-1则查询根目录文件（夹）
       }
     }
   },
@@ -211,8 +238,18 @@ export default {
       if(item.recordType === 'excalidraw') {
         this.storeItem('examStudentCommand', 'openExcalidrawFile')
         this.storeItem('openFileName', item.fileName)
+        this.storeItem('parentId', this.currentLocationId + '')
+        console.log('parentId:' + this.currentLocationId + '')
         console.log('url:' + process.env.EXCALIDRAW_URL)
         window.open("http://bittechblog.com/study/excalidraw/index.html", '_blank')
+        // window.open('http://localhost:8083/excalidraw/index.html', '_blank')
+      } else if(item.recordType === 'process' || item.recordType === 'processOn' ) {
+        this.storeItem('examStudentCommand', 'openProcessFile')
+        this.storeItem('createFileName', item.fileName)
+        this.storeItem('parentId', this.currentLocationId + '')
+        console.log('parentId:' + this.currentLocationId + '')
+        console.log('url:' + process.env.EXCALIDRAW_URL)
+        window.open("http://bittechblog.com/study/bpms/index.html", '_blank')
         // window.open('http://localhost:8083/excalidraw/index.html', '_blank')
       } else {
         this.$message({
@@ -230,6 +267,7 @@ export default {
       if (this.command === 'excalidraw') {
         this.storeItem('examStudentCommand', 'createNewFile')
         this.storeItem('createFileName', this.createFileForm.fileName)
+        this.storeItem('parentId', this.currentLocationId + '')
         console.log('url:' + process.env.EXCALIDRAW_URL)
         window.open("http://bittechblog.com/study/excalidraw/index.html", '_blank')
         // window.open('http://localhost:8083/excalidraw/index.html', '_blank')
@@ -238,6 +276,26 @@ export default {
           console.log('saveOrUpdateJdkFolderFile:' + JSON.stringify(res))
         })
         this.getList()
+      } else if (this.command === 'process'  || item.recordType === 'processOn' ) {
+
+        this.storeItem('examStudentCommand', 'openProcessFile')
+        this.storeItem('createFileName', this.createFileForm.fileName)
+        this.storeItem('parentId', this.currentLocationId + '')
+
+        let commandData = {
+          examStudentCommand: 'openProcessFile',
+          createFileName: this.createFileForm.fileName,
+        }
+        this.storeItem('commandData', JSON.stringify(commandData))
+        console.log('url:' + process.env.EXCALIDRAW_URL)
+        window.open("http://bittechblog.com/study/bpms/index.html", '_blank')
+        // window.open('http://localhost:8083/bpms/index.html', '_blank')
+
+        systemFileApi.saveOrUpdateJdkFolderFile(this.createFileForm).then(res => {
+          console.log('saveOrUpdateJdkFolderFile:' + JSON.stringify(res))
+        })
+        this.getList()
+
       } else {
         this.$message({
           message: this.commandDesc + '类型文件近期将推出，敬请期待！',
@@ -256,6 +314,7 @@ export default {
       await this.excalidrawDB.setItem(key, val)
     },
     handCommand (command) {
+      console.log('command:' + command)
       // excalidraw 白板文件
       if (command === 'excalidraw') {
         this.createFileDialogFormVisible = true
@@ -270,18 +329,24 @@ export default {
       if (command === 'brainMind') {
         this.createFileForm.desc = '思维导图'
         this.commandDesc = '思维导图文件'
+        return
       }
 
       // process 流程图
       if (command === 'process') {
+        this.createFileDialogFormVisible = true
+        this.createFileForm.recordType = command
+        this.command = command
         this.createFileForm.desc = '流程图'
         this.commandDesc = '流程图文件'
+        return
       }
 
       // markDown
       if (command === 'markDown') {
         this.createFileForm.desc = 'MarkDown'
         this.commandDesc = 'MarkDown文件'
+        return
       }
 
       this.$message({
@@ -627,13 +692,15 @@ export default {
 
 <style lang="scss">
 .pageHeader {
+   margin-top: 20px;
   .el-page-header__content {
-    font-size: 16px !important;
+    font-size: 14px !important;
   }
 }
 </style>
 
 <style scoped lang="scss">
+
 .drawing_card {
   width: 100%;
   height: 100%;
@@ -646,18 +713,31 @@ export default {
 }
 
 .folderContainer {
-  width: 150px;
+  width: 300px;
+  height:300px;
   float: left;
   display: block;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
-  margin-left: 30px;
+  margin-bottom: 40px;
+  margin-left: 10px;
+}
+
+.folderContainerNew {
+  width: 240px;
+  height:190px;
+  float: left;
+  display: block;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+  margin-left: 1px;
 }
 
 .folder {
-  width: 110px;
+  width: 200px;
   height: 80px;
   perspective: 600px;
   transform-style: preserve-3d;
@@ -665,8 +745,18 @@ export default {
 }
 
 .folderWrapper {
-  width: 140px;
-  height: 130px;
+  width: 300px;
+  height: 300px;
+  padding: 20px 20px 10px 20px;
+  position: relative;
+  transition: all .2s ease;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.folderWrapperNew {
+  width: 200px;
+  height: 150px;
   padding: 20px 20px 10px 20px;
   position: relative;
   transition: all .2s ease;
@@ -678,12 +768,33 @@ export default {
   background-color: aliceblue;
 }
 
+.folderWrapperNew:hover {
+  background-color: aliceblue;
+}
+
 .folderName {
+  color: black;
   margin-top: 5px;
   font-size: 14px;
   line-height: 20px;
   text-align: center;
-  width: 100px;
+  width: 100%;
+}
+
+.moduleClass{
+  margin:20px;
+  font-weight: bold;
+  color:black;
+}
+
+.folderNameNew {
+  color: black;
+  font-weight: bold;
+  margin-top: 5px;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  width: 100%;
 }
 
 .add-folder-9 {

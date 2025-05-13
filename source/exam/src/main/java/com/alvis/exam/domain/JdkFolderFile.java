@@ -2,6 +2,9 @@ package com.alvis.exam.domain;
 
 import lombok.Data;
 
+import java.io.Serializable;
+import java.util.Date;
+
 /**
  * 画图文件对象 jdk_folder_file
  *
@@ -9,8 +12,7 @@ import lombok.Data;
  * @date 2024-08-09
  */
 @Data
-public class JdkFolderFile
-{
+public class JdkFolderFile implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /** 版本 */
@@ -22,11 +24,17 @@ public class JdkFolderFile
     /** 0--文件夹1--文件  */
     private Long isFolder;
 
+    /** 0--未被收藏  1--已收藏  */
+    private Long isCollected;
+
     /** 0--已禁用 1--已启用  DIC_NAME=ENABLE_FLAG */
     private Long enableFlag;
 
     /** 文件数据 */
     private String fileData;
+
+    /** 图像数据 */
+    private String imgData;
 
     /** 用户id */
     private Long userId;
@@ -45,4 +53,7 @@ public class JdkFolderFile
 
     /** 主键 */
     private Long id;
+
+    /** 更新时间 */
+    private Date updateTime;
 }

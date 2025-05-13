@@ -10,28 +10,32 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="isFolder"    column="is_folder"    />
         <result property="enableFlag"    column="enable_flag"    />
         <result property="fileData"    column="file_data"    />
+        <result property="imgData"    column="img_data"    />
         <result property="userId"    column="user_id"    />
         <result property="fileName"    column="file_name"    />
         <result property="recordType"    column="record_type"    />
         <result property="parentId"    column="parent_id"    />
         <result property="fileDesc"    column="file_desc"    />
         <result property="id"    column="id"    />
+        <result property="updateTime" column="update_time"/>
+        <result property="isCollected" column="is_collected"/>
     </resultMap>
 
 
     <sql id="Conditions">
         <where>
             <if test="version != null "> and version = #{version}</if>
-                <if test="deleteFlag != null "> and delete_flag = #{deleteFlag}</if>
-                <if test="isFolder != null "> and is_folder = #{isFolder}</if>
-                <if test="enableFlag != null "> and enable_flag = #{enableFlag}</if>
-                <if test="fileData != null  and fileData != ''"> and file_data = #{fileData}</if>
-                <if test="userId != null "> and user_id = #{userId}</if>
-                <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
-                <if test="recordType != null and recordType != '' "> and record_type = #{recordType}</if>
-                <if test="parentId != null "> and parent_id = #{parentId}</if>
-                <if test="fileDesc != null  and fileDesc != ''"> and file_desc = #{fileDesc}</if>
-            </where>
+            <if test="deleteFlag != null "> and delete_flag = #{deleteFlag}</if>
+            <if test="isFolder != null "> and is_folder = #{isFolder}</if>
+            <if test="enableFlag != null "> and enable_flag = #{enableFlag}</if>
+            <if test="fileData != null  and fileData != ''"> and file_data = #{fileData}</if>
+            <if test="imgData != null  and imgData != ''"> and img_data = #{imgData}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="fileName != null  and fileName != ''"> and file_name = #{fileName}</if>
+            <if test="recordType != null and recordType != '' "> and record_type = #{recordType}</if>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="fileDesc != null  and fileDesc != ''"> and file_desc = #{fileDesc}</if>
+        </where>
     </sql>
     <sql id="FolderConditions">
         <where>
@@ -40,8 +44,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isFolder != null "> and is_folder = #{isFolder}</if>
             <if test="enableFlag != null "> and enable_flag = #{enableFlag}</if>
             <if test="fileData != null  and fileData != ''"> and file_data = #{fileData}</if>
+            <if test="imgData != null  and imgData != ''"> and img_data = #{imgData}</if>
             <if test="userId != null "> and user_id = #{userId}</if>
-            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="fileName != null  and fileName != ''"> and file_name = #{fileName}</if>
             <if test="recordType != null  and recordType != ''"> and record_type = #{recordType}</if>
             <if test="parentId != null "> and parent_id = #{parentId}</if>
             <if test="parentId == null "> and parent_id is null </if>
@@ -50,12 +55,61 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <sql id="selectJdkFolderFileVo">
-        select version, update_time, update_by, create_time, create_by, delete_flag, is_folder,  enable_flag, file_data, user_id, file_name, record_type, parent_id, file_desc, id from jdk_folder_file
+        select version, update_time, update_by, create_time, create_by, delete_flag, is_folder, is_collected,  enable_flag, file_data, user_id, file_name, record_type, parent_id, file_desc, id, img_data from jdk_folder_file
     </sql>
+
+    <sql id="selectJdkFolderFileVoSimple">
+        select version, update_time, update_by, create_time, create_by, delete_flag, is_folder, is_collected,  enable_flag, user_id, file_name, record_type, parent_id, file_desc, id from jdk_folder_file
+    </sql>
+
+    <select id="selectJdkFolderFileOne" parameterType="com.alvis.exam.domain.JdkFolderFile" resultMap="JdkFolderFileResult">
+        <include refid="selectJdkFolderFileVo"/>
+        <include refid="Conditions"/>
+    </select>
 
     <select id="selectJdkFolderFileList" parameterType="com.alvis.exam.domain.JdkFolderFile" resultMap="JdkFolderFileResult">
         <include refid="selectJdkFolderFileVo"/>
         <include refid="Conditions"/>
+    </select>
+
+    <select id="selectJdkFolderFileListSimple" parameterType="com.alvis.exam.domain.JdkFolderFile" resultMap="JdkFolderFileResult">
+        <include refid="selectJdkFolderFileVoSimple"/>
+        <include refid="Conditions"/>
+    </select>
+
+    <select id="selectCollectFileList" parameterType="com.alvis.exam.domain.JdkFolderFile" resultMap="JdkFolderFileResult">
+        <include refid="selectJdkFolderFileVo"/>
+        <where>
+            <if test="version != null "> and version = #{version}</if>
+            <if test="deleteFlag != null "> and delete_flag = #{deleteFlag}</if>
+            <if test="isFolder != null "> and is_folder = #{isFolder}</if>
+            <if test="enableFlag != null "> and enable_flag = #{enableFlag}</if>
+            <if test="fileData != null  and fileData != ''"> and file_data = #{fileData}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="fileName != null  and fileName != ''"> and file_name = #{fileName}</if>
+            <if test="recordType != null and recordType != '' "> and record_type = #{recordType}</if>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="fileDesc != null  and fileDesc != ''"> and file_desc = #{fileDesc}</if>
+            <if test="isCollected != null "> and is_collected = #{isCollected}</if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="selectRecentFileList" parameterType="com.alvis.exam.domain.JdkFolderFile" resultMap="JdkFolderFileResult">
+        <include refid="selectJdkFolderFileVo"/>
+        <where>
+            <if test="version != null "> and version = #{version}</if>
+            <if test="deleteFlag != null "> and delete_flag = #{deleteFlag}</if>
+            <if test="isFolder != null "> and is_folder = #{isFolder}</if>
+            <if test="enableFlag != null "> and enable_flag = #{enableFlag}</if>
+            <if test="fileData != null  and fileData != ''"> and file_data = #{fileData}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="fileName != null  and fileName != ''"> and file_name = #{fileName}</if>
+            <if test="recordType != null and recordType != '' "> and record_type = #{recordType}</if>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="fileDesc != null  and fileDesc != ''"> and file_desc = #{fileDesc}</if>
+        </where>
+        order by update_time desc limit 20
     </select>
 
     <select id="selectJdkFolderFilePageList" parameterType="com.alvis.exam.domain.JdkFolderFile" resultMap="JdkFolderFileResult">
@@ -86,6 +140,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isFolder != null ">is_folder,</if>
             <if test="enableFlag != null ">enable_flag,</if>
             <if test="fileData != null  and fileData != ''">file_data,</if>
+            <if test="imgData != null  and imgData != ''">img_data,</if>
             <if test="userId != null ">user_id,</if>
             <if test="fileName != null  and fileName != ''">file_name,</if>
             <if test="recordType != null  and recordType != ''">record_type,</if>
@@ -98,6 +153,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isFolder != null ">#{isFolder},</if>
             <if test="enableFlag != null ">#{enableFlag},</if>
             <if test="fileData != null  and fileData != ''">#{fileData},</if>
+            <if test="imgData != null  and imgData != ''">#{imgData},</if>
             <if test="userId != null ">#{userId},</if>
             <if test="fileName != null  and fileName != ''">#{fileName},</if>
             <if test="recordType != null  and recordType != ''">#{recordType},</if>
@@ -114,6 +170,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isFolder != null ">is_folder = #{isFolder},</if>
             <if test="enableFlag != null ">enable_flag = #{enableFlag},</if>
             <if test="fileData != null  and fileData != ''">file_data = #{fileData},</if>
+            <if test="imgData != null  and imgData != ''">img_data = #{imgData},</if>
             <if test="userId != null ">user_id = #{userId},</if>
             <if test="fileName != null  and fileName != ''">file_name = #{fileName},</if>
             <if test="recordType != null and recordType != ''">record_type = #{recordType},</if>

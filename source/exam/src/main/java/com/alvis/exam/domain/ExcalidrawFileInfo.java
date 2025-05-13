@@ -21,4 +21,10 @@ public class ExcalidrawFileInfo implements Serializable {
   String elementsJson;
 
   String appStateJson;
+
+  String imgData;
+
+  /** 父文件夹id */
+  private Long parentId;
+
 }

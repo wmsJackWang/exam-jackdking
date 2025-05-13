@@ -14,4 +14,5 @@ export default {
   // 新建任务
   saveOrUpdateJdkTask: data => post('/api/student/task/add', data),
 
+  changeStatus: data => post('/api/student/task/changeStatus', data),
 }

@@ -61,6 +61,30 @@ const router = new Router({
       ]
     },
     {
+      path: '/recentFiles',
+      component: Layout,
+      children: [
+        {
+          path: 'index',
+          component: () => import('@/views/recent-file/index'),
+          name: 'recentFiles',
+          meta: { title: '最近文件' }
+        }
+      ]
+    },
+    {
+      path: '/collect',
+      component: Layout,
+      children: [
+        {
+          path: 'index',
+          component: () => import('@/views/collect/index'),
+          name: 'collect',
+          meta: { title: '我的收藏' }
+        }
+      ]
+    },
+    {
       path: '/paper',
       component: Layout,
       children: [

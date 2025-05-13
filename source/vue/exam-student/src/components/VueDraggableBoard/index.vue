@@ -1,6 +1,6 @@
 <template>
   <div>
-    <draggable class="main-box" v-model="dragList" :move="onMove" filter=".undraggable">
+    <draggable class="main-box" v-model="dragList" @end="onEnd" :move="onMove" filter=".undraggable">
       <div v-for="(stage,index) in dragList" class="stage-item" :key="index">
         <div class="stage-header">
           <div class="title">{{stage.name}}</div>
@@ -9,8 +9,8 @@
 <!--            <el-button class="delstage" title="删除阶段" type="danger" icon="el-icon-delete" circle size="mini" @click="delStage(index)"></el-button>-->
           </div>
         </div>
-        <draggable tag="span" class="list-group-stage" v-model="stage.list" v-bind="dragOptions" :move="onMove">
-          <transition-group tag="ul" type="transition" class="list-group" :name="'flip-list'">
+        <draggable tag="span" class="list-group-stage" v-model="stage.list" v-bind="dragOptions" @add="onAdd" @end="onEnd" :move="onMove">
+          <transition-group tag="ul" type="transition" class="list-group" :name="'flip-list'"  id = stage.name>
             <li class="list-group-item stage-header" v-for="(element,k) in stage.list" :key="element.order" ondblclick="editTask(element, k)">
               <!--                        <i :class="element.fixed? 'fa fa-anchor' : 'glyphicon glyphicon-pushpin'" @click=" element.fixed=! element.fixed" aria-hidden="true"></i>-->
               <span class="name">{{element.name}}</span>
@@ -81,6 +81,10 @@ export default {
   name: 'vueDraggableBoard',
   data () {
     return {
+      changeStatusData: {
+        id: null,
+        data: null
+      },
       createTaskDialogFormVisible: false,
       createTaskForm: {
         index: '',
@@ -137,63 +141,66 @@ export default {
           });
 
           this.dragList =  [{
-                  list: response.get('readyBegin').map((name, index) => {
+                  list: response.get('readyBegin').map((task, index) => {
                     return {
-                      name,
+                      name: task.content,
                       order: index + 1,
-                      fixed: false
+                      fixed: false,
+                      id: task.id
                     };
                   }),
                   order: 10001,
                   name: "待开始",
                   fixed: true
                 }, {
-                  list: message2.map((name, index) => {
+                  list: response.get('search').map((task, index) => {
                     return {
-                      name,
+                      name: task.content,
                       order: index + 20,
-                      fixed: false
+                      fixed: false,
+                      id: task.id
                     };
                   }),
                   order: 10003,
                   name: "调研准备中",
                   fixed: true
                 }, {
-                  list: message3.map((name, index) => {
+                  list: response.get('doing').map((task, index) => {
                     return {
-                      name,
+                      name: task.content,
                       order: index + 40,
-                      fixed: false
+                      fixed: false,
+                      id: task.id
                     };
                   }),
                   order: 10005,
                   name: "进行中",
                   fixed: true
                 }, {
-                  list: message4.map((name, index) => {
+                  list: response.get('checking').map((task, index) => {
                     return {
-                      name,
+                      name: task.content,
                       order: index + 60,
-                      fixed: false
+                      fixed: false,
+                      id: task.id
                     };
                   }),
                   order: 10007,
                   name: "待验证",
                   fixed: true
                 }, {
-                  list: message4.map((name, index) => {
+                  list: response.get('finish').map((task, index) => {
                     return {
-                      name,
-                      order: index + 60,
-                      fixed: false
+                      name: task.content,
+                      order: index + 80,
+                      fixed: false,
+                      id: task.id
                     };
                   }),
                   order: 10009,
                   name: "已完成",
                   fixed: true
                 }]
-
-
 
         } else {
           this.$message({
@@ -216,12 +223,46 @@ export default {
         return one.order - two.order;
       })
     },
-    onMove ({
-      relatedContext,
-      draggedContext
-    }) {
+    onEnd (dragObj) {
+      let dragInEl = dragObj.to['className']
+      console.log('dragInEl' + JSON.stringify(dragInEl))
+      let key = dragObj.to['id']
+      console.log('key' + JSON.stringify(key))
+      console.log('dataList:' + JSON.stringify(this.dragList))
+
+
+      this.changeStatusData.data = JSON.stringify(this.dragList)
+
+      jdkTaskApi.changeStatus(this.changeStatusData).then(res => {
+          console.log("res:" + JSON.stringify(res))
+          if (res.code === 1) {
+            this.$message({
+              type: 'success',
+              message: '修改成功 '
+            })
+          } else {
+            this.$message({
+              type: 'error',
+              message: '修改失败 '
+            })
+          }
+      })
+
+    },
+    onMove (e) {
+      const relatedContext = e.relatedContext;
+      const draggedContext = e.draggedContext;
       const relatedElement = relatedContext.element;
       const draggedElement = draggedContext.element;
+
+      console.log('relatedElement' + JSON.stringify(relatedElement))
+      console.log('draggedElement' + JSON.stringify(draggedElement))
+
+      console.log('draggedContext' + JSON.stringify(draggedContext))
+
+      this.changeStatusData.id = draggedElement.id
+
+      console.log('_prevClass:' + e.to._prevClass)
       return (
         (!relatedElement || !relatedElement.fixed) && !draggedElement.fixed
       )
@@ -234,6 +275,14 @@ export default {
     addTaskDialog (index) {
       this.createTaskForm.index = index
       this.createTaskDialogFormVisible = true
+    },
+    onAdd (e) {
+      // console.log("add",this.data.this.ondragendIndex);
+      this.oldIndex = e.oldIndex;
+      this.newIndex = e.newIndex;
+      console.log("老坐标:", this.oldIndex);
+      console.log("新坐标:", this.newIndex);
+      console.log("目标位置:", this.ondropIndex);
     },
     // 添加任务
     addTask () {

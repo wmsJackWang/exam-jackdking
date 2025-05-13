@@ -32,7 +32,7 @@
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="FILE"/>
         </root>
-        <logger name="repository" level="DEBUG" additivity="false">
+        <logger name="repository" level="INFO" additivity="false">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="FILE"/>
         </logger>
@@ -43,7 +43,7 @@
         <root level="INFO">
             <appender-ref ref="FILE"/>
         </root>
-        <logger name="repository" level="DEBUG" additivity="false">
+        <logger name="repository" level="INFO" additivity="false">
             <appender-ref ref="FILE"/>
         </logger>
     </springProfile>
@@ -52,7 +52,7 @@
         <root level="INFO">
             <appender-ref ref="FILE"/>
         </root>
-        <logger name="repository" level="DEBUG" additivity="false">
+        <logger name="repository" level="INFO" additivity="false">
             <appender-ref ref="FILE"/>
         </logger>
     </springProfile>

@@ -1,0 +1,1 @@
+{"version":3,"file":"static/js/bug-issue-template.640efb0f.chunk.js","mappings":"qIAAA,QAAgBA,GAAmB,6FASjCA,K","sources":["bug-issue-template.js"],"sourcesContent":["export default (sentryErrorId) => `\n### Scene content\n\n\\`\\`\\`\nPaste scene content here\n\\`\\`\\`\n\n### Sentry Error ID\n\n${sentryErrorId}\n`;\n"],"names":["sentryErrorId"],"sourceRoot":""}

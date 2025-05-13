@@ -6,7 +6,7 @@
     <div class="lowin-wrapper">
       <div class="lowin-box lowin-login">
         <div class="lowin-box-inner">
-            <p>比特课堂管理系统</p>
+            <p>墨汁</p>
             <div class="text-foot">
               <router-link to="/login" class="register-link">
                 切换至  用户名密码登录

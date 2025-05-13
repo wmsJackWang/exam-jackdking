@@ -7,7 +7,7 @@
       <div class="lowin-box lowin-login">
         <div class="lowin-box-inner">
           <el-form ref="loginForm" :model="loginForm" :rules="loginRules">
-            <p>比特课堂管理系统</p>
+            <p>墨汁</p>
             <div class="text-foot">
               <router-link to="/qrcodelogin" class="register-link">切换至  扫描二维码登录</router-link>
             </div>
