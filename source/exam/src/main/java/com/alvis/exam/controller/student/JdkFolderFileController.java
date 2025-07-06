@@ -13,11 +13,13 @@ import com.alvis.exam.base.RestResponse;
 import com.alvis.exam.domain.JdkFolderFile;
 import com.alvis.exam.domain.User;
 import com.alvis.exam.service.JdkFolderFileService;
+import com.alvis.exam.service.impl.JdkFolderFileServiceImpl;
 import jdk.nashorn.internal.ir.Optimistic;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
@@ -36,8 +38,7 @@ import javax.imageio.ImageIO;
 @Slf4j
 public class JdkFolderFileController extends BaseApiController {
 
-    @Autowired
-    JdkFolderFileService jdkFolderFileService;
+    private final JdkFolderFileServiceImpl jdkFolderFileService;
 
     /**
      * 新增保存画图文件
@@ -47,6 +48,34 @@ public class JdkFolderFileController extends BaseApiController {
         User user = getCurrentUser();
         jdkFolderFile.setUserId(Long.valueOf(user.getId()));
         return RestResponse.ok(jdkFolderFileService.saveOrUpdateJdkFolderFile(jdkFolderFile));
+    }
+
+    /**
+     * 文件、文件夹移动
+     */
+    @PostMapping("/moveFile")
+    public RestResponse moveFile(@RequestBody JdkFolderFile jdkFolderFile){
+        User user = getCurrentUser();
+        jdkFolderFile.setUserId(Long.valueOf(user.getId()));
+        int res = jdkFolderFileService.moveFile(jdkFolderFile);
+        return RestResponse.success(res);
+    }
+
+    @PostMapping(value = "/listFolderids")
+    public RestResponse<List<JSONObject>> listFolderids() {
+
+        User user = getCurrentUser();
+        List<JSONObject> result = jdkFolderFileService.getFolderData(0l, user);
+
+        JSONObject ele = new JSONObject();
+        ele.put("id", 0l);
+        ele.put("label", "根节点");
+        ele.put("children", result);
+
+        List<JSONObject> res = new ArrayList<>();
+        res.add(ele);
+
+        return RestResponse.ok(res);
     }
 
     @RequestMapping(value = "/folder/listFolderAndFile/{id}", method = RequestMethod.POST)
@@ -77,6 +106,10 @@ public class JdkFolderFileController extends BaseApiController {
         List<JdkFolderFile> files = Optional.of(queryFiles).orElseGet(Collections::emptyList)
                 .stream()
                 .filter(jdkFolderFile -> !StringUtils.equalsIgnoreCase(jdkFolderFile.getRecordType(), "folder"))
+                .map(jdkFolderFile -> {
+                    jdkFolderFile.setImgData(jdkFolderFileService.imgPrefix + jdkFolderFile.getImgData());
+                    return jdkFolderFile;
+                })
                 .collect(Collectors.toList());
 
         JSONObject result = new JSONObject();
@@ -138,6 +171,10 @@ public class JdkFolderFileController extends BaseApiController {
         List<JdkFolderFile> files = Optional.ofNullable(queryFiles).orElseGet(Collections::emptyList)
                 .stream()
                 .filter(jdkFolderFile -> !StringUtils.equalsIgnoreCase(jdkFolderFile.getRecordType(), "folder"))
+                .map(jdkFolderFile -> {
+                    jdkFolderFile.setImgData(jdkFolderFileService.imgPrefix + jdkFolderFile.getImgData());
+                    return jdkFolderFile;
+                })
                 .collect(Collectors.toList());
 
         JSONObject result = new JSONObject();

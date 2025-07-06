@@ -2,11 +2,8 @@ package com.alvis.exam.controller.student;
 
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.alvis.exam.base.BaseApiController;
 import com.alvis.exam.base.RestResponse;
-import com.alvis.exam.domain.ExcalidrawFileInfo;
 import com.alvis.exam.domain.JdkFolderFile;
 import com.alvis.exam.domain.User;
 import com.alvis.exam.domain.WorkbenchFileInfo;
@@ -15,8 +12,6 @@ import com.alvis.exam.viewmodel.student.education.SubjectEditRequestVM;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -74,8 +69,8 @@ public class WorkerFileController extends BaseApiController {
             jdkFolderFile.setId(res.getId());
         }
 
-        if (!StringUtils.isNotBlank(param.getImgData())) {
-            jdkFolderFileService.saveFilePic(param, jdkFolderFile);
+        if (StringUtils.isNotBlank(param.getImgData())) {
+            jdkFolderFileService.saveProcessOnFilePic(param, jdkFolderFile);
         }
 
         jdkFolderFile.setUserId(Long.valueOf(user.getId()));

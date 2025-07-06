@@ -56,4 +56,9 @@ public class JdkFolderFile implements Serializable {
 
     /** 更新时间 */
     private Date updateTime;
+
+
+    //
+    private Long fileId;
+    private Long desFolderId;
 }

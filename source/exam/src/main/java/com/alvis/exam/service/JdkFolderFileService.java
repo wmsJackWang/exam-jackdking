@@ -1,6 +1,9 @@
 package com.alvis.exam.service;
 
+import com.alibaba.fastjson.JSONObject;
+import com.alvis.exam.domain.ExcalidrawFileInfo;
 import com.alvis.exam.domain.JdkFolderFile;
+import com.alvis.exam.domain.User;
 import com.alvis.exam.domain.WorkbenchFileInfo;
 
 import java.util.List;
@@ -87,5 +90,11 @@ public interface JdkFolderFileService
      */
     public int deleteJdkFolderFileById(Long id);
 
-    void saveFilePic(WorkbenchFileInfo param, JdkFolderFile jdkFolderFile);
+    void saveProcessOnFilePic(WorkbenchFileInfo param, JdkFolderFile jdkFolderFile);
+
+    void saveExcalidrawFilePic(ExcalidrawFileInfo param, JdkFolderFile jdkFolderFile);
+
+    List<JSONObject> getFolderData(long l, User user);
+
+    int moveFile(JdkFolderFile jdkFolderFile);
 }

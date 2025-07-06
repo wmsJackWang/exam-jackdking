@@ -16,18 +16,18 @@
           <div v-for="( item, index ) in  filesList ">
             <div class="folderContainer">
               <div class="folderWrapper" @dblclick="down(item)">
-                <img src="@/assets/folder/fileImg.png" style="width: 100%;height: 100%;"
+                <img  v-bind:src="item.imgData" style="width: 100%;height: 100%;"
                      @contextmenu.prevent.stop="rightClickfile(index, item, $event)" />
                 <div class="folderName">
                   <span>{{
-                      item.fileName.length > 10 ? item.fileName.substring(0, 6) + '...' : item.fileName
+                      item.fileName.length > 6 ? item.fileName.substring(0, 6) + '...' : item.fileName
                     }}</span>
                     <span><br/> ({{item.recordType}})</span>
                 </div>
-
               </div>
             </div>
           </div>
+
         </el-card>
       </div>
 

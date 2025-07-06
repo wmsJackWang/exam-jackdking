@@ -27,4 +27,6 @@ public class ExcalidrawFileInfo implements Serializable {
   /** 父文件夹id */
   private Long parentId;
 
+  private Long id;
+
 }

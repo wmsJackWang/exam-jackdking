@@ -24,6 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <sql id="Conditions">
         <where>
+            <if test="id != null "> and id = #{id}</if>
             <if test="version != null "> and version = #{version}</if>
             <if test="deleteFlag != null "> and delete_flag = #{deleteFlag}</if>
             <if test="isFolder != null "> and is_folder = #{isFolder}</if>

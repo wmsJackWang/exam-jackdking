@@ -3,6 +3,8 @@ package com.alvis.exam.configuration.spring.mvc;
 import java.util.List;
 
 import com.alvis.exam.configuration.spring.codecv.CodeCVTokenHandlerInterceptor;
+import com.alvis.exam.service.impl.JdkFolderFileServiceImpl;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -27,6 +29,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
     private final TokenHandlerInterceptor tokenHandlerInterceptor;
     private final CodeCVTokenHandlerInterceptor codeCVTokenHandlerInterceptor;
     private final SystemConfig systemConfig;
+    private final JdkFolderFileServiceImpl jdkFolderFileService;
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
@@ -44,6 +47,10 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
         registry.addResourceHandler("/**")
                 .addResourceLocations("classpath:/static/")
                 .setCachePeriod(31556926);
+
+        /** 通过url访问项目外的目录图片*/
+        // registry.addResourceHandler("/upload/**").addResourceLocations("file:"+ MyUtils.getUploadFilePath()+"upload/");
+        registry.addResourceHandler("/" + jdkFolderFileService.imagePath +"/**").addResourceLocations("file:" + JdkFolderFileServiceImpl.getUploadFilePath() + jdkFolderFileService.imagePath + "/");
     }
 
     @Override
